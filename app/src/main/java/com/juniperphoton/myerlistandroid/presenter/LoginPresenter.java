@@ -6,7 +6,7 @@ import com.juniperphoton.myerlistandroid.api.CloudService;
 import com.juniperphoton.myerlistandroid.api.response.CheckUserResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetSaltResponse;
 import com.juniperphoton.myerlistandroid.api.response.LoginResponse;
-import com.juniperphoton.myerlistandroid.model.MyerUser;
+import com.juniperphoton.myerlistandroid.model.User;
 import com.juniperphoton.myerlistandroid.util.DataUtil;
 import com.juniperphoton.myerlistandroid.util.LocalSettingUtil;
 import com.juniperphoton.myerlistandroid.util.Params;
@@ -106,10 +106,10 @@ public class LoginPresenter {
                         return Observable.error(new APIException(response.getFriendErrorMessage()));
                     }
                 })
-                .map(new Func1<LoginResponse, MyerUser>() {
+                .map(new Func1<LoginResponse, User>() {
                     @Override
-                    public MyerUser call(LoginResponse loginResponse) {
-                        MyerUser user = loginResponse.getUser();
+                    public User call(LoginResponse loginResponse) {
+                        User user = loginResponse.getUser();
                         if (user != null) {
                             return user;
                         }
@@ -117,7 +117,7 @@ public class LoginPresenter {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyerUser>() {
+                .subscribe(new Subscriber<User>() {
                     @Override
                     public void onCompleted() {
 
@@ -131,9 +131,10 @@ public class LoginPresenter {
                     }
 
                     @Override
-                    public void onNext(MyerUser user) {
-                        LocalSettingUtil.putString(App.getInstance(), Params.SID, String.valueOf(user.getSID()));
+                    public void onNext(User user) {
+                        LocalSettingUtil.putString(App.getInstance(), Params.SID_KEY, String.valueOf(user.getSID()));
                         LocalSettingUtil.putString(App.getInstance(), Params.ACCESS_TOKEN_KEY, user.getAccessToken());
+                        LocalSettingUtil.putString(App.getInstance(), Params.EMAIL_KEY, mEmail);
                         mLoginView.afterLogin(true);
                     }
                 });

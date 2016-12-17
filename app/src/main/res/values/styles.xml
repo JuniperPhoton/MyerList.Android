@@ -10,8 +10,6 @@
     </style>
 
     <style name="AppNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-
-        <item name="android:windowAnimationStyle">@style/activityAnim</item>
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 

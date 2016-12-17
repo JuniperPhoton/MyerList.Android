@@ -1,26 +1,78 @@
 package com.juniperphoton.myerlistandroid.activity;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.adapter.CategoryAdapter;
+import com.juniperphoton.myerlistandroid.adapter.ToDoAdapter;
+import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
+import com.juniperphoton.myerlistandroid.model.ToDo;
+import com.juniperphoton.myerlistandroid.model.ToDoCategory;
+import com.juniperphoton.myerlistandroid.presenter.MainPresenter;
+import com.juniperphoton.myerlistandroid.util.AppConfig;
+import com.juniperphoton.myerlistandroid.util.LocalSettingUtil;
+import com.juniperphoton.myerlistandroid.util.Params;
+import com.juniperphoton.myerlistandroid.view.MainView;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements MainView, OnDrawerSelectedChanged {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+
+    @BindView(R.id.activity_drawer_list)
+    RecyclerView mCategoryRecyclerView;
+
+    @BindView(R.id.todo_list)
+    RecyclerView mToDoRecyclerView;
+
+    @BindView(R.id.drawer_root)
+    View mDrawerRoot;
+
+    @BindView(R.id.add_fab)
+    FloatingActionButton mAddFAB;
+
+    @BindView(R.id.drawer_account_email)
+    TextView mEmailView;
+
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
+
+    @BindView(R.id.undone_text)
+    TextView mUndoneText;
+
+    private CategoryAdapter mCateAdapter;
+    private ToDoAdapter mToDoAdapter;
+
+    private MainPresenter mPresenter;
+
+    private int mSelectedCategory = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +81,7 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+        mPresenter = new MainPresenter(this);
 
         if (mDrawerLayout != null) {
             final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -41,6 +94,45 @@ public class MainActivity extends BaseActivity {
                 }
             });
         }
+
+
+        if (!AppConfig.hasLogined()) {
+            Intent intent = new Intent();
+            intent.setClass(this, StartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            initViews();
+            initData();
+        }
+    }
+
+    private void initViews() {
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.getCate();
+            }
+        });
+        mEmailView.setText(LocalSettingUtil.getString(this, Params.EMAIL_KEY, ""));
+
+        mCateAdapter = new CategoryAdapter(new ArrayList<ToDoCategory>());
+        mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false));
+        mCategoryRecyclerView.setAdapter(mCateAdapter);
+        mCateAdapter.setSelectedCallback(MainActivity.this);
+
+        mToDoAdapter = new ToDoAdapter(new ArrayList<ToDo>());
+        mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false));
+        mToDoRecyclerView.setAdapter(mToDoAdapter);
+
+        displayCategories();
+        displayToDos();
+    }
+
+    private void initData() {
+        mPresenter.getCate();
     }
 
     @OnClick(R.id.drawer_settings)
@@ -50,8 +142,67 @@ public class MainActivity extends BaseActivity {
     }
 
     @OnClick(R.id.drawer_about)
-    void onClickAbout(){
+    void onClickAbout() {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void displayCategories() {
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<ToDoCategory> categories = realm.where(ToDoCategory.class).findAll();
+                ArrayList<ToDoCategory> list = new ArrayList<>();
+                for (ToDoCategory cate : categories) {
+                    list.add(cate);
+                }
+                list.add(0, ToDoCategory.getAllCategory());
+                list.add(ToDoCategory.getDeletedCategory());
+                list.add(ToDoCategory.getPersonalizationCategory());
+                mCateAdapter.refreshData(list);
+                mCateAdapter.selectItem(0);
+            }
+        });
+    }
+
+    @Override
+    public void displayToDos() {
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmQuery<ToDo> query;
+                if (mSelectedCategory == 0) {
+                    query = realm.where(ToDo.class);
+                } else {
+                    query = realm.where(ToDo.class).equalTo("cate", String.valueOf(mSelectedCategory));
+                }
+                
+                RealmResults<ToDo> toDos = query.findAll();
+
+                long count = query.equalTo("isdone", "0").count();
+                mUndoneText.setText(String.valueOf(count));
+
+                ArrayList<ToDo> list = new ArrayList<>();
+                for (ToDo todo : toDos) {
+                    list.add(todo);
+                }
+                mToDoAdapter.refreshData(list);
+                mRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    @Override
+    public void onSelectedChanged(ToDoCategory category) {
+        if (mSelectedCategory == category.getId()) {
+            return;
+        }
+        mSelectedCategory = category.getId();
+        mDrawerRoot.setBackground(new ColorDrawable(category.getIntColor()));
+        mAddFAB.setBackgroundTintList(ColorStateList.valueOf(category.getIntColor()));
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        mToolbar.setTitle(category.getName());
+        displayToDos();
     }
 }

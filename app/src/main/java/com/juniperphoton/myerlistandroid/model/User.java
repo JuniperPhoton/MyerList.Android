@@ -3,9 +3,13 @@ package com.juniperphoton.myerlistandroid.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 @SuppressWarnings("UnusedDeclaration")
-public class MyerUser {
+public class User extends RealmObject {
     @SerializedName("sid")
+    @PrimaryKey
     private int mSid;
 
     private String mEmail;
@@ -13,7 +17,7 @@ public class MyerUser {
     @SerializedName("access_token")
     private String mAccessToken;
 
-    public MyerUser() {
+    public User() {
 
     }
 
@@ -33,7 +37,7 @@ public class MyerUser {
         this.mEmail = value;
     }
 
-    public String getAccessToken(){
+    public String getAccessToken() {
         return mAccessToken;
     }
 }

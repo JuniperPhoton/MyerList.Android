@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/ripple_clip"
+                android:clickable="true">
+
+    <LinearLayout
+        android:id="@+id/quick_download_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settings_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                android:layout_marginStart="@dimen/settings_margin_left"
+                android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/settings_item_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                android:layout_marginStart="@dimen/settings_margin_left"
+                android:alpha="0.5"
+                android:paddingEnd="@dimen/settings_margin_left"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/settings_item_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:buttonTint="@color/MyerListBlue"
+            android:checked="true"
+            android:foregroundTint="@color/MyerListBlue"
+            android:theme="@style/AppTheme"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/settings_margin_left"
+        android:layout_marginLeft="@dimen/settings_margin_left"
+        android:background="@drawable/grey_line"
+        />
+</RelativeLayout>

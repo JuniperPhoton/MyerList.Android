@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/drawer_root"
                 android:layout_width="250dp"
                 android:layout_height="match_parent"
                 android:background="@color/MyerListBlue"
@@ -79,11 +80,11 @@
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_drawer_rv"
+        android:id="@+id/activity_drawer_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="120sp"
-        android:layout_marginTop="200dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="250dp"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:scrollbars="vertical"/>
@@ -91,7 +92,7 @@
     <LinearLayout
         android:id="@+id/activity_drawer_bottom_layout"
         android:layout_width="match_parent"
-        android:layout_height="50sp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         >
@@ -112,8 +113,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="25sp"
-                    android:layout_height="25sp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@drawable/vector_ic_settings"/>
 
                 <TextView
@@ -142,8 +143,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="25sp"
-                    android:layout_height="25sp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/vector_ic_emoticon"/>
 

@@ -1,10 +1,17 @@
 package com.juniperphoton.myerlistandroid.api;
 
+import android.net.rtp.RtpStream;
+
+import com.juniperphoton.myerlistandroid.api.response.CateResponse;
 import com.juniperphoton.myerlistandroid.api.response.CheckUserResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetSaltResponse;
 import com.juniperphoton.myerlistandroid.api.response.LoginResponse;
+import com.juniperphoton.myerlistandroid.api.response.ToDoResponse;
+import com.juniperphoton.myerlistandroid.util.AppConfig;
+import com.juniperphoton.myerlistandroid.util.Params;
 
 import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -48,5 +55,13 @@ public class CloudService {
 
     public Observable<LoginResponse> login(String email, String pwd) {
         return mRetrofit.create(UserService.class).login(email, pwd);
+    }
+
+    public Observable<CateResponse> getCates() {
+        return mRetrofit.create(CategoryService.class).getCategory(AppConfig.getSid(), AppConfig.getAccessToken());
+    }
+
+    public Observable<ToDoResponse> getToDos() {
+        return mRetrofit.create(ToDoService.class).getToDos(AppConfig.getSid(), AppConfig.getSid(), AppConfig.getAccessToken());
     }
 }

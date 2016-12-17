@@ -9,4 +9,5 @@
     <color name="MyerListBlueDark">#338dc3</color>
     <color name="MyerListGray">#FFF2F2F2</color>
     <color name="MyerListGrayDark">#ffdddddd</color>
+    <color name="DeleteColor">#a9a9a9</color>
 </resources>

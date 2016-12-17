@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+    >
+
+    <View
+        android:id="@+id/row_cate_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#42000000"/>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.juniperphoton.myerlistandroid.widget.CircleView
+            android:id="@+id/row_cate_color_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            />
+
+        <TextView
+            android:id="@+id/row_cate_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:drawablePadding="16dp"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            />
+    </LinearLayout>
+</RelativeLayout>

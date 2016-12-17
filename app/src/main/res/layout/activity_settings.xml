@@ -1,11 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <Button
-        android:id="@+id/settings_logout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/MyerListGray"
+                android:orientation="vertical">
+
+    <include layout="@layout/status_bar_layout"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="LOGOUT"/>
-</LinearLayout>
+        android:layout_marginTop="@dimen/status_bar_height"
+        android:orientation="vertical">
+
+        <com.juniperphoton.myerlistandroid.widget.CommonTitleBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="SETTINGS"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+            android:layout_marginLeft="@dimen/settings_margin_left"
+            android:layout_marginTop="@dimen/settings_margin_up_and_down"
+            android:text="PERSONALIZATION"
+            android:textColor="@color/MyerListBlue"
+            android:textStyle="bold"/>
+
+        <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:has_checkbox="true"
+            app:setting_content="Now todos will be append to bottom"
+            app:setting_title="Add to bottom"
+            app:show_divider="true"/>
+
+        <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:has_checkbox="false"
+            app:setting_content="English"
+            app:setting_title="Change language"
+            app:show_divider="false"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+            android:layout_marginLeft="@dimen/settings_margin_left"
+            android:layout_marginTop="@dimen/settings_margin_up_and_down"
+            android:text="ACCOUNT"
+            android:textColor="@color/MyerListBlue"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/settings_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+            android:layout_marginLeft="@dimen/settings_margin_left"
+            android:layout_marginRight="@dimen/settings_margin_left"
+            android:layout_marginTop="@dimen/settings_margin_up_and_down"
+            android:text="LOGOUT"/>
+    </LinearLayout>
+
+</RelativeLayout>

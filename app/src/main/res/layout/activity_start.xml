@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/MyerListGray"
                 android:orientation="vertical">
 
     <ImageView
@@ -35,14 +36,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:text="Myer"
+                android:text="@string/myer"
                 android:textColor="@color/MyerListBlue"
                 android:textSize="40sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="List"
+                android:text="@string/list"
                 android:textColor="@color/MyerListBlue"
                 android:textSize="40sp"
                 android:textStyle="bold"/>
@@ -53,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-light"
-            android:text="Sync todos on Windows and Android"
+            android:text="@string/sync_todos_on_windows_and_android"
             android:textSize="15sp"/>
 
         <LinearLayout
@@ -70,20 +71,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/MyerListBlue"
-                android:text="Login"
+                android:text="@string/login"
                 android:textColor="@android:color/white"/>
 
             <Button
                 android:id="@+id/register_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Register"/>
+                android:text="@string/register"/>
 
             <Button
                 android:id="@+id/offline_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Offline mode"/>
+                android:text="@string/offline_mode"/>
         </LinearLayout>
 
     </LinearLayout>

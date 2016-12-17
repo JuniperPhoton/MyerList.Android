@@ -8,4 +8,12 @@ public class AppConfig {
         String access_token = LocalSettingUtil.getString(App.getInstance(), Params.ACCESS_TOKEN_KEY);
         return access_token != null;
     }
+
+    public static String getSid() {
+        return LocalSettingUtil.getString(App.getInstance(), Params.SID_KEY);
+    }
+
+    public static String getAccessToken() {
+        return LocalSettingUtil.getString(App.getInstance(), Params.ACCESS_TOKEN_KEY);
+    }
 }

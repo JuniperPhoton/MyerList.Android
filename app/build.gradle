@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "4.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -40,6 +40,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.orhanobut:logger:1.15'
     compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'moe.feng:AlipayZeroSdk:1.1'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     testCompile 'junit:junit:4.12'
 }

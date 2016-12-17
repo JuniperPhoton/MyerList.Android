@@ -2,18 +2,18 @@ package com.juniperphoton.myerlistandroid.api.response;
 
 
 import com.google.gson.annotations.SerializedName;
-import com.juniperphoton.myerlistandroid.model.MyerUser;
+import com.juniperphoton.myerlistandroid.model.User;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LoginResponse extends CommonResponse {
     @SerializedName("UserInfo")
-    private MyerUser mUser;
+    private User mUser;
 
     public LoginResponse() {
 
     }
 
-    public MyerUser getUser() {
+    public User getUser() {
         return mUser;
     }
 }
