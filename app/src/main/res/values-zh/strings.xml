@@ -21,5 +21,6 @@
     <string name="register">Register</string>
     <string name="offline_mode">Offline mode</string>
     <string name="sync_todos_on_windows_and_android">Sync todos on Windows and Android</string>
+    <string name="add_shortcuts">添加</string>
 
 </resources>

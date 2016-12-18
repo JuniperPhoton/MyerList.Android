@@ -1,9 +1,14 @@
 package com.juniperphoton.myerlistandroid.activity;
 
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Icon;
+import android.net.Uri;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +25,7 @@ import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.adapter.CategoryAdapter;
 import com.juniperphoton.myerlistandroid.adapter.ToDoAdapter;
 import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
+import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.presenter.MainPresenter;
@@ -29,11 +35,14 @@ import com.juniperphoton.myerlistandroid.util.Params;
 import com.juniperphoton.myerlistandroid.view.MainView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
@@ -95,7 +104,6 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
             });
         }
 
-
         if (!AppConfig.hasLogined()) {
             Intent intent = new Intent();
             intent.setClass(this, StartActivity.class);
@@ -108,6 +116,8 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     }
 
     private void initViews() {
+        mToolbar.setTitle(getString(R.string.all));
+
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -171,23 +181,20 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmQuery<ToDo> query;
+                OrderedToDoList query = realm.where(OrderedToDoList.class).findFirst();
+                if (query == null) return;
+                RealmList<ToDo> list = query.getToDos();
+                long count = 0;
                 if (mSelectedCategory == 0) {
-                    query = realm.where(ToDo.class);
+                    mToDoAdapter.refreshData(list);
+                    count = list.where().equalTo("isdone", "0").count();
                 } else {
-                    query = realm.where(ToDo.class).equalTo("cate", String.valueOf(mSelectedCategory));
+                    RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategory)).findAll();
+                    count = toDos.where().equalTo("isdone", "0").count();
+                    mToDoAdapter.refreshData(toDos);
                 }
-                
-                RealmResults<ToDo> toDos = query.findAll();
 
-                long count = query.equalTo("isdone", "0").count();
                 mUndoneText.setText(String.valueOf(count));
-
-                ArrayList<ToDo> list = new ArrayList<>();
-                for (ToDo todo : toDos) {
-                    list.add(todo);
-                }
-                mToDoAdapter.refreshData(list);
                 mRefreshLayout.setRefreshing(false);
             }
         });
@@ -204,5 +211,14 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         mDrawerLayout.closeDrawer(GravityCompat.START);
         mToolbar.setTitle(category.getName());
         displayToDos();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mSelectedCategory != 0) {
+            mCateAdapter.selectItem(0);
+        } else {
+            super.onBackPressed();
+        }
     }
 }

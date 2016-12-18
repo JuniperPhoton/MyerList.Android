@@ -9,7 +9,7 @@ android {
         applicationId "com.juniperphoton.myerlistandroid"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
+        versionCode 40
         versionName "4.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

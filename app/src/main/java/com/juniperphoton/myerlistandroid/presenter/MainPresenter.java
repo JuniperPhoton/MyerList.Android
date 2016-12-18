@@ -4,14 +4,23 @@ import com.google.gson.Gson;
 import com.juniperphoton.myerlistandroid.api.APIException;
 import com.juniperphoton.myerlistandroid.api.CloudService;
 import com.juniperphoton.myerlistandroid.api.response.CateResponse;
+import com.juniperphoton.myerlistandroid.api.response.GetOrderResponse;
 import com.juniperphoton.myerlistandroid.api.response.ToDoResponse;
 import com.juniperphoton.myerlistandroid.model.CategoryInfomation;
+import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.util.ToastService;
 import com.juniperphoton.myerlistandroid.view.MainView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
+import io.realm.Sort;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -58,8 +67,27 @@ public class MainPresenter {
     public void getToDos() {
         CloudService.getInstance().getToDos()
                 .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .flatMap(new Func1<ToDoResponse, Observable<GetOrderResponse>>() {
+                    @Override
+                    public Observable<GetOrderResponse> call(final ToDoResponse toDoResponse) {
+                        if (toDoResponse.getToDos() != null) {
+                            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    for (ToDo toDo : toDoResponse.getToDos()) {
+                                        realm.copyToRealmOrUpdate(toDo);
+                                    }
+                                }
+                            });
+                            return CloudService.getInstance().getOrders();
+                        } else {
+                            return Observable.error(new APIException(toDoResponse.getFriendErrorMessage()));
+                        }
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ToDoResponse>() {
+                .subscribe(new Subscriber<GetOrderResponse>() {
                     @Override
                     public void onCompleted() {
 
@@ -71,20 +99,37 @@ public class MainPresenter {
                     }
 
                     @Override
-                    public void onNext(final ToDoResponse toDoResponse) {
-                        if (toDoResponse.getToDos() != null) {
-                            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                                @Override
-                                public void execute(Realm realm) {
-                                    for (ToDo toDo : toDoResponse.getToDos()) {
-                                        realm.copyToRealmOrUpdate(toDo);
-                                    }
-                                }
-                            });
+                    public void onNext(GetOrderResponse getOrderResponse) {
+                        String order = getOrderResponse.getOrder();
+                        if (order != null) {
+                            final String[] orders = order.split(",");
+
+                            Realm realm = Realm.getDefaultInstance();
+                            realm.beginTransaction();
+
+                            final RealmList<ToDo> orderedToDos = new RealmList<>();
+                            RealmResults<ToDo> realmResult = realm.where(ToDo.class).findAll();
+                            ArrayList<ToDo> noOrderList = new ArrayList<>();
+                            for (ToDo toDo : realmResult) {
+                                noOrderList.add(toDo);
+                            }
+                            for (String id : orders) {
+                                ToDo toDo = realmResult.where().equalTo("id", id).findFirst();
+                                orderedToDos.add(toDo);
+                                noOrderList.remove(toDo);
+                            }
+                            for (ToDo toDo : noOrderList) {
+                                orderedToDos.add(toDo);
+                            }
+                            OrderedToDoList list = new OrderedToDoList();
+                            list.setToDos(orderedToDos);
+                            realm.copyToRealmOrUpdate(list);
+
+                            realm.commitTransaction();
                             ToastService.sendShortToast("Fetched:D");
                             mMainView.displayToDos();
                         } else {
-                            ToastService.sendShortToast(toDoResponse.getFriendErrorMessage());
+                            ToastService.sendShortToast("Can't get order");
                         }
                     }
                 });

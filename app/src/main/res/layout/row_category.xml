@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@drawable/ripple_clip"
                 android:clickable="true"
     >
 
@@ -10,7 +10,7 @@
         android:id="@+id/row_cate_back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#42000000"/>
+        android:background="#70000000"/>
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -29,10 +29,12 @@ public class AboutActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
+
+        updateVersion();
     }
 
     private void updateVersion() {
-        mVersionTextView.setText(PackageUtil.getVersionName(this));
+        mVersionTextView.setText("Version " + PackageUtil.getVersionName(this));
     }
 
     @OnClick(R.id.email_rl)

@@ -6,8 +6,6 @@ import com.juniperphoton.myerlistandroid.model.ToDo;
 
 import java.util.ArrayList;
 
-import io.realm.RealmList;
-
 public class ToDoResponse extends CommonResponse {
     @SerializedName("ScheduleInfo")
     private ArrayList<ToDo> mToDos;

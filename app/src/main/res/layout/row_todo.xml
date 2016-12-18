@@ -2,21 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@drawable/ripple_clip"
                 android:clickable="true"
     >
 
-    <LinearLayout
+    <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/ripple_clip"
+        android:clickable="true"
         android:orientation="horizontal">
 
         <com.juniperphoton.myerlistandroid.widget.CircleView
             android:id="@+id/row_todo_color_view"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             />
 
@@ -25,22 +27,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:drawablePadding="16dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="50dp"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             />
-    </LinearLayout>
+    <ImageView
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:alpha="0.4"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_arrange_thumb"/>
+    </RelativeLayout>
 
     <View
         android:id="@+id/done_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/black"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="12dp"
+        android:layout_marginRight="52dp"
+        android:layout_alignParentLeft="true"
         android:alpha="0.3"
-        android:layout_marginRight="12dp"
-        android:layout_centerInParent="true"/>
+        android:background="@android:color/black"/>
 </RelativeLayout>
