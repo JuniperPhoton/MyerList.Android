@@ -16,4 +16,8 @@ public class AppConfig {
     public static String getAccessToken() {
         return LocalSettingUtil.getString(App.getInstance(), Params.ACCESS_TOKEN_KEY);
     }
+
+    public static boolean isInOfflineMode() {
+        return LocalSettingUtil.checkKey(App.getInstance(), Params.OFFLINE_MODE);
+    }
 }

@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import io.realm.Realm;
+
 public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
         extends RecyclerView.Adapter<BaseAdapter.BaseViewHolder> {
 
@@ -106,14 +108,24 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
         return mData.get(dataIndex);
     }
 
-    public void addData(T item) {
-        mData.add(item);
-        notifyItemInserted(mData.size() - 1);
+    public void addData(final T item) {
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                mData.add(item);
+                notifyItemInserted(mData.size() - 1);
+            }
+        });
     }
 
-    public void removeData(int index) {
-        mData.remove(index);
-        notifyItemRemoved(index);
+    public void removeData(final int index) {
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                mData.remove(index);
+                notifyItemRemoved(index);
+            }
+        });
     }
 
     public class BaseViewHolder extends RecyclerView.ViewHolder {

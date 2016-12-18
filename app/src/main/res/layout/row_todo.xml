@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:background="@drawable/ripple_clip"
+                android:background="#FFFFFF"
                 android:clickable="true"
     >
 
@@ -34,22 +34,24 @@
             android:textColor="@android:color/black"
             android:textSize="15sp"
             />
-    <ImageView
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:alpha="0.4"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_arrange_thumb"/>
+
+        <ImageView
+            android:id="@+id/arrange_thumb"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_alignParentRight="true"
+            android:alpha="0.4"
+            android:src="@drawable/ic_arrange_thumb"/>
     </RelativeLayout>
 
     <View
         android:id="@+id/done_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="52dp"
-        android:layout_alignParentLeft="true"
         android:alpha="0.3"
         android:background="@android:color/black"/>
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.juniperphoton.myerlistandroid.api;
 
 import com.juniperphoton.myerlistandroid.api.response.CateResponse;
 import com.juniperphoton.myerlistandroid.api.response.CheckUserResponse;
+import com.juniperphoton.myerlistandroid.api.response.CommonResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetOrderResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetSaltResponse;
 import com.juniperphoton.myerlistandroid.api.response.LoginResponse;
@@ -61,10 +62,22 @@ public class CloudService {
     }
 
     public Observable<ToDoResponse> getToDos() {
-        return mRetrofit.create(ToDoService.class).getToDos(AppConfig.getSid(), AppConfig.getSid(), AppConfig.getAccessToken());
+        return mRetrofit.create(ToDoService.class).getToDos(AppConfig.getSid(), AppConfig.getAccessToken(), AppConfig.getSid());
     }
 
     public Observable<GetOrderResponse> getOrders() {
-        return mRetrofit.create(ToDoService.class).getOrders(AppConfig.getSid(), AppConfig.getSid(), AppConfig.getAccessToken());
+        return mRetrofit.create(ToDoService.class).getOrders(AppConfig.getSid(), AppConfig.getAccessToken(), AppConfig.getSid());
+    }
+
+    public Observable<CommonResponse> setOrders(String order) {
+        return mRetrofit.create(ToDoService.class).setOrders(AppConfig.getSid(), AppConfig.getAccessToken(), AppConfig.getSid(), order);
+    }
+
+    public Observable<CommonResponse> setIsDone(String id, String isDone) {
+        return mRetrofit.create(ToDoService.class).setDone(AppConfig.getSid(), AppConfig.getAccessToken(), id, isDone);
+    }
+
+    public Observable<CommonResponse> deleteToDo(String id) {
+        return mRetrofit.create(ToDoService.class).deleteToDo(AppConfig.getSid(), AppConfig.getAccessToken(), id);
     }
 }

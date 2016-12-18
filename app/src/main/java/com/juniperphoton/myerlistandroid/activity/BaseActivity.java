@@ -4,7 +4,6 @@ package com.juniperphoton.myerlistandroid.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.WindowManager;
 
 import com.juniperphoton.myerlistandroid.util.StatusBarCompat;
 

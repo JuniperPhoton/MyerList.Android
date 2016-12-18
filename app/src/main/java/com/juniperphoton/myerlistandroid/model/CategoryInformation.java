@@ -3,7 +3,7 @@ package com.juniperphoton.myerlistandroid.model;
 
 import java.util.List;
 
-public class CategoryInfomation {
+public class CategoryInformation {
 
     private boolean modified;
     private List<ToDoCategory> cates;

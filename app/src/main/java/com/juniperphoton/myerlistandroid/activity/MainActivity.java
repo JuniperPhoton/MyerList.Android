@@ -1,29 +1,25 @@
 package com.juniperphoton.myerlistandroid.activity;
 
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Icon;
-import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.adapter.CategoryAdapter;
 import com.juniperphoton.myerlistandroid.adapter.ToDoAdapter;
+import com.juniperphoton.myerlistandroid.callback.OnItemOperationCompletedCallback;
 import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
 import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
@@ -35,7 +31,6 @@ import com.juniperphoton.myerlistandroid.util.Params;
 import com.juniperphoton.myerlistandroid.view.MainView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -43,11 +38,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MainActivity extends BaseActivity implements MainView, OnDrawerSelectedChanged {
+public class MainActivity extends BaseActivity implements MainView, OnDrawerSelectedChanged, OnItemOperationCompletedCallback {
+
+    private static final String TAG = "MainActivity";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -115,6 +111,13 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "destroyed");
+        Realm.getDefaultInstance().close();
+    }
+
     private void initViews() {
         mToolbar.setTitle(getString(R.string.all));
 
@@ -133,6 +136,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         mCateAdapter.setSelectedCallback(MainActivity.this);
 
         mToDoAdapter = new ToDoAdapter(new ArrayList<ToDo>());
+        mToDoAdapter.setCallback(this);
         mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
         mToDoRecyclerView.setAdapter(mToDoAdapter);
@@ -159,6 +163,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @Override
     public void displayCategories() {
+        mRefreshLayout.setRefreshing(true);
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -184,20 +189,29 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                 OrderedToDoList query = realm.where(OrderedToDoList.class).findFirst();
                 if (query == null) return;
                 RealmList<ToDo> list = query.getToDos();
-                long count = 0;
+                long count;
                 if (mSelectedCategory == 0) {
                     mToDoAdapter.refreshData(list);
-                    count = list.where().equalTo("isdone", "0").count();
                 } else {
                     RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategory)).findAll();
-                    count = toDos.where().equalTo("isdone", "0").count();
                     mToDoAdapter.refreshData(toDos);
                 }
 
-                mUndoneText.setText(String.valueOf(count));
+                updateCount();
                 mRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void updateCount() {
+        int count = 0;
+        List<ToDo> toDos = mToDoAdapter.getData();
+        for (ToDo todo : toDos) {
+            if (todo.getIsdone().equals("0")) {
+                count++;
+            }
+        }
+        mUndoneText.setText(String.valueOf(count));
     }
 
     @Override
@@ -206,6 +220,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
             return;
         }
         mSelectedCategory = category.getId();
+        mToDoAdapter.setCanDrag(mSelectedCategory == 0);
         mDrawerRoot.setBackground(new ColorDrawable(category.getIntColor()));
         mAddFAB.setBackgroundTintList(ColorStateList.valueOf(category.getIntColor()));
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -220,5 +235,30 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onArrangeCompleted() {
+        StringBuilder orderStr = new StringBuilder();
+        for (ToDo toDo : mToDoAdapter.getData()) {
+            orderStr.append(toDo.getId());
+            orderStr.append(",");
+        }
+        orderStr.deleteCharAt(orderStr.length() - 1);
+        mPresenter.updateOrders(orderStr.toString());
+    }
+
+    @Override
+    public void onUpdateDone(int position) {
+        ToDo toDo = mToDoAdapter.getData(position);
+        mPresenter.updateIsDone(toDo);
+        updateCount();
+    }
+
+    @Override
+    public void onDelete(int position) {
+        ToDo toDo = mToDoAdapter.getData(position);
+        mToDoAdapter.removeData(position);
+        mPresenter.deleteToDo(toDo);
     }
 }

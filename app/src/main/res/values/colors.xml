@@ -10,4 +10,7 @@
     <color name="MyerListGray">#FFF2F2F2</color>
     <color name="MyerListGrayDark">#ffdddddd</color>
     <color name="DeleteColor">#a9a9a9</color>
+
+    <color name="DoneGreenColor">#FF4AD4CB</color>
+    <color name="DeleteRedColor">#FFDC7373</color>
 </resources>
