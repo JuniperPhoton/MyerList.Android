@@ -229,10 +229,14 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
                 @Override
                 public void execute(Realm realm) {
                     int cate = Integer.valueOf(todo.getCate());
-                    ToDoCategory category = realm.where(ToDoCategory.class).equalTo("id",
-                            cate).findFirst();
-                    if (category != null) {
-                        circleView.setColor(category.getIntColor());
+                    if (cate > 0) {
+                        ToDoCategory category = realm.where(ToDoCategory.class).equalTo("id",
+                                cate).findFirst();
+                        if (category != null) {
+                            circleView.setColor(category.getIntColor());
+                        }
+                    } else if (cate == 0) {
+                        circleView.setColor(ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
                     }
                 }
             });

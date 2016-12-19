@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adding_view_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/MyerListBlue"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2"
+        android:src="@drawable/texture_background"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/adding_view_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="20dp"
+                android:height="50dp"
+                android:gravity="center_vertical"
+                android:text="Adding"
+                android:textColor="@android:color/white"
+                android:textSize="27sp"
+                android:textStyle="normal"/>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="#30000000"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/adding_view_cate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:gravity="center_vertical"
+                    android:text="ALL"
+                    android:textColor="@android:color/white"/>
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <com.juniperphoton.myerlistandroid.widget.SelectCategoryView
+            android:id="@+id/select_category_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/adding_view_add_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/white"
+            android:elegantTextHeight="true"
+            android:hint="e.g. Have coffee with my friends at 5'clock."
+            android:paddingBottom="10dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                                    android:id="@+id/fragment_adding_pane_ok_btn_cardview"
+                                                    android:layout_width="120dp"
+                                                    android:layout_height="40dp"
+                                                    android:layout_marginEnd="10dp"
+                                                    android:textSize="15sp"
+                                                    card_view:cardBackgroundColor="#33FFFFFF"
+                                                    card_view:cardCornerRadius="2dp"
+                                                    card_view:cardElevation="0dp">
+
+                    <Button
+                        android:id="@+id/adding_view_ok"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:text="OK"
+                        android:textColor="@color/MyerListGray"
+                        android:textSize="15sp"
+                        android:textStyle="normal"/>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                                    android:id="@+id/fragment_adding_pane_cancel_btn_cv"
+                                                    android:layout_width="70dp"
+                                                    android:layout_height="40dp"
+                                                    card_view:cardBackgroundColor="#10000000"
+                                                    card_view:cardCornerRadius="2dp"
+                                                    card_view:cardElevation="0dp">
+
+                    <Button
+                        android:id="@+id/adding_view_cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:text="CANCEL"
+                        android:textColor="@android:color/white"
+                        android:textSize="15sp"
+                        android:textStyle="normal"/>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

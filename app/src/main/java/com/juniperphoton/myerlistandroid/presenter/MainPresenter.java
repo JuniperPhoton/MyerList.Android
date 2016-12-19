@@ -5,21 +5,26 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.juniperphoton.myerlistandroid.api.APIException;
 import com.juniperphoton.myerlistandroid.api.CloudService;
+import com.juniperphoton.myerlistandroid.api.response.AddToDoResponse;
 import com.juniperphoton.myerlistandroid.api.response.CateResponse;
 import com.juniperphoton.myerlistandroid.api.response.CommonResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetOrderResponse;
-import com.juniperphoton.myerlistandroid.api.response.ToDoResponse;
+import com.juniperphoton.myerlistandroid.api.response.GetToDosResponse;
 import com.juniperphoton.myerlistandroid.model.CategoryInformation;
+import com.juniperphoton.myerlistandroid.model.DeletedList;
 import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.util.ToastService;
 import com.juniperphoton.myerlistandroid.view.MainView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -39,7 +44,7 @@ public class MainPresenter {
     }
 
     public void getCate() {
-        CloudService.getInstance().getCates()
+        CloudService.getInstance().getCategories()
                 .subscribeOn(Schedulers.io())
                 .map(new Func1<CateResponse, Object>() {
                     @Override
@@ -72,13 +77,14 @@ public class MainPresenter {
         CloudService.getInstance().getToDos()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .flatMap(new Func1<ToDoResponse, Observable<GetOrderResponse>>() {
+                .flatMap(new Func1<GetToDosResponse, Observable<GetOrderResponse>>() {
                     @Override
-                    public Observable<GetOrderResponse> call(final ToDoResponse toDoResponse) {
+                    public Observable<GetOrderResponse> call(final GetToDosResponse toDoResponse) {
                         if (toDoResponse.getToDos() != null) {
                             Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
+                                    realm.delete(ToDo.class);
                                     for (ToDo toDo : toDoResponse.getToDos()) {
                                         realm.copyToRealmOrUpdate(toDo);
                                     }
@@ -133,6 +139,47 @@ public class MainPresenter {
                 });
     }
 
+    public void addToDo(String cate, String content) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        String dateStr = sdf.format(date);
+
+        CloudService.getInstance().addToDo(dateStr, content, "0", cate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AddToDoResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        ToastService.sendShortToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(AddToDoResponse addToDoResponse) {
+                        ToDo toDo = addToDoResponse.getToDo();
+                        if (toDo != null) {
+                            Realm realm = Realm.getDefaultInstance();
+                            realm.beginTransaction();
+                            OrderedToDoList orderList = realm.where(OrderedToDoList.class).findFirst();
+                            if (orderList == null) {
+                                orderList = new OrderedToDoList();
+                                orderList = realm.copyFromRealm(orderList);
+                            }
+                            ToDo managedToDo = realm.copyToRealm(toDo);
+                            orderList.getToDos().add(managedToDo);
+                            realm.commitTransaction();
+
+                            mMainView.displayToDos();
+                        }
+                    }
+                });
+    }
+
     public void deleteToDo(ToDo toDo) {
         String id = toDo.getId();
 
@@ -143,7 +190,14 @@ public class MainPresenter {
         if (query == null) return;
         RealmList<ToDo> list = query.getToDos();
         boolean ok = list.remove(toDo);
-        toDo.deleteFromRealm();
+
+        DeletedList deletedList = realm.where(DeletedList.class).findFirst();
+        if (deletedList == null) {
+            deletedList = new DeletedList();
+            deletedList = realm.copyToRealm(deletedList);
+        }
+        deletedList.getToDos().add(toDo);
+        
         Log.d(TAG, "delete from realm:" + String.valueOf(ok));
 
         realm.commitTransaction();
@@ -167,13 +221,13 @@ public class MainPresenter {
             realm.beginTransaction();
 
             final RealmList<ToDo> orderedToDos = new RealmList<>();
-            RealmResults<ToDo> realmResult = realm.where(ToDo.class).findAll();
+            RealmResults<ToDo> localToDos = realm.where(ToDo.class).findAll();
             ArrayList<ToDo> noOrderList = new ArrayList<>();
-            for (ToDo toDo : realmResult) {
+            for (ToDo toDo : localToDos) {
                 noOrderList.add(toDo);
             }
             for (String id : orders) {
-                ToDo toDo = realmResult.where().equalTo("id", id).findFirst();
+                ToDo toDo = localToDos.where().equalTo("id", id).findFirst();
                 if (toDo != null) {
                     orderedToDos.add(toDo);
                     noOrderList.remove(toDo);

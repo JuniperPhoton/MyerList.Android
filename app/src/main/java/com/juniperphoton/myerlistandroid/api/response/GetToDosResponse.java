@@ -6,11 +6,11 @@ import com.juniperphoton.myerlistandroid.model.ToDo;
 
 import java.util.ArrayList;
 
-public class ToDoResponse extends CommonResponse {
+public class GetToDosResponse extends CommonResponse {
     @SerializedName("ScheduleInfo")
     private ArrayList<ToDo> mToDos;
 
-    public ToDoResponse() {
+    public GetToDosResponse() {
 
     }
 

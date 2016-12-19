@@ -1,18 +1,18 @@
 package com.juniperphoton.myerlistandroid.api;
 
+import com.juniperphoton.myerlistandroid.api.response.AddToDoResponse;
 import com.juniperphoton.myerlistandroid.api.response.CateResponse;
 import com.juniperphoton.myerlistandroid.api.response.CheckUserResponse;
 import com.juniperphoton.myerlistandroid.api.response.CommonResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetOrderResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetSaltResponse;
 import com.juniperphoton.myerlistandroid.api.response.LoginResponse;
-import com.juniperphoton.myerlistandroid.api.response.ToDoResponse;
+import com.juniperphoton.myerlistandroid.api.response.GetToDosResponse;
 import com.juniperphoton.myerlistandroid.util.AppConfig;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -57,11 +57,11 @@ public class CloudService {
         return mRetrofit.create(UserService.class).login(email, pwd);
     }
 
-    public Observable<CateResponse> getCates() {
+    public Observable<CateResponse> getCategories() {
         return mRetrofit.create(CategoryService.class).getCategory(AppConfig.getSid(), AppConfig.getAccessToken());
     }
 
-    public Observable<ToDoResponse> getToDos() {
+    public Observable<GetToDosResponse> getToDos() {
         return mRetrofit.create(ToDoService.class).getToDos(AppConfig.getSid(), AppConfig.getAccessToken(), AppConfig.getSid());
     }
 
@@ -79,5 +79,10 @@ public class CloudService {
 
     public Observable<CommonResponse> deleteToDo(String id) {
         return mRetrofit.create(ToDoService.class).deleteToDo(AppConfig.getSid(), AppConfig.getAccessToken(), id);
+    }
+
+    public Observable<AddToDoResponse> addToDo(String time, String content, String isDone, String cate) {
+        return mRetrofit.create(ToDoService.class).addToDo(AppConfig.getSid(), AppConfig.getAccessToken(),
+                AppConfig.getSid(), time, content, isDone, cate);
     }
 }

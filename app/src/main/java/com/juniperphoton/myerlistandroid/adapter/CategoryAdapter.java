@@ -52,7 +52,7 @@ public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.C
             notifyItemChanged(lastIndex);
             notifyItemChanged(position);
             if (mCallback != null) {
-                mCallback.onSelectedChanged(category);
+                mCallback.onSelectedChanged(category, position);
             }
         } else {
 

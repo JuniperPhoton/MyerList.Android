@@ -1,5 +1,6 @@
 package com.juniperphoton.myerlistandroid.activity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
@@ -21,14 +23,19 @@ import com.juniperphoton.myerlistandroid.adapter.CategoryAdapter;
 import com.juniperphoton.myerlistandroid.adapter.ToDoAdapter;
 import com.juniperphoton.myerlistandroid.callback.OnItemOperationCompletedCallback;
 import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
+import com.juniperphoton.myerlistandroid.model.DeletedList;
 import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.presenter.MainPresenter;
 import com.juniperphoton.myerlistandroid.util.AppConfig;
+import com.juniperphoton.myerlistandroid.util.DisplayUtil;
+import com.juniperphoton.myerlistandroid.util.EndAnimator;
 import com.juniperphoton.myerlistandroid.util.LocalSettingUtil;
 import com.juniperphoton.myerlistandroid.util.Params;
 import com.juniperphoton.myerlistandroid.view.MainView;
+import com.juniperphoton.myerlistandroid.widget.AddingView;
+import com.juniperphoton.myerlistandroid.widget.SelectCategoryView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +44,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MainActivity extends BaseActivity implements MainView, OnDrawerSelectedChanged, OnItemOperationCompletedCallback {
+public class MainActivity extends BaseActivity implements MainView, OnDrawerSelectedChanged,
+        OnItemOperationCompletedCallback, AddingView.AddingViewCallback {
 
     private static final String TAG = "MainActivity";
 
@@ -72,12 +81,23 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     @BindView(R.id.undone_text)
     TextView mUndoneText;
 
+    @BindView(R.id.main_adding_view)
+    AddingView mAddingView;
+
     private CategoryAdapter mCateAdapter;
     private ToDoAdapter mToDoAdapter;
 
     private MainPresenter mPresenter;
 
-    private int mSelectedCategory = 0;
+    private int mSelectedCategoryId = 0;
+    private int mSelectedCategoryPosition = 0;
+
+    private RealmChangeListener realmChangeListener = new RealmChangeListener() {
+        @Override
+        public void onChange(Object element) {
+            displayCategories();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +139,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     }
 
     private void initViews() {
+        mAddingView.setVisibility(View.GONE);
         mToolbar.setTitle(getString(R.string.all));
 
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -141,6 +162,16 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                 LinearLayoutManager.VERTICAL, false));
         mToDoRecyclerView.setAdapter(mToDoAdapter);
 
+        mAddingView.setOnSelectionChangedCallback(new SelectCategoryView.OnSelectionChangedCallback() {
+            @Override
+            public void onSelectionChanged(int position) {
+                ToDoCategory toDoCategory = mCateAdapter.getData(position);
+                mAddingView.updateCategory(toDoCategory);
+            }
+        });
+
+        mAddingView.setCallback(this);
+
         displayCategories();
         displayToDos();
     }
@@ -161,24 +192,69 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         startActivity(intent);
     }
 
+    @OnClick(R.id.add_fab)
+    void onClickAdd() {
+        int[] location = new int[2];
+        mAddFAB.getLocationOnScreen(location);
+
+        int x = location[0] + DisplayUtil.getDimenInPixel(28, this);
+        int y = location[1] + DisplayUtil.getDimenInPixel(28, this);
+
+        int radius = Math.max(getWindow().getDecorView().getWidth(), getWindow().getDecorView().getHeight());
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(mAddingView, x, y, 0, radius);
+        mAddingView.setVisibility(View.VISIBLE);
+        mAddingView.setSelected(mSelectedCategoryPosition);
+        anim.addListener(new EndAnimator() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mAddingView.showInputPane();
+            }
+        });
+        anim.start();
+    }
+
+    private void hideAddingView() {
+        int[] location = new int[2];
+        mAddFAB.getLocationOnScreen(location);
+
+        int x = location[0] + DisplayUtil.getDimenInPixel(28, this);
+        int y = location[1] + DisplayUtil.getDimenInPixel(28, this);
+
+        int radius = Math.max(getWindow().getDecorView().getWidth(), getWindow().getDecorView().getHeight());
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(mAddingView, x, y, radius, 0);
+        anim.addListener(new EndAnimator() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mAddingView.setSelected(0);
+                mAddingView.setVisibility(View.GONE);
+            }
+        });
+        anim.start();
+    }
+
     @Override
     public void displayCategories() {
         mRefreshLayout.setRefreshing(true);
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<ToDoCategory> categories = realm.where(ToDoCategory.class).findAll();
-                ArrayList<ToDoCategory> list = new ArrayList<>();
-                for (ToDoCategory cate : categories) {
-                    list.add(cate);
-                }
-                list.add(0, ToDoCategory.getAllCategory());
-                list.add(ToDoCategory.getDeletedCategory());
-                list.add(ToDoCategory.getPersonalizationCategory());
-                mCateAdapter.refreshData(list);
-                mCateAdapter.selectItem(0);
-            }
-        });
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+
+        RealmResults<ToDoCategory> categories = realm.where(ToDoCategory.class).findAll();
+        ArrayList<ToDoCategory> list = new ArrayList<>();
+        for (ToDoCategory cate : categories) {
+            list.add(cate);
+        }
+        list.add(0, ToDoCategory.getAllCategory());
+        list.add(ToDoCategory.getDeletedCategory());
+        list.add(ToDoCategory.getPersonalizationCategory());
+        mCateAdapter.refreshData(list);
+        mCateAdapter.selectItem(0);
+
+        realm.commitTransaction();
+
+        mAddingView.makeCategoriesSelection();
     }
 
     @Override
@@ -190,10 +266,16 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                 if (query == null) return;
                 RealmList<ToDo> list = query.getToDos();
                 long count;
-                if (mSelectedCategory == 0) {
+                if (mSelectedCategoryId == 0) {
                     mToDoAdapter.refreshData(list);
+                } else if (mSelectedCategoryId == -1) {
+                    DeletedList deletedList = realm.where(DeletedList.class).findFirst();
+                    if (deletedList != null) {
+                        list = deletedList.getToDos();
+                        mToDoAdapter.refreshData(list);
+                    }
                 } else {
-                    RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategory)).findAll();
+                    RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategoryId)).findAll();
                     mToDoAdapter.refreshData(toDos);
                 }
 
@@ -215,12 +297,13 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     }
 
     @Override
-    public void onSelectedChanged(ToDoCategory category) {
-        if (mSelectedCategory == category.getId()) {
+    public void onSelectedChanged(ToDoCategory category, int position) {
+        if (mSelectedCategoryId == category.getId()) {
             return;
         }
-        mSelectedCategory = category.getId();
-        mToDoAdapter.setCanDrag(mSelectedCategory == 0);
+        mSelectedCategoryPosition = position;
+        mSelectedCategoryId = category.getId();
+        mToDoAdapter.setCanDrag(mSelectedCategoryId == 0);
         mDrawerRoot.setBackground(new ColorDrawable(category.getIntColor()));
         mAddFAB.setBackgroundTintList(ColorStateList.valueOf(category.getIntColor()));
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -230,7 +313,9 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @Override
     public void onBackPressed() {
-        if (mSelectedCategory != 0) {
+        if (mAddingView.getVisibility() == View.VISIBLE) {
+            hideAddingView();
+        } else if (mSelectedCategoryId != 0) {
             mCateAdapter.selectItem(0);
         } else {
             super.onBackPressed();
@@ -260,5 +345,19 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         ToDo toDo = mToDoAdapter.getData(position);
         mToDoAdapter.removeData(position);
         mPresenter.deleteToDo(toDo);
+    }
+
+    @Override
+    public void onClickOk(int cateIndex, String content) {
+        hideAddingView();
+        ToDoCategory category = mCateAdapter.getData(cateIndex);
+        if (category != null) {
+            mPresenter.addToDo(String.valueOf(category.getId()), content);
+        }
+    }
+
+    @Override
+    public void onClickCancel() {
+        hideAddingView();
     }
 }

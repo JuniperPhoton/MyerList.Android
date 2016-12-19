@@ -54,6 +54,7 @@
                 android:src="@drawable/ic_add"
                 app:backgroundTint="@color/MyerListBlue"
                 />
+
         </android.support.design.widget.CoordinatorLayout>
 
         <include
@@ -64,5 +65,10 @@
             android:fitsSystemWindows="true"/>
 
     </android.support.v4.widget.DrawerLayout>
+
+    <com.juniperphoton.myerlistandroid.widget.AddingView
+        android:id="@+id/main_adding_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
