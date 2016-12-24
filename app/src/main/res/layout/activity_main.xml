@@ -45,6 +45,8 @@
                     android:layout_height="match_parent"/>
             </android.support.v4.widget.SwipeRefreshLayout>
 
+            <include layout="@layout/no_item_layout"/>
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/add_fab"
                 android:layout_width="wrap_content"
@@ -69,6 +71,7 @@
     <com.juniperphoton.myerlistandroid.widget.AddingView
         android:id="@+id/main_adding_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </RelativeLayout>

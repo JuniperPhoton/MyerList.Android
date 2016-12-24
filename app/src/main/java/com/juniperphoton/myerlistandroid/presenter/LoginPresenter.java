@@ -21,7 +21,7 @@ import rx.exceptions.Exceptions;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class LoginPresenter {
+public class LoginPresenter implements Presenter {
     private boolean DEBUG = true;
 
     private LoginView mLoginView;
@@ -138,5 +138,15 @@ public class LoginPresenter {
                         mLoginView.afterLogin(true);
                     }
                 });
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
     }
 }

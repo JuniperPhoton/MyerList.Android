@@ -21,4 +21,6 @@
     <string name="offline_mode">Offline mode</string>
     <string name="sync_todos_on_windows_and_android">Sync todos on Windows and Android</string>
     <string name="add_shortcuts">Add</string>
+    <string name="enjoy_your_day_d">Enjoy your day :D</string>
+    <string name="no_to_do">NO TO-DO</string>
 </resources>

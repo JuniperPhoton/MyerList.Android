@@ -20,4 +20,11 @@ public class AppConfig {
     public static boolean isInOfflineMode() {
         return LocalSettingUtil.checkKey(App.getInstance(), Params.OFFLINE_MODE);
     }
+
+    public static boolean addToBottom() {
+        if (!LocalSettingUtil.checkKey(App.getInstance(), Params.SETTING_ADD_TO_BOTTOM_KEY)) {
+            return true;
+        }
+        return LocalSettingUtil.getBoolean(App.getInstance(), Params.SETTING_ADD_TO_BOTTOM_KEY);
+    }
 }

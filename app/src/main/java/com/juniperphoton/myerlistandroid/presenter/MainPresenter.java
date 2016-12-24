@@ -10,11 +10,13 @@ import com.juniperphoton.myerlistandroid.api.response.CateResponse;
 import com.juniperphoton.myerlistandroid.api.response.CommonResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetOrderResponse;
 import com.juniperphoton.myerlistandroid.api.response.GetToDosResponse;
-import com.juniperphoton.myerlistandroid.model.CategoryInformation;
+import com.juniperphoton.myerlistandroid.model.CategoryRespInformation;
 import com.juniperphoton.myerlistandroid.model.DeletedList;
+import com.juniperphoton.myerlistandroid.model.OrderedCateList;
 import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
+import com.juniperphoton.myerlistandroid.util.AppConfig;
 import com.juniperphoton.myerlistandroid.util.ToastService;
 import com.juniperphoton.myerlistandroid.view.MainView;
 
@@ -24,7 +26,6 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -33,7 +34,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MainPresenter {
+public class MainPresenter implements Presenter {
 
     private static final String TAG = "MainPresenter";
 
@@ -139,11 +140,51 @@ public class MainPresenter {
                 });
     }
 
-    public void addToDo(String cate, String content) {
+    public void modifyToDo(final String cate, final String content, final String id) {
+        final String dateStr = getDateStr();
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        ToDo toDo = realm.where(ToDo.class).equalTo("id", id).findFirst();
+        if (toDo != null) {
+            toDo.setContent(content);
+            toDo.setCate(cate);
+            toDo.setTime(dateStr);
+        }
+        realm.commitTransaction();
+        CloudService.getInstance().updateToDo(id, dateStr, content, cate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CommonResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(CommonResponse commonResponse) {
+                        if (commonResponse.getOK()) {
+                            ToastService.sendShortToast("Modified.");
+                        } else {
+                            ToastService.sendShortToast(commonResponse.getFriendErrorMessage());
+                            Log.e(TAG, "Modify failed:" + commonResponse.getFriendErrorMessage());
+                        }
+                    }
+                });
+    }
+
+    private String getDateStr() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
-        String dateStr = sdf.format(date);
+        return sdf.format(date);
+    }
 
+    public void addToDo(String cate, String content) {
+        String dateStr = getDateStr();
         CloudService.getInstance().addToDo(dateStr, content, "0", cate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -171,7 +212,11 @@ public class MainPresenter {
                                 orderList = realm.copyFromRealm(orderList);
                             }
                             ToDo managedToDo = realm.copyToRealm(toDo);
-                            orderList.getToDos().add(managedToDo);
+                            if (AppConfig.addToBottom()) {
+                                orderList.getToDos().add(managedToDo);
+                            } else {
+                                orderList.getToDos().add(0, managedToDo);
+                            }
                             realm.commitTransaction();
 
                             mMainView.displayToDos();
@@ -197,7 +242,7 @@ public class MainPresenter {
             deletedList = realm.copyToRealm(deletedList);
         }
         deletedList.getToDos().add(toDo);
-        
+
         Log.d(TAG, "delete from realm:" + String.valueOf(ok));
 
         realm.commitTransaction();
@@ -250,18 +295,31 @@ public class MainPresenter {
 
     private void parseCategories(String resp) {
         Gson gson = new Gson();
-        final CategoryInformation information = gson.fromJson(resp, CategoryInformation.class);
+        final CategoryRespInformation information = gson.fromJson(resp, CategoryRespInformation.class);
         if (information.isModified()) {
             Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
+                    OrderedCateList orderedCateList = new OrderedCateList();
+                    RealmList<ToDoCategory> toDoCategories = orderedCateList.getCates();
                     for (ToDoCategory cate : information.getCates()) {
-                        realm.copyToRealmOrUpdate(cate);
+                        toDoCategories.add(cate);
                     }
+                    realm.copyToRealmOrUpdate(orderedCateList);
                 }
             });
         } else {
-
+            //// TODO: 12/24/2016  handle not modified situation
         }
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
     }
 }

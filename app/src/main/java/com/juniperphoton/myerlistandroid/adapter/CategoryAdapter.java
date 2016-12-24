@@ -12,8 +12,6 @@ import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.widget.CircleView;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -22,8 +20,8 @@ public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.C
     private OnDrawerSelectedChanged mCallback;
     private int mSelectedIndex = -1;
 
-    public CategoryAdapter(List<ToDoCategory> data) {
-        super(data);
+    public CategoryAdapter() {
+        super();
     }
 
     @Override
@@ -44,8 +42,8 @@ public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.C
         });
     }
 
-    public void selectItem(int position) {
-        ToDoCategory category = getData(position);
+    public void selectItem(final int position) {
+        final ToDoCategory category = getData(position);
         if (category.getId() != ToDoCategory.PERSONALIZATION_ID) {
             int lastIndex = mSelectedIndex;
             mSelectedIndex = position;
@@ -57,6 +55,24 @@ public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.C
         } else {
 
         }
+    }
+
+    private ToDoCategory getItemById(String cateId) {
+        for (int i = 0; i < getData().size(); i++) {
+            ToDoCategory category = getData(i);
+            if (category.getId() == Integer.valueOf(cateId)) {
+                return category;
+            }
+        }
+        return null;
+    }
+
+    public int getItemIndexById(String cateId) {
+        ToDoCategory toDoCategory = getItemById(cateId);
+        if (toDoCategory != null) {
+            return getData().indexOf(toDoCategory);
+        }
+        return -1;
     }
 
     public void setSelectedCallback(OnDrawerSelectedChanged callback) {

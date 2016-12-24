@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -15,13 +16,12 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
     private static final int ITEM = 1 << 1;
     private static final int FOOTER = 1 << 2;
 
-    private List<T> mData;
+    private List<T> mData = new ArrayList<>();
 
     private View mHeaderView;
     private View mFooterView;
 
-    public BaseAdapter(List<T> data) {
-        mData = data;
+    public BaseAdapter() {
     }
 
     @Override
@@ -128,11 +128,11 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
         });
     }
 
-    public class BaseViewHolder extends RecyclerView.ViewHolder {
+    class BaseViewHolder extends RecyclerView.ViewHolder {
 
-        public View rootView;
+        View rootView;
 
-        public BaseViewHolder(View itemView) {
+        BaseViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
         }

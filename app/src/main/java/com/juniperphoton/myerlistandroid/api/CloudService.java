@@ -85,4 +85,9 @@ public class CloudService {
         return mRetrofit.create(ToDoService.class).addToDo(AppConfig.getSid(), AppConfig.getAccessToken(),
                 AppConfig.getSid(), time, content, isDone, cate);
     }
+
+    public Observable<CommonResponse> updateToDo(String id, String time, String content, String cate) {
+        return mRetrofit.create(ToDoService.class).updateToDo(AppConfig.getSid(), AppConfig.getAccessToken(),
+                id, time, content, cate);
+    }
 }

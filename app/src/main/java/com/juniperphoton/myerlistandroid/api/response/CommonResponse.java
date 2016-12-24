@@ -38,8 +38,12 @@ public class CommonResponse {
                 return "The email has been registered";
             case ErrorCodes.API_ERROR_CHECK_USER_NAME_OR_PWD:
                 return "Please check your email and password";
+            case ErrorCodes.API_ERROR_LACK_PARAM:
+                return "Lack params";
+            case ErrorCodes.API_ERROR_SCHEDULE_NOT_EXIST:
+                return "Schedule is not existed";
         }
-        return "Error happens. Code " + mErrorCode;
+        return "Error occurs. Code : " + mErrorCode;
     }
 
     public class ErrorCodes {
@@ -65,7 +69,6 @@ public class CommonResponse {
         public static final int API_ERROR_LACK_PARAM = 300;
 
         public static final int API_ERROR_SCHEDULE_NOT_EXIST = 301;
-
 
     }
 }

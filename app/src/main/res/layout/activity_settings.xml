@@ -30,6 +30,7 @@
             android:textStyle="bold"/>
 
         <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+            android:id="@+id/setting_item_add_to_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:has_checkbox="true"

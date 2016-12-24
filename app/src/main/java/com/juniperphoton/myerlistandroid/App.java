@@ -3,6 +3,7 @@ package com.juniperphoton.myerlistandroid;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import io.realm.Realm;
 

@@ -14,15 +14,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.model.OrderedCateList;
+import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmList;
 
 public class AddingView extends FrameLayout implements View.OnTouchListener {
 
     private static final float FLING_THRESHOULD = 20f;
+
+    public static final int ADD_MODE = 1;
+    public static final int MODIFY_MODE = 1 << 1;
+
+    private int mMode = ADD_MODE;
 
     @BindView(R.id.adding_view_root)
     RelativeLayout mRoot;
@@ -35,6 +44,9 @@ public class AddingView extends FrameLayout implements View.OnTouchListener {
 
     @BindView(R.id.select_category_view)
     SelectCategoryView mSelectCategoryView;
+
+    @BindView(R.id.adding_view_title)
+    TextView mTittleText;
 
     private Context mContext;
 
@@ -51,11 +63,32 @@ public class AddingView extends FrameLayout implements View.OnTouchListener {
         mRoot.setOnTouchListener(this);
     }
 
+    public void setVisibleMode(int visibility, int mode) {
+        setVisibility(visibility);
+        mMode = mode;
+        updateUi();
+    }
+
+    public void setContent(String text) {
+        mEditText.setText(text);
+    }
+
+    private void updateUi() {
+        switch (mMode) {
+            case ADD_MODE:
+                mTittleText.setText("ADD");
+                break;
+            case MODIFY_MODE:
+                mTittleText.setText("MODIFY");
+                break;
+        }
+    }
+
     @OnClick(R.id.adding_view_ok)
     void onClickOk() {
         prepareToHide();
         if (mCallback != null) {
-            mCallback.onClickOk(mSelectCategoryView.getSelectedIndex(), mInputText);
+            mCallback.onClickOk(mSelectCategoryView.getSelectedIndex(), mInputText, mMode);
         }
     }
 
@@ -71,6 +104,9 @@ public class AddingView extends FrameLayout implements View.OnTouchListener {
         InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
         mInputText = mEditText.getEditableText().toString();
+    }
+
+    public void reset(){
         mEditText.setText("");
     }
 
@@ -147,7 +183,7 @@ public class AddingView extends FrameLayout implements View.OnTouchListener {
     }
 
     public interface AddingViewCallback {
-        void onClickOk(int cateindex, String content);
+        void onClickOk(int cateIndex, String content, int mode);
 
         void onClickCancel();
     }

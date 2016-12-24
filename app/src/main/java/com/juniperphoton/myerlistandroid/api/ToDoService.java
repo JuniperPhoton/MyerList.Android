@@ -43,4 +43,10 @@ public interface ToDoService {
                                         @Field("sid") String sid2, @Field("time") String time,
                                         @Field("content") String content, @Field("isdone") String isDone,
                                         @Field("cate") String cate);
+
+    @FormUrlEncoded
+    @POST("Schedule/UpdateContent/v1?")
+    Observable<CommonResponse> updateToDo(@Query("sid") String sid, @Query("access_token") String token,
+                                        @Field("id") String id, @Field("time") String time,
+                                        @Field("content") String content, @Field("cate") String cate);
 }

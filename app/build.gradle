@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 
 android {
@@ -41,6 +40,6 @@ dependencies {
     compile 'com.orhanobut:logger:1.15'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'moe.feng:AlipayZeroSdk:1.1'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     testCompile 'junit:junit:4.12'
 }

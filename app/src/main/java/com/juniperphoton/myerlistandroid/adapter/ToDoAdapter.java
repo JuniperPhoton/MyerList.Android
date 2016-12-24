@@ -23,11 +23,11 @@ import com.juniperphoton.myerlistandroid.util.CustomItemTouchHelper;
 import com.juniperphoton.myerlistandroid.widget.CircleView;
 
 import java.util.Collections;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
     private final static String TAG = "ToDoAdapter";
@@ -37,8 +37,8 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
     private RecyclerView mRecyclerView;
 
-    public ToDoAdapter(List<ToDo> data) {
-        super(data);
+    public ToDoAdapter() {
+        super();
     }
 
     public void setCallback(OnItemOperationCompletedCallback callback) {
@@ -55,6 +55,11 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
         private ToDoViewHolder getToDoViewHolder(RecyclerView.ViewHolder viewHolder) {
             return (ToDoViewHolder) viewHolder;
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
         }
 
         @Override
@@ -117,6 +122,15 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         }
     });
 
+    private RealmChangeListener realmChangeListener = new RealmChangeListener() {
+        @Override
+        public void onChange(Object element) {
+            if (element instanceof ToDo) {
+                notifyDataSetChanged();
+            }
+        }
+    };
+
     @Override
     protected ToDoAdapter.ToDoViewHolder onCreateItemViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(App.getInstance()).inflate(R.layout.row_todo, parent, false);
@@ -148,12 +162,67 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         @BindView(R.id.arrange_thumb)
         View mThumb;
 
+        @BindView(R.id.item_root)
+        View mRoot;
+
         private boolean isGreen;
         private boolean isRed;
 
         ToDoViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mRoot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onClickedItem(getAdapterPosition(), circleView);
+                    }
+                }
+            });
+        }
+
+        void bind(int position) {
+            final ToDo todo = getData(position);
+            todo.addChangeListener(realmChangeListener);
+            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    int cate = Integer.valueOf(todo.getCate());
+                    if (cate > 0) {
+                        ToDoCategory category = realm.where(ToDoCategory.class).equalTo("id",
+                                cate).findFirst();
+                        if (category != null) {
+                            circleView.setColor(category.getIntColor());
+                        }
+                    } else if (cate == 0) {
+                        circleView.setColor(ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
+                    }
+                }
+            });
+            if (todo.getIsdone().equals("1")) {
+                doneView.setVisibility(View.VISIBLE);
+            } else {
+                doneView.setVisibility(View.GONE);
+            }
+            contentView.setText(todo.getContent());
+            if (mCanDrag) {
+                mThumb.setVisibility(View.VISIBLE);
+                mThumb.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                helper.startDrag(ToDoViewHolder.this);
+                                setBackgroundGrey();
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+            } else {
+                mThumb.setVisibility(View.GONE);
+            }
+
         }
 
         void toggleDone() {
@@ -221,60 +290,6 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             int fromColor = colorDrawable.getColor();
             int toColor = Color.WHITE;
             animateColor(fromColor, toColor);
-        }
-
-        void bind(int position) {
-            final ToDo todo = getData(position);
-            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    int cate = Integer.valueOf(todo.getCate());
-                    if (cate > 0) {
-                        ToDoCategory category = realm.where(ToDoCategory.class).equalTo("id",
-                                cate).findFirst();
-                        if (category != null) {
-                            circleView.setColor(category.getIntColor());
-                        }
-                    } else if (cate == 0) {
-                        circleView.setColor(ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
-                    }
-                }
-            });
-            if (todo.getIsdone().equals("1")) {
-                doneView.setVisibility(View.VISIBLE);
-            } else {
-                doneView.setVisibility(View.GONE);
-            }
-            contentView.setText(todo.getContent());
-            rootView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            helper.startSwipe(ToDoViewHolder.this);
-                            return true;
-                    }
-                    return false;
-                }
-            });
-            if (mCanDrag) {
-                mThumb.setVisibility(View.VISIBLE);
-                mThumb.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                helper.startDrag(ToDoViewHolder.this);
-                                setBackgroundGrey();
-                                return true;
-                        }
-                        return false;
-                    }
-                });
-            } else {
-                mThumb.setVisibility(View.GONE);
-            }
-
         }
     }
 }

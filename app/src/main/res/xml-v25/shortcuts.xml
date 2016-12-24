@@ -5,7 +5,7 @@
         android:shortcutLongLabel="@string/add_shortcuts"
         android:shortcutShortLabel="@string/add_shortcuts">
         <intent
-            android:action="action.search"
+            android:action="action.add"
             android:targetClass="com.juniperphoton.myerlistandroid.activity.MainActivity"
             android:targetPackage="com.juniperphoton.myerlistandroid" />
     </shortcut>

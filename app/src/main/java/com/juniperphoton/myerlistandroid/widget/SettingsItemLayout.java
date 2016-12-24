@@ -30,6 +30,9 @@ public class SettingsItemLayout extends FrameLayout {
     @BindView(R.id.divider_view)
     View dividerView;
 
+    @BindView(R.id.settings_item_root)
+    View mRootView;
+
     public SettingsItemLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -59,6 +62,13 @@ public class SettingsItemLayout extends FrameLayout {
         if (!showDivider) {
             dividerView.setVisibility(GONE);
         }
+
+        mRootView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                compoundButton.setChecked(!compoundButton.isChecked());
+            }
+        });
     }
 
     public void setOnCheckedListener(AppCompatCheckBox.OnCheckedChangeListener onCheckedListener) {
