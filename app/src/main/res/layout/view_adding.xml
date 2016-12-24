@@ -33,7 +33,7 @@
                 android:layout_marginStart="20dp"
                 android:height="50dp"
                 android:gravity="center_vertical"
-                android:text="Adding"
+                android:text="@string/adding_adding"
                 android:textColor="@android:color/white"
                 android:textSize="27sp"
                 android:textStyle="normal"/>
@@ -55,7 +55,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="4dp"
                     android:gravity="center_vertical"
-                    android:text="ALL"
+                    android:text="@string/all_adding"
                     android:textColor="@android:color/white"/>
             </android.support.v7.widget.CardView>
         </LinearLayout>
@@ -78,7 +78,7 @@
             android:layout_marginTop="10dp"
             android:background="@android:color/white"
             android:elegantTextHeight="true"
-            android:hint="e.g. Have coffee with my friends at 5'clock."
+            android:hint="@string/e_g_have_coffee_with_my_friends_at_5_clock"
             android:paddingBottom="10dp"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
@@ -115,7 +115,7 @@
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:text="OK"
+                        android:text="@string/ok_adding"
                         android:textColor="@color/MyerListGray"
                         android:textSize="15sp"
                         android:textStyle="normal"/>
@@ -135,7 +135,7 @@
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:text="CANCEL"
+                        android:text="@string/cancel_adding"
                         android:textColor="@android:color/white"
                         android:textSize="15sp"
                         android:textStyle="normal"/>

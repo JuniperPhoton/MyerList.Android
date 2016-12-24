@@ -22,5 +22,8 @@
     <string name="offline_mode">Offline mode</string>
     <string name="sync_todos_on_windows_and_android">Sync todos on Windows and Android</string>
     <string name="add_shortcuts">添加</string>
+    <string name="all_adding">ALL</string>
+    <string name="ok_adding">OK</string>
+    <string name="e_g_have_coffee_with_my_friends_at_5_clock">e.g. Have coffee with my friends at 5\'clock.</string>
 
 </resources>

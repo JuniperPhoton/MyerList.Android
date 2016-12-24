@@ -23,4 +23,11 @@
     <string name="add_shortcuts">Add</string>
     <string name="enjoy_your_day_d">Enjoy your day :D</string>
     <string name="no_to_do">NO TO-DO</string>
+    <string name="account">ACCOUNT</string>
+    <string name="logout">LOGOUT</string>
+    <string name="all_adding">ALL</string>
+    <string name="adding_adding">Adding</string>
+    <string name="cancel_adding">CANCEL</string>
+    <string name="ok_adding">OK</string>
+    <string name="e_g_have_coffee_with_my_friends_at_5_clock">e.g. Have coffee with my friends at 5\'clock.</string>
 </resources>

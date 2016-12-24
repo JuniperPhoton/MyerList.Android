@@ -216,6 +216,9 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     private void handleShortcutsAction() {
         String action = getIntent().getAction();
+        if (action == null) {
+            return;
+        }
         switch (action) {
             case "action.add": {
                 if (!mHandledShortCuts) {

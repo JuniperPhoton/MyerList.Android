@@ -52,7 +52,7 @@
             android:layout_marginBottom="@dimen/settings_margin_up_and_down"
             android:layout_marginLeft="@dimen/settings_margin_left"
             android:layout_marginTop="@dimen/settings_margin_up_and_down"
-            android:text="ACCOUNT"
+            android:text="@string/account"
             android:textColor="@color/MyerListBlue"
             android:textStyle="bold"/>
 
@@ -64,7 +64,9 @@
             android:layout_marginLeft="@dimen/settings_margin_left"
             android:layout_marginRight="@dimen/settings_margin_left"
             android:layout_marginTop="@dimen/settings_margin_up_and_down"
-            android:text="LOGOUT"/>
+            android:background="@drawable/ripple_grey"
+            android:text="@string/logout"/>
+
     </LinearLayout>
 
 </RelativeLayout>

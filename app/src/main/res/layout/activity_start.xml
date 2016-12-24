@@ -61,7 +61,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="20dp"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:paddingTop="20dp">
@@ -70,7 +69,7 @@
                 android:id="@+id/login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/MyerListBlue"
+                android:background="@drawable/ripple_theme"
                 android:text="@string/login"
                 android:textColor="@android:color/white"/>
 
@@ -78,12 +77,17 @@
                 android:id="@+id/register_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/ripple_grey"
                 android:text="@string/register"/>
 
             <Button
                 android:id="@+id/offline_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/ripple_grey"
                 android:text="@string/offline_mode"/>
         </LinearLayout>
 
