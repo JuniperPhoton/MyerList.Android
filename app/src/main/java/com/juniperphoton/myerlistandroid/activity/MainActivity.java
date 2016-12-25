@@ -29,6 +29,7 @@ import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.presenter.MainPresenter;
+import com.juniperphoton.myerlistandroid.realm.RealmUtils;
 import com.juniperphoton.myerlistandroid.util.AppConfig;
 import com.juniperphoton.myerlistandroid.util.DisplayUtil;
 import com.juniperphoton.myerlistandroid.util.StartEndAnimator;
@@ -147,7 +148,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "destroyed");
-        Realm.getDefaultInstance().close();
+        //RealmUtils.getMainInstance().close();
     }
 
     @Override
@@ -162,6 +163,11 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         mPresenter.stop();
     }
 
+    /**
+     * 更新没有 Item 的 UI
+     *
+     * @param show 是否显示
+     */
     private void updateNoItemUi(boolean show) {
         if (show) {
             mNoItemLayout.setVisibility(View.VISIBLE);
@@ -214,6 +220,9 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         handleShortcutsAction();
     }
 
+    /**
+     * 处理 7.1 的快捷方式
+     */
     private void handleShortcutsAction() {
         String action = getIntent().getAction();
         if (action == null) {
@@ -293,7 +302,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     public void displayCategories() {
         mRefreshLayout.setRefreshing(true);
 
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = RealmUtils.getMainInstance();
         realm.beginTransaction();
 
         OrderedCateList categories = realm.where(OrderedCateList.class).findFirst();
@@ -316,7 +325,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @Override
     public void displayToDos() {
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+        RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 OrderedToDoList query = realm.where(OrderedToDoList.class).findFirst();
@@ -324,21 +333,27 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                 RealmList<ToDo> list = query.getToDos();
                 query.addChangeListener(mRealmChangeListener);
                 long count;
-                if (mSelectedCategoryId == 0) {
-                    mToDoAdapter.refreshData(list);
-                    updateNoItemUi(list.size() == 0);
-                } else if (mSelectedCategoryId == -1) {
-                    DeletedList deletedList = realm.where(DeletedList.class).findFirst();
-                    if (deletedList != null) {
-                        list = deletedList.getToDos();
-                        mToDoAdapter.refreshData(list);
-                    }
-                } else {
-                    RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategoryId)).findAll();
-                    mToDoAdapter.refreshData(toDos);
-                    updateNoItemUi(toDos.size() == 0);
-                }
 
+                switch (mSelectedCategoryId) {
+                    case ToDoCategory.ALL_ID:
+                        mToDoAdapter.refreshData(list);
+                        updateNoItemUi(list.size() == 0);
+                        break;
+                    case ToDoCategory.DELETED_ID:
+                        DeletedList deletedList = realm.where(DeletedList.class).findFirst();
+                        if (deletedList != null) {
+                            list = deletedList.getToDos();
+                            mToDoAdapter.refreshData(list);
+                        }
+                        break;
+                    case ToDoCategory.PERSONALIZATION_ID:
+                        break;
+                    default:
+                        RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategoryId)).findAll();
+                        mToDoAdapter.refreshData(toDos);
+                        updateNoItemUi(toDos.size() == 0);
+                        break;
+                }
                 updateCount();
                 mRefreshLayout.setRefreshing(false);
             }
@@ -426,7 +441,6 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     @Override
     public void onDelete(int position) {
         ToDo toDo = mToDoAdapter.getData(position);
-        mToDoAdapter.removeData(position);
         mPresenter.deleteToDo(toDo);
     }
 

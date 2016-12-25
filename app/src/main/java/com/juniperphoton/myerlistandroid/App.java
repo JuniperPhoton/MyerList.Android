@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.juniperphoton.myerlistandroid.realm.RealmUtils;
+
 import io.realm.Realm;
 
 public class App extends Application {
@@ -15,7 +17,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
-        Realm.init(this);
+        RealmUtils.init(this);
     }
 
     public static Context getInstance() {

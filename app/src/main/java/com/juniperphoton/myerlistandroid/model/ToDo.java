@@ -13,6 +13,7 @@ public class ToDo extends RealmObject {
     private String content;
     private String isdone;
     private String cate;
+    private boolean deleted;
 
     public String getId() {
         return id;

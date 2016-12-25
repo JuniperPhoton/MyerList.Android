@@ -16,6 +16,7 @@ import com.juniperphoton.myerlistandroid.model.OrderedCateList;
 import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
+import com.juniperphoton.myerlistandroid.realm.RealmUtils;
 import com.juniperphoton.myerlistandroid.util.AppConfig;
 import com.juniperphoton.myerlistandroid.util.ToastService;
 import com.juniperphoton.myerlistandroid.view.MainView;
@@ -82,7 +83,7 @@ public class MainPresenter implements Presenter {
                     @Override
                     public Observable<GetOrderResponse> call(final GetToDosResponse toDoResponse) {
                         if (toDoResponse.getToDos() != null) {
-                            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                            RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
                                     realm.delete(ToDo.class);
@@ -142,7 +143,7 @@ public class MainPresenter implements Presenter {
 
     public void modifyToDo(final String cate, final String content, final String id) {
         final String dateStr = getDateStr();
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = RealmUtils.getMainInstance();
         realm.beginTransaction();
         ToDo toDo = realm.where(ToDo.class).equalTo("id", id).findFirst();
         if (toDo != null) {
@@ -204,7 +205,7 @@ public class MainPresenter implements Presenter {
                     public void onNext(AddToDoResponse addToDoResponse) {
                         ToDo toDo = addToDoResponse.getToDo();
                         if (toDo != null) {
-                            Realm realm = Realm.getDefaultInstance();
+                            Realm realm = RealmUtils.getMainInstance();
                             realm.beginTransaction();
                             OrderedToDoList orderList = realm.where(OrderedToDoList.class).findFirst();
                             if (orderList == null) {
@@ -228,13 +229,13 @@ public class MainPresenter implements Presenter {
     public void deleteToDo(ToDo toDo) {
         String id = toDo.getId();
 
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = RealmUtils.getMainInstance();
         realm.beginTransaction();
 
         OrderedToDoList query = realm.where(OrderedToDoList.class).findFirst();
         if (query == null) return;
-        RealmList<ToDo> list = query.getToDos();
-        boolean ok = list.remove(toDo);
+
+        boolean ok = query.getToDos().remove(toDo);
 
         DeletedList deletedList = realm.where(DeletedList.class).findFirst();
         if (deletedList == null) {
@@ -262,7 +263,7 @@ public class MainPresenter implements Presenter {
         if (order != null) {
             final String[] orders = order.split(",");
 
-            Realm realm = Realm.getDefaultInstance();
+            Realm realm = RealmUtils.getMainInstance();
             realm.beginTransaction();
 
             final RealmList<ToDo> orderedToDos = new RealmList<>();
@@ -297,7 +298,7 @@ public class MainPresenter implements Presenter {
         Gson gson = new Gson();
         final CategoryRespInformation information = gson.fromJson(resp, CategoryRespInformation.class);
         if (information.isModified()) {
-            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     OrderedCateList orderedCateList = new OrderedCateList();
@@ -305,7 +306,7 @@ public class MainPresenter implements Presenter {
                     for (ToDoCategory cate : information.getCates()) {
                         toDoCategories.add(cate);
                     }
-                    realm.copyToRealmOrUpdate(orderedCateList);
+                    RealmUtils.getMainInstance().copyToRealmOrUpdate(orderedCateList);
                 }
             });
         } else {

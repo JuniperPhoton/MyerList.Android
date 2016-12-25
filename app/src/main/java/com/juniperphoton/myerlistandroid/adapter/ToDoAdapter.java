@@ -19,6 +19,7 @@ import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.callback.OnItemOperationCompletedCallback;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
+import com.juniperphoton.myerlistandroid.realm.RealmUtils;
 import com.juniperphoton.myerlistandroid.util.CustomItemTouchHelper;
 import com.juniperphoton.myerlistandroid.widget.CircleView;
 
@@ -71,7 +72,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            Realm realm = Realm.getDefaultInstance();
+            Realm realm = RealmUtils.getMainInstance();
             realm.beginTransaction();
             Collections.swap(getData(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
             notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
@@ -184,7 +185,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         void bind(int position) {
             final ToDo todo = getData(position);
             todo.addChangeListener(realmChangeListener);
-            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     int cate = Integer.valueOf(todo.getCate());
@@ -227,7 +228,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
         void toggleDone() {
             final ToDo todo = getData(getAdapterPosition());
-            Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     if (todo.getIsdone().equals("1")) {

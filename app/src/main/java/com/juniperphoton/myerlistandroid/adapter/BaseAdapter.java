@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.juniperphoton.myerlistandroid.realm.RealmUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +111,7 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
     }
 
     public void addData(final T item) {
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+        RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 mData.add(item);
@@ -119,7 +121,7 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
     }
 
     public void removeData(final int index) {
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+        RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 mData.remove(index);

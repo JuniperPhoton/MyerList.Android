@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
+import com.juniperphoton.myerlistandroid.realm.RealmUtils;
 import com.juniperphoton.myerlistandroid.util.DisplayUtil;
 
 import io.realm.Realm;
@@ -61,7 +62,7 @@ public class SelectCategoryView extends LinearLayout implements ViewGroup.OnClic
 
     public void makeViews() {
         removeAllViews();
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = RealmUtils.getMainInstance();
         realm.beginTransaction();
         RealmResults<ToDoCategory> categories = realm.where(ToDoCategory.class).findAll();
         for (ToDoCategory toDoCategory : categories) {
