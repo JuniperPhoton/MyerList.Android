@@ -65,6 +65,10 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            ToDo toDo = getData(viewHolder.getAdapterPosition());
+            if (toDo != null && toDo.isDeleted()) {
+                return 0;
+            }
             int dragFlags = CustomItemTouchHelper.UP | CustomItemTouchHelper.DOWN;
             int swipeFlags = CustomItemTouchHelper.LEFT | CustomItemTouchHelper.RIGHT;
             return makeMovementFlags(dragFlags, swipeFlags);

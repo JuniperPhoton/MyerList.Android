@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 
 import com.juniperphoton.myerlistandroid.R;
@@ -24,6 +25,7 @@ public class CateCircleView extends CircleView {
     public CateCircleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+        setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_borderless));
     }
 
     @Override
@@ -55,6 +57,7 @@ public class CateCircleView extends CircleView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, mDarkPaint);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, (int) (getWidth() / 2 * 0.8), mPaint);
         if (mSelected) {

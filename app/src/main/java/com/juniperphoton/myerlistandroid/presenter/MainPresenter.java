@@ -239,10 +239,11 @@ public class MainPresenter implements Presenter {
 
         DeletedList deletedList = realm.where(DeletedList.class).findFirst();
         if (deletedList == null) {
-            deletedList = new DeletedList();
-            deletedList = realm.copyToRealm(deletedList);
+            deletedList = realm.createObject(DeletedList.class);
         }
-        deletedList.getToDos().add(toDo);
+        toDo.setDeleted(true);
+        ToDo managedToDo = realm.copyToRealmOrUpdate(toDo);
+        deletedList.getToDos().add(managedToDo);
 
         Log.d(TAG, "delete from realm:" + String.valueOf(ok));
 
@@ -256,6 +257,18 @@ public class MainPresenter implements Presenter {
                         Log.d(TAG, "deleteToDo");
                     }
                 });
+    }
+
+    public void clearDeletedList() {
+        RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                DeletedList deletedList = realm.where(DeletedList.class).findFirst();
+                if (deletedList != null) {
+                    deletedList.getToDos().clear();
+                }
+            }
+        });
     }
 
     private void orderToDos(GetOrderResponse getOrderResponse) {

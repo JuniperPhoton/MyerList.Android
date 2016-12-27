@@ -23,41 +23,37 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/adding_view_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
-                android:height="50dp"
-                android:gravity="center_vertical"
-                android:text="@string/adding_adding"
-                android:textColor="@android:color/white"
-                android:textSize="27sp"
-                android:textStyle="normal"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
                 app:cardBackgroundColor="#30000000"
                 app:cardCornerRadius="2dp"
                 app:cardElevation="0dp">
 
                 <TextView
-                    android:id="@+id/adding_view_cate"
+                    android:id="@+id/adding_view_title"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="4dp"
                     android:gravity="center_vertical"
-                    android:text="@string/all_adding"
+                    android:text="@string/adding_adding"
                     android:textColor="@android:color/white"/>
             </android.support.v7.widget.CardView>
+
+            <TextView
+                android:id="@+id/adding_view_cate"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:textSize="20sp"
+                android:text="@string/all_adding"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
 
         <com.juniperphoton.myerlistandroid.widget.SelectCategoryView
@@ -89,7 +85,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="20dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"

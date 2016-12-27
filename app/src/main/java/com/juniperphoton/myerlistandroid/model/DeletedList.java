@@ -13,16 +13,15 @@ public class DeletedList extends RealmObject {
 
     public DeletedList() {
         id = AppConfig.getSid();
-        toDos = new RealmList<>();
     }
 
     public RealmList<ToDo> getToDos() {
         return toDos;
     }
 
-    public void setToDos(RealmList<ToDo> toDos) {
-        this.toDos = toDos;
+    public String getId() {
+        return id;
     }
 
-    private RealmList<ToDo> toDos;
+    private RealmList<ToDo> toDos = new RealmList<>();
 }

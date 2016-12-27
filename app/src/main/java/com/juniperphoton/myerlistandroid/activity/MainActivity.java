@@ -262,6 +262,10 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @OnClick(R.id.add_fab)
     void onClickAdd() {
+        if (mSelectedCategoryId == ToDoCategory.DELETED_ID) {
+            mPresenter.clearDeletedList();
+            return;
+        }
         int[] location = new int[2];
         mAddFAB.getLocationOnScreen(location);
 
@@ -398,6 +402,12 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         mDrawerRoot.setBackground(new ColorDrawable(category.getIntColor()));
         mAddFAB.setBackgroundTintList(ColorStateList.valueOf(category.getIntColor()));
         mToolbar.setTitle(category.getName());
+
+        if (mSelectedCategoryId == ToDoCategory.DELETED_ID) {
+            mAddFAB.setImageResource(R.drawable.ic_delete);
+        } else {
+            mAddFAB.setImageResource(R.drawable.ic_add);
+        }
 
         mDrawerLayout.postDelayed(new Runnable() {
             @Override

@@ -62,4 +62,12 @@ public class ToDo extends RealmObject {
     public void setCate(String cate) {
         this.cate = cate;
     }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 }
