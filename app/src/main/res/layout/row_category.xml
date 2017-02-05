@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <com.juniperphoton.myerlistandroid.widget.CircleView
+        <com.juniperphoton.myerlist.widget.CircleView
             android:id="@+id/row_cate_color_view"
             android:layout_width="20dp"
             android:layout_height="20dp"

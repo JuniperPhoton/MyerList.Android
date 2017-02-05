@@ -10,7 +10,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="3dp"
+        android:elevation="2dp"
         app:cardCornerRadius="0dp">
 
         <RelativeLayout
@@ -24,10 +24,10 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="10dp"
                 android:layout_marginStart="12dp"
-                android:textStyle="bold"
                 android:text="@string/personalization_title"
                 android:textColor="@android:color/black"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginStart="4dp"
             android:src="@drawable/ic_clear"
             app:backgroundTint="@color/MyerListGray"
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_check"
-            app:backgroundTint="@color/MyerListBlueDark"
+            app:backgroundTint="@color/InvertThemeColor"
             app:fabSize="normal"/>
     </LinearLayout>
 </RelativeLayout>

@@ -13,4 +13,6 @@
 
     <color name="DoneGreenColor">#FF4AD4CB</color>
     <color name="DeleteRedColor">#FFDC7373</color>
+
+    <color name="InvertThemeColor">#ff316b</color>
 </resources>

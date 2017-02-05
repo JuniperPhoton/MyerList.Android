@@ -14,7 +14,7 @@
         android:layout_marginTop="@dimen/status_bar_height"
         android:orientation="vertical">
 
-        <com.juniperphoton.myerlistandroid.widget.CommonTitleBar
+        <com.juniperphoton.myerlist.widget.CommonTitleBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:title="@string/settings_title"/>
@@ -29,7 +29,7 @@
             android:textColor="@color/MyerListBlue"
             android:textStyle="bold"/>
 
-        <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+        <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:id="@+id/setting_item_add_to_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             app:setting_title="@string/add_to_bottom"
             app:show_divider="true"/>
 
-        <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+        <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:id="@+id/setting_item_dark_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             app:setting_title="@string/dark_mode"
             app:show_divider="true"/>
 
-        <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+        <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:has_checkbox="false"

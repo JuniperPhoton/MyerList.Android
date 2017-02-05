@@ -15,7 +15,7 @@
         android:clickable="true"
         android:orientation="horizontal">
 
-        <com.juniperphoton.myerlistandroid.widget.CircleView
+        <com.juniperphoton.myerlist.widget.CircleView
             android:id="@+id/row_todo_color_view"
             android:layout_width="20dp"
             android:layout_height="20dp"
