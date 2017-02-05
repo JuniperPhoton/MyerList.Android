@@ -1,6 +1,5 @@
 package com.juniperphoton.myerlistandroid.adapter;
 
-
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -51,8 +50,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
     }
 
     private CustomItemTouchHelper helper = new CustomItemTouchHelper(new CustomItemTouchHelper.Callback() {
-
-        private final float SWIPE_THRESHOLD = 0.2f;
+        private final float SWIPE_THRESHOLD = 0.4f;
 
         private ToDoViewHolder getToDoViewHolder(RecyclerView.ViewHolder viewHolder) {
             return (ToDoViewHolder) viewHolder;
@@ -86,7 +84,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         }
 
         @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+        public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
             Log.d(TAG, "onSwiped");
             Log.d(TAG, "direction" + direction);
             switch (direction) {
@@ -123,7 +121,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         @Override
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
-            getToDoViewHolder(viewHolder).setBackgroundTransparent();
+            //getToDoViewHolder(viewHolder).setBackgroundTransparent();
         }
     });
 
@@ -131,7 +129,8 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         @Override
         public void onChange(Object element) {
             if (element instanceof ToDo) {
-                notifyDataSetChanged();
+                ToDo toDo = (ToDo) element;
+                notifyItemChanged(toDo.getPosition());
             }
         }
     };
@@ -167,6 +166,9 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         @BindView(R.id.arrange_thumb)
         View mThumb;
 
+        @BindView(R.id.recover_icon)
+        View recoverView;
+
         @BindView(R.id.item_root)
         View mRoot;
 
@@ -188,23 +190,26 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
         void bind(int position) {
             final ToDo todo = getData(position);
+            if (!todo.isValid() || !todo.isManaged()) {
+                return;
+            }
             todo.addChangeListener(realmChangeListener);
-            RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    int cate = Integer.valueOf(todo.getCate());
-                    if (cate > 0) {
-                        ToDoCategory category = realm.where(ToDoCategory.class).equalTo("id",
-                                cate).findFirst();
-                        if (category != null) {
-                            circleView.setColor(category.getIntColor());
-                        }
-                    } else if (cate == 0) {
-                        circleView.setColor(ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
-                    }
+
+            Realm realm = RealmUtils.getMainInstance();
+            realm.beginTransaction();
+            int cate = Integer.valueOf(todo.getCate());
+            if (cate > 0) {
+                ToDoCategory category = realm.where(ToDoCategory.class).equalTo(ToDoCategory.ID_KEY,
+                        cate).findFirst();
+                if (category != null) {
+                    circleView.setColor(category.getIntColor());
                 }
-            });
-            if (todo.getIsdone().equals("1")) {
+            } else if (cate == 0) {
+                circleView.setColor(ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
+            }
+            realm.commitTransaction();
+
+            if (todo.getIsdone().equals(ToDo.IS_DONE)) {
                 doneView.setVisibility(View.VISIBLE);
             } else {
                 doneView.setVisibility(View.GONE);
@@ -221,13 +226,26 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
                                 setBackgroundGrey();
                                 return true;
                         }
-                        return false;
+                        return true;
                     }
                 });
             } else {
                 mThumb.setVisibility(View.GONE);
             }
-
+            if (todo.isDeleted()) {
+                mThumb.setVisibility(View.GONE);
+                recoverView.setVisibility(View.VISIBLE);
+            } else {
+                recoverView.setVisibility(View.GONE);
+            }
+            recoverView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onClickRecover(getAdapterPosition());
+                    }
+                }
+            });
         }
 
         void toggleDone() {
@@ -235,14 +253,14 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    if (todo.getIsdone().equals("1")) {
-                        todo.setIsdone("0");
+                    if (todo.getIsdone().equals(ToDo.IS_DONE)) {
+                        todo.setIsdone(ToDo.IS_NOT_DONE);
                     } else {
-                        todo.setIsdone("1");
+                        todo.setIsdone(ToDo.IS_DONE);
                     }
                 }
             });
-            if (todo.getIsdone().equals("1")) {
+            if (todo.getIsdone().equals(ToDo.IS_DONE)) {
                 doneView.setVisibility(View.VISIBLE);
             } else {
                 doneView.setVisibility(View.GONE);

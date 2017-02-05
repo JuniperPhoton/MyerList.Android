@@ -17,9 +17,9 @@ public class LocalSettingUtil {
         sharedPreferences.edit().clear().apply();
     }
 
-    public static boolean getBoolean(Context context, String key) {
+    public static boolean getBoolean(Context context, String key, boolean defaultVal) {
         SharedPreferences sharedPreferences = getSharedPreference(context);
-        return sharedPreferences.getBoolean(key, false);
+        return sharedPreferences.getBoolean(key, defaultVal);
     }
 
     public static boolean checkKey(Context context, String key) {

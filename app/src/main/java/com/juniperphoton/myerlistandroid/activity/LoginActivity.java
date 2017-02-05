@@ -60,14 +60,14 @@ public class LoginActivity extends BaseActivity implements LoginView {
         int loginMode = intent.getIntExtra(Params.LOGIN_MODE, -1);
         switch (loginMode) {
             case Params.LoginMode.LOGIN:
-                mTitle.setText("LOGIN");
+                mTitle.setText(getString(R.string.login_title));
                 mSecondPasswordLayout.setVisibility(View.GONE);
-                mButton.setText("Login");
+                mButton.setText(getString(R.string.login));
                 break;
             case Params.LoginMode.REGISTER:
-                mTitle.setText("REGISTER");
+                mTitle.setText(getString(R.string.register_title));
                 mSecondPasswordLayout.setVisibility(View.VISIBLE);
-                mButton.setText("Register");
+                mButton.setText(getString(R.string.register));
                 break;
         }
         if (DEBUG) {
@@ -95,7 +95,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
     @OnClick(R.id.login_btn)
     void onClickButton() {
         mDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        mDialog.setTitle("Loading...");
+        mDialog.setTitle(getString(R.string.loading_hint));
         mDialog.show();
         mPresenter.login();
     }

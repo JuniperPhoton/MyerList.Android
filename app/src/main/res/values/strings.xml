@@ -18,16 +18,57 @@
     <string name="for_windows_10_and_android">for Windows 10 and Android</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="register_title">REGISTER</string>
     <string name="offline_mode">Offline mode</string>
-    <string name="sync_todos_on_windows_and_android">Sync todos on Windows and Android</string>
+    <string name="sync_to_dos_on_windows_and_android">Sync to-dos on Windows and Android</string>
     <string name="add_shortcuts">Add</string>
     <string name="enjoy_your_day_d">Enjoy your day :D</string>
     <string name="no_to_do">NO TO-DO</string>
     <string name="account">ACCOUNT</string>
     <string name="logout">LOGOUT</string>
     <string name="all_adding">ALL</string>
-    <string name="adding_adding">Adding</string>
+    <string name="adding_adding">ADD</string>
+    <string name="modify_adding">MODIFY</string>
     <string name="cancel_adding">CANCEL</string>
     <string name="ok_adding">OK</string>
     <string name="e_g_have_coffee_with_my_friends_at_5_clock">e.g. Have coffee with my friends at 5\'clock.</string>
+    <string name="personalization_title">PERSONALIZATION</string>
+    <string name="about">ABOUT</string>
+    <string name="settings">SETTINGS</string>
+    <string name="left">Left</string>
+    <string name="personalization_setting">PERSONALIZATION</string>
+    <string name="settings_title">SETTINGS</string>
+    <string name="email">Email</string>
+    <string name="forget_password">Forget password?</string>
+    <string name="input_password_again">Input password again</string>
+    <string name="login_title">LOGIN</string>
+    <string name="login_to_sync_your_to_dos">Login to sync your to-dos</string>
+    <string name="login_btn">Login</string>
+    <string name="password">Password</string>
+    <string name="loading_hint">LOADING...</string>
+    <string name="account_drawer">ACCOUNT</string>
+
+    <string name="confirm_to_logout"></string>
+    <string name="confirm_ok">OK</string>
+    <string name="confirm_cancel">CANCEL</string>
+
+    <string name="add_to_bottom">Add to bottom</string>
+    <string name="add_to_bottom_hint">New to-dos will be added to bottom</string>
+
+    <string name="dark_mode">Use dark mode</string>
+    <string name="dark_mode_hint">Dark mode</string>
+
+    <string name="change_lang">Change language</string>
+    <string name="change_lang_hint_english">English</string>
+    <string name="change_lang_hint_chinese">Chinese</string>
+    <string name="input_email_hint">Please input email address</string>
+    <string name="invaild_email_hint">The email you input is invalid</string>
+    <string name="input_pwd_hint">Please input password</string>
+    <string name="re_pwd_hint">Please input password again</string>
+    <string name="two_pwd_not_match_hint">Two passwords don\'t match</string>
+    <string name="fetch_hint">Fetched:D</string>
+    <string name="modified_hint">Modified</string>
+
+    <string name="confirm_delete_title">Confirm delete all?</string>
+    
 </resources>

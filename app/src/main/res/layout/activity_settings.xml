@@ -17,7 +17,7 @@
         <com.juniperphoton.myerlistandroid.widget.CommonTitleBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="SETTINGS"/>
+            app:title="@string/settings_title"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
             android:layout_marginBottom="@dimen/settings_margin_up_and_down"
             android:layout_marginLeft="@dimen/settings_margin_left"
             android:layout_marginTop="@dimen/settings_margin_up_and_down"
-            android:text="PERSONALIZATION"
+            android:text="@string/personalization_setting"
             android:textColor="@color/MyerListBlue"
             android:textStyle="bold"/>
 
@@ -34,16 +34,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:has_checkbox="true"
-            app:setting_content="Now todos will be append to bottom"
-            app:setting_title="Add to bottom"
+            app:setting_content="@string/add_to_bottom_hint"
+            app:setting_title="@string/add_to_bottom"
+            app:show_divider="true"/>
+
+        <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
+            android:id="@+id/setting_item_dark_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:has_checkbox="true"
+            app:setting_content="@string/dark_mode_hint"
+            app:setting_title="@string/dark_mode"
             app:show_divider="true"/>
 
         <com.juniperphoton.myerlistandroid.widget.SettingsItemLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:has_checkbox="false"
-            app:setting_content="English"
-            app:setting_title="Change language"
+            app:setting_content="@string/change_lang_hint_english"
+            app:setting_title="@string/change_lang"
             app:show_divider="false"/>
 
         <TextView
@@ -58,6 +67,7 @@
 
         <Button
             android:id="@+id/settings_logout"
+            style="@style/ButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_margin_up_and_down"

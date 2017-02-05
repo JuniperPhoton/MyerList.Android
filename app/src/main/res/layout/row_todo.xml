@@ -37,6 +37,16 @@
             />
 
         <ImageView
+            android:id="@+id/recover_icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_alignParentRight="true"
+            android:alpha="0.4"
+            android:padding="12dp"
+            android:src="@drawable/ic_recover_black"
+            android:visibility="gone"/>
+
+        <ImageView
             android:id="@+id/arrange_thumb"
             android:layout_width="52dp"
             android:layout_height="52dp"

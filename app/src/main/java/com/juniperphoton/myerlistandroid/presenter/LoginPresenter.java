@@ -1,6 +1,7 @@
 package com.juniperphoton.myerlistandroid.presenter;
 
 import com.juniperphoton.myerlistandroid.App;
+import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.api.APIException;
 import com.juniperphoton.myerlistandroid.api.CloudService;
 import com.juniperphoton.myerlistandroid.api.response.CheckUserResponse;
@@ -42,27 +43,27 @@ public class LoginPresenter implements Presenter {
         mPassword2 = mLoginView.getSecondPassword();
 
         if (DataUtil.isStringNullOrEmpty(mEmail)) {
-            ToastService.sendShortToast("Please input email address");
+            ToastService.sendShortToast(App.getInstance().getString(R.string.input_email_hint));
             return false;
         }
         if (!DataUtil.isEmailFormat(mEmail)) {
-            ToastService.sendShortToast("The email you input is invalid");
+            ToastService.sendShortToast(App.getInstance().getString(R.string.invaild_email_hint));
             return false;
         }
 
         if (DataUtil.isStringNullOrEmpty(mPassword)) {
-            ToastService.sendShortToast("Please input password");
+            ToastService.sendShortToast(App.getInstance().getString(R.string.input_pwd_hint));
             return false;
         }
 
         if (mMode == Params.LoginMode.REGISTER) {
             if (DataUtil.isStringNullOrEmpty(mPassword2)) {
-                ToastService.sendShortToast("Please input password again");
+                ToastService.sendShortToast(App.getInstance().getString(R.string.re_pwd_hint));
                 return false;
             }
 
             if (!mPassword.equals(mPassword2)) {
-                ToastService.sendShortToast("Two passwords don't match");
+                ToastService.sendShortToast(App.getInstance().getString(R.string.two_pwd_not_match_hint));
                 return false;
             }
         }

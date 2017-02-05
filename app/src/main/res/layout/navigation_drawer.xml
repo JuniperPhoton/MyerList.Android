@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Left"
+                android:text="@string/left"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
                 android:textStyle="normal"/>
@@ -61,7 +61,7 @@
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:text="ACOUNT"
+                    android:text="@string/account_drawer"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="12dp"
-                    android:text="SETTINGS"
+                    android:text="@string/settings"
                     android:textColor="@android:color/white"/>
             </LinearLayout>
 
@@ -154,7 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="12dp"
-                    android:text="ABOUT"
+                    android:text="@string/about"
                     android:textColor="@android:color/white"/>
             </LinearLayout>
 

@@ -3,6 +3,7 @@ package com.juniperphoton.myerlistandroid.widget;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.juniperphoton.myerlistandroid.App;
 import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.model.OrderedCateList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
@@ -76,10 +78,10 @@ public class AddingView extends FrameLayout implements View.OnTouchListener {
     private void updateUi() {
         switch (mMode) {
             case ADD_MODE:
-                mTittleText.setText("ADD");
+                mTittleText.setText(App.getInstance().getString(R.string.adding_adding));
                 break;
             case MODIFY_MODE:
-                mTittleText.setText("MODIFY");
+                mTittleText.setText(App.getInstance().getString(R.string.modify_adding));
                 break;
         }
     }

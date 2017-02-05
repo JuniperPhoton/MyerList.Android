@@ -1,5 +1,7 @@
 package com.juniperphoton.myerlistandroid.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,8 @@ import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.App;
 import com.juniperphoton.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.activity.CategoryManagementActivity;
+import com.juniperphoton.myerlistandroid.activity.MainActivity;
 import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
 import com.juniperphoton.myerlistandroid.widget.CircleView;
@@ -19,9 +23,11 @@ public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.C
 
     private OnDrawerSelectedChanged mCallback;
     private int mSelectedIndex = -1;
+    private Context mContext;
 
-    public CategoryAdapter() {
+    public CategoryAdapter(Context context) {
         super();
+        mContext = context;
     }
 
     @Override
@@ -49,11 +55,9 @@ public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.C
             mSelectedIndex = position;
             notifyItemChanged(lastIndex);
             notifyItemChanged(position);
-            if (mCallback != null) {
-                mCallback.onSelectedChanged(category, position);
-            }
-        } else {
-
+        }
+        if (mCallback != null) {
+            mCallback.onSelectedChanged(category, position);
         }
     }
 

@@ -11,4 +11,6 @@ public interface OnItemOperationCompletedCallback {
     void onDelete(int position);
 
     void onClickedItem(int position, View cateView);
+
+    void onClickRecover(int position);
 }

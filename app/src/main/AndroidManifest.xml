@@ -37,6 +37,10 @@
         <activity
             android:name=".activity.AboutActivity"
             android:theme="@style/AppNoActionBar"/>
+
+        <activity
+            android:name=".activity.CategoryManagementActivity"
+            android:theme="@style/AppNoActionBar"/>
     </application>
 
 </manifest>

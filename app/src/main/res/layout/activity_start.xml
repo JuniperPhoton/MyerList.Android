@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-light"
-            android:text="@string/sync_todos_on_windows_and_android"
+            android:text="@string/sync_to_dos_on_windows_and_android"
             android:textSize="15sp"/>
 
         <LinearLayout
@@ -67,6 +67,7 @@
 
             <Button
                 android:id="@+id/login_btn"
+                style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ripple_theme"
@@ -75,6 +76,7 @@
 
             <Button
                 android:id="@+id/register_btn"
+                style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -83,10 +85,11 @@
 
             <Button
                 android:id="@+id/offline_btn"
+                style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="12dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/ripple_grey"
                 android:text="@string/offline_mode"/>
         </LinearLayout>

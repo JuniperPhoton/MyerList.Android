@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:text="LOGIN"
+                android:text="@string/login_title"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold"/>
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:text="Login to sync your todos"
+                android:text="@string/login_to_sync_your_to_dos"
                 android:textColor="@android:color/black"
                 android:textSize="15sp"/>
 
@@ -85,10 +85,9 @@
                     android:id="@+id/login_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
+                    android:hint="@string/email"
                     android:inputType="textEmailAddress"/>
             </android.support.design.widget.TextInputLayout>
-
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -98,7 +97,7 @@
                     android:id="@+id/login_pwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="@string/password"
                     android:inputType="textPassword"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -111,18 +110,18 @@
                     android:id="@+id/login_second_pwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Input password again"
+                    android:hint="@string/input_password_again"
                     android:inputType="textPassword"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/login_btn"
+                style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/ripple_theme"
-                android:elevation="2dp"
-                android:text="Login"
+                android:text="@string/login_btn"
                 android:textColor="@android:color/white"/>
 
             <TextView
@@ -131,7 +130,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/ripple_clip"
                 android:padding="4dp"
-                android:text="Forget password?"/>
+                android:text="@string/forget_password"/>
         </LinearLayout>
 
     </android.support.v7.widget.CardView>

@@ -1,17 +1,21 @@
 package com.juniperphoton.myerlistandroid.activity;
 
 import android.animation.Animator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -21,22 +25,20 @@ import android.widget.TextView;
 import com.juniperphoton.myerlistandroid.R;
 import com.juniperphoton.myerlistandroid.adapter.CategoryAdapter;
 import com.juniperphoton.myerlistandroid.adapter.ToDoAdapter;
-import com.juniperphoton.myerlistandroid.callback.OnItemOperationCompletedCallback;
 import com.juniperphoton.myerlistandroid.callback.OnDrawerSelectedChanged;
-import com.juniperphoton.myerlistandroid.model.DeletedList;
+import com.juniperphoton.myerlistandroid.callback.OnItemOperationCompletedCallback;
 import com.juniperphoton.myerlistandroid.model.OrderedCateList;
-import com.juniperphoton.myerlistandroid.model.OrderedToDoList;
 import com.juniperphoton.myerlistandroid.model.ToDo;
 import com.juniperphoton.myerlistandroid.model.ToDoCategory;
+import com.juniperphoton.myerlistandroid.presenter.MainContract;
 import com.juniperphoton.myerlistandroid.presenter.MainPresenter;
 import com.juniperphoton.myerlistandroid.realm.RealmUtils;
 import com.juniperphoton.myerlistandroid.util.AppConfig;
 import com.juniperphoton.myerlistandroid.util.DisplayUtil;
-import com.juniperphoton.myerlistandroid.util.StartEndAnimator;
 import com.juniperphoton.myerlistandroid.util.LocalSettingUtil;
 import com.juniperphoton.myerlistandroid.util.Params;
+import com.juniperphoton.myerlistandroid.util.StartEndAnimator;
 import com.juniperphoton.myerlistandroid.util.TypefaceUtil;
-import com.juniperphoton.myerlistandroid.view.MainView;
 import com.juniperphoton.myerlistandroid.widget.AddingView;
 import com.juniperphoton.myerlistandroid.widget.SelectCategoryView;
 
@@ -48,13 +50,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MainActivity extends BaseActivity implements MainView, OnDrawerSelectedChanged,
+public class MainActivity extends BaseActivity implements MainContract.View, OnDrawerSelectedChanged,
         OnItemOperationCompletedCallback, AddingView.AddingViewCallback {
-
     private static final String TAG = "MainActivity";
 
     @BindView(R.id.toolbar)
@@ -93,7 +94,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     private CategoryAdapter mCateAdapter;
     private ToDoAdapter mToDoAdapter;
 
-    private MainPresenter mPresenter;
+    private MainContract.Presenter mPresenter;
 
     private int mSelectedCategoryId = 0;
     private int mSelectedCategoryPosition = 0;
@@ -105,9 +106,9 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     private int mModifyingToDoId = -1;
 
-    private RealmChangeListener<OrderedToDoList> mRealmChangeListener = new RealmChangeListener<OrderedToDoList>() {
+    private RealmChangeListener<RealmResults<ToDo>> mRealmChangeListener = new RealmChangeListener<RealmResults<ToDo>>() {
         @Override
-        public void onChange(OrderedToDoList element) {
+        public void onChange(RealmResults<ToDo> element) {
             //updateNoItemUi(element.getToDos().size() == 0);
         }
     };
@@ -178,7 +179,13 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     private void initViews() {
         mAddingView.setVisibility(View.GONE);
-        mToolbar.setTitle(getString(R.string.all));
+
+        mToolbar.post(new Runnable() {
+            @Override
+            public void run() {
+                mToolbar.setTitle(getString(R.string.all));
+            }
+        });
 
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -186,13 +193,13 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                 if (mCateAdapter != null && mCateAdapter.getData().size() > 0) {
                     mPresenter.getToDos();
                 } else {
-                    mPresenter.getCate();
+                    mPresenter.getCates();
                 }
             }
         });
         mEmailView.setText(LocalSettingUtil.getString(this, Params.EMAIL_KEY, ""));
 
-        mCateAdapter = new CategoryAdapter();
+        mCateAdapter = new CategoryAdapter(this);
         mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
         mCategoryRecyclerView.setAdapter(mCateAdapter);
@@ -202,6 +209,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         mToDoAdapter.setCallback(this);
         mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
+        ((SimpleItemAnimator) mToDoRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         mToDoRecyclerView.setAdapter(mToDoAdapter);
 
         mAddingView.setOnSelectionChangedCallback(new SelectCategoryView.OnSelectionChangedCallback() {
@@ -235,7 +243,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                     mAddingView.post(new Runnable() {
                         @Override
                         public void run() {
-                            onClickAdd();
+                            onClickFAB();
                         }
                     });
                 }
@@ -245,7 +253,7 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     }
 
     private void initData() {
-        mPresenter.getCate();
+        mPresenter.getCates();
     }
 
     @OnClick(R.id.drawer_settings)
@@ -261,16 +269,33 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
     }
 
     @OnClick(R.id.add_fab)
-    void onClickAdd() {
+    void onClickFAB() {
         if (mSelectedCategoryId == ToDoCategory.DELETED_ID) {
-            mPresenter.clearDeletedList();
+            if (mToDoAdapter.getData().size() == 0) {
+                return;
+            }
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.confirm_delete_title))
+                    .setPositiveButton(getString(R.string.confirm_ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mPresenter.clearDeletedList();
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.confirm_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
             return;
         }
         int[] location = new int[2];
         mAddFAB.getLocationOnScreen(location);
 
-        int x = location[0] + DisplayUtil.getDimenInPixel(28, this);
-        int y = location[1] + DisplayUtil.getDimenInPixel(28, this);
+        int x = location[0] + getResources().getDimensionPixelSize(R.dimen.fab_center_margin);
+        int y = location[1] + getResources().getDimensionPixelSize(R.dimen.fab_center_margin);
 
         startRevealAnimation(x, y, new StartEndAnimator() {
             @Override
@@ -329,39 +354,46 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @Override
     public void displayToDos() {
-        RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                OrderedToDoList query = realm.where(OrderedToDoList.class).findFirst();
-                if (query == null) return;
-                RealmList<ToDo> list = query.getToDos();
-                query.addChangeListener(mRealmChangeListener);
-                long count;
+        List<ToDo> resultsWrapper = new ArrayList<>();
 
-                switch (mSelectedCategoryId) {
-                    case ToDoCategory.ALL_ID:
-                        mToDoAdapter.refreshData(list);
-                        updateNoItemUi(list.size() == 0);
-                        break;
-                    case ToDoCategory.DELETED_ID:
-                        DeletedList deletedList = realm.where(DeletedList.class).findFirst();
-                        if (deletedList != null) {
-                            list = deletedList.getToDos();
-                            mToDoAdapter.refreshData(list);
-                        }
-                        break;
-                    case ToDoCategory.PERSONALIZATION_ID:
-                        break;
-                    default:
-                        RealmResults<ToDo> toDos = list.where().equalTo("cate", String.valueOf(mSelectedCategoryId)).findAll();
-                        mToDoAdapter.refreshData(toDos);
-                        updateNoItemUi(toDos.size() == 0);
-                        break;
+        Realm realm = RealmUtils.getMainInstance();
+        realm.beginTransaction();
+
+        switch (mSelectedCategoryId) {
+            case ToDoCategory.PERSONALIZATION_ID:
+                break;
+            case ToDoCategory.DELETED_ID:
+                RealmResults<ToDo> deletedResults = realm.where(ToDo.class)
+                        .equalTo(ToDo.DELETED_KEY, Boolean.TRUE)
+                        .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING);
+                for (ToDo toDo : deletedResults) {
+                    resultsWrapper.add(toDo);
                 }
-                updateCount();
-                mRefreshLayout.setRefreshing(false);
-            }
-        });
+                break;
+            case ToDoCategory.ALL_ID:
+                RealmResults<ToDo> results = realm.where(ToDo.class).notEqualTo(ToDo.DELETED_KEY, Boolean.TRUE)
+                        .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING);
+                for (ToDo toDo : results) {
+                    resultsWrapper.add(toDo);
+                }
+                break;
+            default:
+                RealmResults<ToDo> toDos = realm.where(ToDo.class)
+                        .notEqualTo(ToDo.DELETED_KEY, Boolean.TRUE)
+                        .equalTo(ToDo.CATE_KEY, String.valueOf(mSelectedCategoryId))
+                        .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING);
+                for (ToDo toDo : toDos) {
+                    resultsWrapper.add(toDo);
+                }
+                break;
+        }
+        updateNoItemUi(resultsWrapper.size() == 0);
+        mToDoAdapter.refreshData(resultsWrapper);
+
+        realm.commitTransaction();
+
+        updateCount();
+        mRefreshLayout.setRefreshing(false);
     }
 
     private void updateCount() {
@@ -396,6 +428,12 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         if (mSelectedCategoryId == category.getId()) {
             return;
         }
+        if (category.getId() == ToDoCategory.PERSONALIZATION_ID) {
+            Intent intent = new Intent(MainActivity.this, CategoryManagementActivity.class);
+            startActivity(intent);
+            return;
+        }
+
         mSelectedCategoryPosition = position;
         mSelectedCategoryId = category.getId();
         mToDoAdapter.setCanDrag(mSelectedCategoryId == 0);
@@ -421,6 +459,10 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @Override
     public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
         if (mAddingView.getVisibility() == View.VISIBLE) {
             hideAddingView();
         } else if (mSelectedCategoryId != 0) {
@@ -432,6 +474,11 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
 
     @Override
     public void onArrangeCompleted() {
+        uploadOrders();
+    }
+
+    @Override
+    public void uploadOrders() {
         StringBuilder orderStr = new StringBuilder();
         for (ToDo toDo : mToDoAdapter.getData()) {
             orderStr.append(toDo.getId());
@@ -439,6 +486,11 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
         }
         orderStr.deleteCharAt(orderStr.length() - 1);
         mPresenter.updateOrders(orderStr.toString());
+    }
+
+    @Override
+    public void notifyToDoDeleted(int pos) {
+        displayToDos();
     }
 
     @Override
@@ -481,6 +533,12 @@ public class MainActivity extends BaseActivity implements MainView, OnDrawerSele
                 mAddingView.showInputPane();
             }
         });
+    }
+
+    @Override
+    public void onClickRecover(int position) {
+        ToDo toDo = mToDoAdapter.getData(position);
+        mPresenter.recoverToDo(toDo);
     }
 
     @Override

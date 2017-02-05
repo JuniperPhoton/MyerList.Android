@@ -25,6 +25,6 @@ public class AppConfig {
         if (!LocalSettingUtil.checkKey(App.getInstance(), Params.SETTING_ADD_TO_BOTTOM_KEY)) {
             return true;
         }
-        return LocalSettingUtil.getBoolean(App.getInstance(), Params.SETTING_ADD_TO_BOTTOM_KEY);
+        return LocalSettingUtil.getBoolean(App.getInstance(), Params.SETTING_ADD_TO_BOTTOM_KEY, true);
     }
 }

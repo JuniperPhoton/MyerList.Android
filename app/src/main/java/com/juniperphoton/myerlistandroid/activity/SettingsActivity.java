@@ -35,10 +35,10 @@ public class SettingsActivity extends BaseActivity {
 
     private void initViews() {
         if (LocalSettingUtil.checkKey(this, Params.SETTING_ADD_TO_BOTTOM_KEY)) {
-            boolean addToBottom = LocalSettingUtil.getBoolean(this, Params.SETTING_ADD_TO_BOTTOM_KEY);
+            boolean addToBottom = LocalSettingUtil.getBoolean(this, Params.SETTING_ADD_TO_BOTTOM_KEY, true);
             mAddToBottomLayout.setChecked(addToBottom);
         } else {
-            mAddToBottomLayout.setChecked(false);
+            mAddToBottomLayout.setChecked(true);
         }
         mAddToBottomLayout.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -51,8 +51,8 @@ public class SettingsActivity extends BaseActivity {
     @OnClick(R.id.settings_logout)
     void onClickLogout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Confirm to logout?")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.confirm_to_logout))
+                .setPositiveButton(getString(R.string.confirm_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         LocalSettingUtil.clearAll(App.getInstance());
@@ -61,7 +61,7 @@ public class SettingsActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 })
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.confirm_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

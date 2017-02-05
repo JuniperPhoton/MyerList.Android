@@ -12,13 +12,15 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class ToDoCategory extends RealmObject {
-
+    public static final String ID_KEY = "id";
     public static final int ALL_ID = 0;
     public static final int DELETED_ID = -1;
     public static final int PERSONALIZATION_ID = -2;
 
     private String name;
     private String color;
+
+    private int position;
 
     @PrimaryKey
     private int id;
@@ -77,5 +79,13 @@ public class ToDoCategory extends RealmObject {
         category.setName(App.getInstance().getString(R.string.personalization));
         category.setId(PERSONALIZATION_ID);
         return category;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }
