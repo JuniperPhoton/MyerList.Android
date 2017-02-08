@@ -66,4 +66,7 @@
     <string name="two_pwd_not_match_hint">两个密码不一致</string>
     <string name="confirm_delete_title">清除已经删除的项目?</string>
 
+    <string name="add_to_bottom_key">add_to_bottom_key</string>
+    <string name="use_dark_theme_key">use_dark_theme_key</string>
+    <string name="language_key">language_key</string>
 </resources>

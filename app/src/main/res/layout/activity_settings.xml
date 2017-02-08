@@ -33,7 +33,9 @@
             android:id="@+id/setting_item_add_to_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:default_checkbox_value="true"
             app:has_checkbox="true"
+            app:key="@string/add_to_bottom"
             app:setting_content="@string/add_to_bottom_hint"
             app:setting_title="@string/add_to_bottom"
             app:show_divider="true"/>
@@ -42,7 +44,9 @@
             android:id="@+id/setting_item_dark_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:default_checkbox_value="false"
             app:has_checkbox="true"
+            app:key="@string/use_dark_theme_key"
             app:setting_content="@string/dark_mode_hint"
             app:setting_title="@string/dark_mode"
             app:show_divider="true"/>

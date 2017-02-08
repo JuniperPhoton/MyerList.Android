@@ -20,32 +20,11 @@ import butterknife.OnClick;
 
 @SuppressWarnings("UnusedDeclaration")
 public class SettingsActivity extends BaseActivity {
-
-    @BindView(R.id.setting_item_add_to_bottom)
-    SettingsItemLayout mAddToBottomLayout;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-
-        initViews();
-    }
-
-    private void initViews() {
-        if (LocalSettingUtil.checkKey(this, Params.SETTING_ADD_TO_BOTTOM_KEY)) {
-            boolean addToBottom = LocalSettingUtil.getBoolean(this, Params.SETTING_ADD_TO_BOTTOM_KEY, true);
-            mAddToBottomLayout.setChecked(addToBottom);
-        } else {
-            mAddToBottomLayout.setChecked(true);
-        }
-        mAddToBottomLayout.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                LocalSettingUtil.putBoolean(SettingsActivity.this, Params.SETTING_ADD_TO_BOTTOM_KEY, isChecked);
-            }
-        });
     }
 
     @OnClick(R.id.settings_logout)

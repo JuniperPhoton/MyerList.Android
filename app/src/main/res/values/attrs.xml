@@ -8,5 +8,7 @@
         <attr name="setting_content" format="string"/>
         <attr name="has_checkbox" format="boolean"/>
         <attr name="show_divider" format="boolean"/>
+        <attr name="key" format="string"/>
+        <attr name="default_checkbox_value" format="boolean"/>
     </declare-styleable>
 </resources>

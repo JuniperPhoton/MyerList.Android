@@ -12,12 +12,14 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myerlist.R;
+import com.juniperphoton.myerlist.activity.SettingsActivity;
+import com.juniperphoton.myerlist.util.LocalSettingUtil;
+import com.juniperphoton.myerlist.util.Params;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SettingsItemLayout extends FrameLayout {
-
     @BindView(R.id.settings_item_title)
     TextView titleTextView;
 
@@ -33,8 +35,13 @@ public class SettingsItemLayout extends FrameLayout {
     @BindView(R.id.settings_item_root)
     View mRootView;
 
+    private boolean mDefaultValue;
+    private String mKey;
+    private Context mContext;
+
     public SettingsItemLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
 
         LayoutInflater.from(context).inflate(R.layout.row_settings_item, this, true);
 
@@ -45,6 +52,8 @@ public class SettingsItemLayout extends FrameLayout {
         String content = array.getString(R.styleable.SettingsItemLayout_setting_content);
         boolean hasCheckbox = array.getBoolean(R.styleable.SettingsItemLayout_has_checkbox, false);
         boolean showDivider = array.getBoolean(R.styleable.SettingsItemLayout_show_divider, true);
+        mDefaultValue = array.getBoolean(R.styleable.SettingsItemLayout_default_checkbox_value, false);
+        mKey = array.getString(R.styleable.SettingsItemLayout_key);
         array.recycle();
 
         if (title != null) {
@@ -67,6 +76,25 @@ public class SettingsItemLayout extends FrameLayout {
             @Override
             public void onClick(View v) {
                 compoundButton.setChecked(!compoundButton.isChecked());
+            }
+        });
+
+        if (hasCheckbox) {
+            initViews();
+        }
+    }
+
+    private void initViews() {
+        if (LocalSettingUtil.checkKey(mContext, mKey)) {
+            boolean addToBottom = LocalSettingUtil.getBoolean(mContext, mKey, mDefaultValue);
+            compoundButton.setChecked(addToBottom);
+        } else {
+            compoundButton.setChecked(mDefaultValue);
+        }
+        compoundButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LocalSettingUtil.putBoolean(mContext, mKey, isChecked);
             }
         });
     }
