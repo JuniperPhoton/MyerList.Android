@@ -22,7 +22,7 @@ import butterknife.OnClick;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LoginActivity extends BaseActivity implements LoginView {
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
 
     @BindView(R.id.login_email)
     EditText mEmailView;

@@ -30,6 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="60dp"
             android:layout_marginRight="50dp"
+            android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@android:color/black"

@@ -33,7 +33,6 @@ import com.juniperphoton.myerlist.presenter.MainContract;
 import com.juniperphoton.myerlist.presenter.MainPresenter;
 import com.juniperphoton.myerlist.realm.RealmUtils;
 import com.juniperphoton.myerlist.util.AppConfig;
-import com.juniperphoton.myerlist.util.DisplayUtil;
 import com.juniperphoton.myerlist.util.LocalSettingUtil;
 import com.juniperphoton.myerlist.util.Params;
 import com.juniperphoton.myerlist.util.StartEndAnimator;
@@ -409,8 +408,12 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     private void startRevealAnimation(int x, int y, StartEndAnimator animator) {
         mx = x;
         my = y;
-        int radius = Math.max(getWindow().getDecorView().getWidth(), getWindow().getDecorView().getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(mAddingView, x, y, 0, radius);
+        int width = getWindow().getDecorView().getWidth();
+        int height = getWindow().getDecorView().getHeight();
+
+        double radius = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) -
+                getResources().getDimensionPixelSize(R.dimen.fab_center_margin);
+        Animator anim = ViewAnimationUtils.createCircularReveal(mAddingView, x, y, 0, (int) radius);
         anim.addListener(animator);
         anim.start();
     }
