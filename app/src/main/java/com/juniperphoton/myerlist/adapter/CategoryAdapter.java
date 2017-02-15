@@ -20,7 +20,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoryAdapter extends BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHolder> {
-
     private OnDrawerSelectedChanged mCallback;
     private int mSelectedIndex = -1;
     private Context mContext;

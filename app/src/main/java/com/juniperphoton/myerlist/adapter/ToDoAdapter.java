@@ -65,7 +65,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             ToDo toDo = getData(viewHolder.getAdapterPosition());
             if (toDo != null && toDo.isDeleted()) {
-                return 0;
+                return makeMovementFlags(0, CustomItemTouchHelper.LEFT);
             }
             int dragFlags = CustomItemTouchHelper.UP | CustomItemTouchHelper.DOWN;
             int swipeFlags = CustomItemTouchHelper.LEFT | CustomItemTouchHelper.RIGHT;
@@ -174,6 +174,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
 
         private boolean isGreen;
         private boolean isRed;
+        private ToDo mToDo;
 
         ToDoViewHolder(View itemView) {
             super(itemView);
@@ -181,6 +182,9 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             mRoot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (mToDo == null || mToDo.isDeleted()) {
+                        return;
+                    }
                     if (mCallback != null) {
                         mCallback.onClickedItem(getAdapterPosition(), circleView);
                     }
@@ -193,6 +197,7 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             if (!todo.isValid() || !todo.isManaged()) {
                 return;
             }
+            mToDo = todo;
             todo.addChangeListener(realmChangeListener);
 
             Realm realm = RealmUtils.getMainInstance();

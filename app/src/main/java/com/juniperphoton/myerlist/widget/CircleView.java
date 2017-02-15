@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class CircleView extends View {
-
     private int mColor;
     private Paint mPaint;
 
@@ -20,9 +19,6 @@ public class CircleView extends View {
 
     public void setColor(int color) {
         mColor = color;
-        if (mPaint == null) {
-            mPaint = new Paint();
-        }
         mPaint.setColor(mColor);
         invalidate();
     }

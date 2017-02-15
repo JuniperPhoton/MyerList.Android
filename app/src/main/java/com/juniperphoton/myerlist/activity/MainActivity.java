@@ -26,7 +26,6 @@ import com.juniperphoton.myerlist.adapter.CategoryAdapter;
 import com.juniperphoton.myerlist.adapter.ToDoAdapter;
 import com.juniperphoton.myerlist.callback.OnDrawerSelectedChanged;
 import com.juniperphoton.myerlist.callback.OnItemOperationCompletedCallback;
-import com.juniperphoton.myerlist.model.OrderedCateList;
 import com.juniperphoton.myerlist.model.ToDo;
 import com.juniperphoton.myerlist.model.ToDoCategory;
 import com.juniperphoton.myerlist.presenter.MainContract;
@@ -154,6 +153,9 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     protected void onResume() {
         super.onResume();
         mPresenter.start();
+        if (mCateAdapter != null) {
+            displayCategories();
+        }
     }
 
     @Override
@@ -332,22 +334,25 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         Realm realm = RealmUtils.getMainInstance();
         realm.beginTransaction();
 
-        OrderedCateList categories = realm.where(OrderedCateList.class).findFirst();
+        RealmResults<ToDoCategory> categories = realm.where(ToDoCategory.class)
+                .findAllSorted(ToDoCategory.POSITION_KEY, Sort.ASCENDING);
         List<ToDoCategory> list = new ArrayList<>();
         if (categories != null) {
-            for (ToDoCategory cate : categories.getCates()) {
+            for (ToDoCategory cate : categories) {
                 list.add(cate);
             }
         }
         list.add(0, ToDoCategory.getAllCategory());
         list.add(ToDoCategory.getDeletedCategory());
         list.add(ToDoCategory.getPersonalizationCategory());
+        realm.commitTransaction();
 
         mCateAdapter.refreshData(list);
         mCateAdapter.selectItem(0);
-        realm.commitTransaction();
 
         mAddingView.makeCategoriesSelection();
+
+        mRefreshLayout.setRefreshing(false);
     }
 
     @Override

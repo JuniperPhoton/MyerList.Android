@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.juniperphoton.myerlist.App;
 import com.juniperphoton.myerlist.R;
 import com.juniperphoton.myerlist.model.ToDoCategory;
+import com.juniperphoton.myerlist.util.KeyboardUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,12 +99,11 @@ public class AddingView extends FrameLayout implements View.OnTouchListener {
     }
 
     private void prepareToHide() {
-        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        KeyboardUtil.hide(mContext, mEditText.getWindowToken());
         mInputText = mEditText.getEditableText().toString();
     }
 
-    public void reset(){
+    public void reset() {
         mEditText.setText("");
     }
 

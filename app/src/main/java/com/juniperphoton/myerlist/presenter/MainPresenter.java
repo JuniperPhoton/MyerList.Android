@@ -13,7 +13,6 @@ import com.juniperphoton.myerlist.api.response.CommonResponse;
 import com.juniperphoton.myerlist.api.response.GetOrderResponse;
 import com.juniperphoton.myerlist.api.response.GetToDosResponse;
 import com.juniperphoton.myerlist.model.CategoryRespInformation;
-import com.juniperphoton.myerlist.model.OrderedCateList;
 import com.juniperphoton.myerlist.model.ToDo;
 import com.juniperphoton.myerlist.model.ToDoCategory;
 import com.juniperphoton.myerlist.realm.RealmUtils;
@@ -163,6 +162,7 @@ public class MainPresenter implements MainContract.Presenter {
             toDo.setTime(dateStr);
         }
         realm.commitTransaction();
+
         CloudService.getInstance().updateToDo(id, dateStr, content, cate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -241,22 +241,30 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void deleteToDo(ToDo toDo) {
         String id = toDo.getId();
+        boolean alreadyDeleted = toDo.isDeleted();
+        int position = toDo.getPosition();
 
         Realm realm = RealmUtils.getMainInstance();
         realm.beginTransaction();
-        toDo.setDeleted(true);
+        if (!alreadyDeleted) {
+            toDo.setDeleted(true);
+        } else {
+            toDo.deleteFromRealm();
+        }
         realm.commitTransaction();
 
-        mView.notifyToDoDeleted(toDo.getPosition());
+        mView.notifyToDoDeleted(position);
 
-        CloudService.getInstance().deleteToDo(id).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<CommonResponse>() {
-                    @Override
-                    public void call(CommonResponse commonResponse) {
-                        Log.d(TAG, "deleteToDo");
-                    }
-                });
+        if (!alreadyDeleted) {
+            CloudService.getInstance().deleteToDo(id).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<CommonResponse>() {
+                        @Override
+                        public void call(CommonResponse commonResponse) {
+                            Log.d(TAG, "deleteToDo");
+                        }
+                    });
+        }
     }
 
     @Override
@@ -314,12 +322,12 @@ public class MainPresenter implements MainContract.Presenter {
             RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    OrderedCateList orderedCateList = new OrderedCateList();
-                    RealmList<ToDoCategory> toDoCategories = orderedCateList.getCates();
+                    int i = 0;
                     for (ToDoCategory cate : information.getCates()) {
-                        toDoCategories.add(cate);
+                        cate.setPosition(i);
+                        i++;
+                        realm.copyToRealmOrUpdate(cate);
                     }
-                    RealmUtils.getMainInstance().copyToRealmOrUpdate(orderedCateList);
                 }
             });
         } else {

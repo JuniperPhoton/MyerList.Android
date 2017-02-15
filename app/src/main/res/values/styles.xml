@@ -13,8 +13,31 @@
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
+    <style name="AppTrans" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/fadeAnim</item>
+    </style>
+
+    <style name="AppTransStill" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowAnimationStyle">@style/fadeAnim2</item>
+    </style>
+
     <style name="AppSplashTheme" parent="AppNoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="fadeAnim" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="fadeAnim2" parent="@android:style/Animation.Activity">
+        <item name="android:activityCloseEnterAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
     </style>
 
     <style name="activityAnim" parent="@android:style/Animation.Activity">

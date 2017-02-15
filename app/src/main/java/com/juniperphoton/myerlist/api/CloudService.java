@@ -90,4 +90,9 @@ public class CloudService {
         return mRetrofit.create(ToDoService.class).updateToDo(AppConfig.getSid(), AppConfig.getAccessToken(),
                 id, time, content, cate);
     }
+
+    public Observable<CommonResponse> updateToDoCategories(String str) {
+        return mRetrofit.create(CategoryService.class).setCategory(AppConfig.getSid(), AppConfig.getAccessToken(),
+                str, AppConfig.getSid(), AppConfig.getAccessToken());
+    }
 }

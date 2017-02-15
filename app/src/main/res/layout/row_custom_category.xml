@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_root"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:id="@+id/row_category_color_view_root"
+        android:layout_width="52dp"
+        android:layout_height="52dp">
+
+        <com.juniperphoton.myerlist.widget.CircleView
+            android:id="@+id/row_category_color_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+
+    <EditText
+        android:id="@+id/row_category_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="130dp"
+        android:background="@android:color/transparent"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/arrange_delete"
+            android:layout_width="52dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/ripple_borderless">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+                android:alpha="0.4"
+                android:src="@drawable/ic_delete_dark" />
+        </FrameLayout>
+
+
+        <ImageView
+            android:id="@+id/arrange_thumb"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_alignParentRight="true"
+            android:alpha="0.4"
+            android:src="@drawable/ic_arrange_thumb" />
+    </LinearLayout>
+
+</RelativeLayout>
+

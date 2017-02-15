@@ -115,7 +115,7 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
             @Override
             public void execute(Realm realm) {
                 mData.add(item);
-                notifyItemInserted(mData.size() - 1);
+                notifyItemInserted(mData.indexOf(item) + (mHeaderView != null ? 1 : 0));
             }
         });
     }
@@ -125,7 +125,7 @@ public abstract class BaseAdapter<T, U extends BaseAdapter.BaseViewHolder>
             @Override
             public void execute(Realm realm) {
                 mData.remove(index);
-                notifyItemRemoved(index);
+                notifyItemRemoved(mHeaderView != null ? index + 1 : index);
             }
         });
     }

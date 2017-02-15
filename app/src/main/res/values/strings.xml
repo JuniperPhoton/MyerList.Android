@@ -74,5 +74,6 @@
     <string name="add_to_bottom_key">add_to_bottom_key</string>
     <string name="use_dark_theme_key">use_dark_theme_key</string>
     <string name="language_key">language_key</string>
+    <string name="add_header">ADD</string>
 
 </resources>
