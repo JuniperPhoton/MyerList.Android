@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PickColorActivity extends BaseActivity {
-    private static final int SPAN_COUNT = 8;
+    private static final int SPAN_COUNT = 6;
     public static final String RESULT_KEY = "picked_color";
 
     @BindView(R.id.color_picker_list)
@@ -32,7 +32,7 @@ public class PickColorActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.color_picker);
+        setContentView(R.layout.activity_color_picker);
         ButterKnife.bind(this);
         init();
         mRoot.setOnClickListener(new View.OnClickListener() {

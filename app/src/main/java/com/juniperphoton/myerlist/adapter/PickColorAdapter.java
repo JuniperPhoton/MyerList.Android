@@ -1,6 +1,5 @@
 package com.juniperphoton.myerlist.adapter;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 
 import com.juniperphoton.myerlist.R;
-import com.juniperphoton.myerlist.widget.CircleView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,46 +35,36 @@ public class PickColorAdapter extends BaseAdapter<Integer, PickColorAdapter.Pick
     }
 
     private void animateContainer(final View container, int position) {
-        int delay = 30 * (position);
-        int duration = 700;
+        int delay = 10 * (position);
+        int duration = 400;
 
-        container.setAlpha(0f);
-        container.setTranslationX(60);
+        float startAlpha = 0f;
+        int startTranslation = 40;
 
-        ValueAnimator animator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                container.setAlpha((float) valueAnimator.getAnimatedValue());
-            }
-        });
-        animator.setStartDelay(delay);
-        animator.setDuration(duration);
-        animator.start();
+        container.setAlpha(startAlpha);
+        container.setTranslationX(startTranslation);
 
-        ValueAnimator animator2 = ValueAnimator.ofInt(300, 0);
-        animator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                container.setTranslationX((int) valueAnimator.getAnimatedValue());
-            }
-        });
-        animator2.setInterpolator(new DecelerateInterpolator());
-        animator2.setStartDelay(delay);
-        animator2.setDuration(duration);
-        animator2.start();
+        container.animate().alpha(1.0f)
+                .translationX(0)
+                .setStartDelay(delay)
+                .setDuration(duration)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
     }
 
-    class PickColorHolder extends BaseAdapter.BaseViewHolder {
+    protected class PickColorHolder extends BaseAdapter.BaseViewHolder {
         @BindView(R.id.color_view)
         View mTintView;
+
+        @BindView(R.id.color_picker_item_root)
+        ViewGroup mRoot;
 
         Integer mColor;
 
         PickColorHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            mTintView.setOnClickListener(new View.OnClickListener() {
+            mRoot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mCallback != null && mColor != null) {

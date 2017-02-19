@@ -21,7 +21,6 @@ public class ColorUtil {
     public static List<Integer> generateColors() {
         List<Integer> list = new ArrayList<>();
         list.add(Color.parseColor("#F75B44"));
-        list.add(Color.parseColor("#EC4128"));
         list.add(Color.parseColor("#F73215"));
         list.add(Color.parseColor("#F7445B"));
         list.add(Color.parseColor("#E1184B"));
@@ -29,7 +28,6 @@ public class ColorUtil {
         list.add(Color.parseColor("#80224C"));
         list.add(Color.parseColor("#66436F"));
         list.add(Color.parseColor("#713A80"));
-        list.add(Color.parseColor("#5F3A80"));
         list.add(Color.parseColor("#4D3A80"));
         list.add(Color.parseColor("#352F44"));
         list.add(Color.parseColor("#474E88"));
@@ -46,7 +44,6 @@ public class ColorUtil {
         list.add(Color.parseColor("#4F9595"));
         list.add(Color.parseColor("#2C8D8D"));
         list.add(Color.parseColor("#00BEBE"));
-        list.add(Color.parseColor("#257575"));
         list.add(Color.parseColor("#2B8A78"));
         list.add(Color.parseColor("#3FBEA6"));
         list.add(Color.parseColor("#3FBE7D"));
@@ -59,7 +56,6 @@ public class ColorUtil {
         list.add(Color.parseColor("#F7D842"));
         list.add(Color.parseColor("#F79E42"));
         list.add(Color.parseColor("#FF8726"));
-        list.add(Color.parseColor("#EF7919"));
         return list;
     }
 }

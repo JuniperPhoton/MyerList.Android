@@ -29,11 +29,6 @@ public class CustomCategoryPresenter implements CustomCategoryContract.Presenter
     private List<ToDoCategory> mList;
 
     @Override
-    public void cancel() {
-        mView.finish();
-    }
-
-    @Override
     public void commit() {
         mView.hideKeyboard();
 

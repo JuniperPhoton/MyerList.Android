@@ -2,10 +2,12 @@ package com.juniperphoton.myerlist.activity;
 
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +31,6 @@ import butterknife.OnClick;
 
 public class CategoryManagementActivity extends BaseActivity implements CustomCategoryContract.View,
         CustomCategoryAdapter.Callback {
-
     @BindView(R.id.activity_category_manage_list)
     RecyclerView mCategoryList;
 
@@ -39,6 +40,8 @@ public class CategoryManagementActivity extends BaseActivity implements CustomCa
     private CustomCategoryAdapter mAdapter;
     private CustomCategoryContract.Presenter mPresenter;
     private ProgressDialog mProgressDialog;
+    private ToDoCategory mCategory;
+    private View mHeaderView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +56,26 @@ public class CategoryManagementActivity extends BaseActivity implements CustomCa
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        prepareToExit();
+    }
+
+    private void prepareToExit(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.exit_without_saving)
+                .setPositiveButton(R.string.ok_adding, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        CategoryManagementActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_adding, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
     @Override
@@ -79,8 +101,6 @@ public class CategoryManagementActivity extends BaseActivity implements CustomCa
 
         mCancelView.requestFocus();
     }
-
-    private View mHeaderView;
 
     private void createHeader() {
         mHeaderView = LayoutInflater.from(this).inflate(R.layout.add_cate_header, null, false);
@@ -130,7 +150,7 @@ public class CategoryManagementActivity extends BaseActivity implements CustomCa
 
     @OnClick(R.id.activity_cate_per_cancel_view)
     public void onClickCancel() {
-        mPresenter.cancel();
+        prepareToExit();
     }
 
     @OnClick(R.id.activity_cate_per_commit_view)
@@ -151,22 +171,10 @@ public class CategoryManagementActivity extends BaseActivity implements CustomCa
         }
     }
 
-    private ToDoCategory mCategory;
-
     @Override
     public void onClickSelectCategory(final ToDoCategory category) {
         mCategory = category;
         Intent intent = new Intent(this, PickColorActivity.class);
         startActivityForResult(intent, 0);
-    }
-
-    @Override
-    public void onClickDelete(ToDoCategory category) {
-
-    }
-
-    @Override
-    public void onArrangeCompleted() {
-
     }
 }

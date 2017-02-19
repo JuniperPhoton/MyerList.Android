@@ -19,8 +19,6 @@ public class CustomCategoryContract {
     }
 
     public interface Presenter extends com.juniperphoton.myerlist.presenter.Presenter {
-        void cancel();
-
         void commit();
 
         void refreshData();

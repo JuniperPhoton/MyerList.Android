@@ -69,4 +69,9 @@
     <string name="add_to_bottom_key">add_to_bottom_key</string>
     <string name="use_dark_theme_key">use_dark_theme_key</string>
     <string name="language_key">language_key</string>
+    <string name="add">添加</string>
+    <string name="add_header">添加</string>
+    <string name="pick_a_color">选取一个颜色</string>
+    <string name="edit_category_name_title">编辑</string>
+    <string name="exit_without_saving">不保存吗？</string>
 </resources>

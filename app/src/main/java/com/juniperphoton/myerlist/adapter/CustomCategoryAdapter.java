@@ -1,19 +1,20 @@
 package com.juniperphoton.myerlist.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.juniperphoton.myerlist.R;
 import com.juniperphoton.myerlist.model.ToDoCategory;
-import com.juniperphoton.myerlist.realm.RealmUtils;
 import com.juniperphoton.myerlist.util.CustomItemTouchHelper;
 import com.juniperphoton.myerlist.util.KeyboardUtil;
 import com.juniperphoton.myerlist.widget.CircleView;
@@ -22,7 +23,6 @@ import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 public class CustomCategoryAdapter extends BaseAdapter<ToDoCategory, CustomCategoryAdapter.CustomCategoryViewHolder> {
     private Context mContext;
@@ -54,7 +54,6 @@ public class CustomCategoryAdapter extends BaseAdapter<ToDoCategory, CustomCateg
             }
             Collections.swap(getData(), pos, targetPos);
             notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-            mCallback.onArrangeCompleted();
             return false;
         }
 
@@ -97,7 +96,7 @@ public class CustomCategoryAdapter extends BaseAdapter<ToDoCategory, CustomCateg
         CircleView mCateView;
 
         @BindView(R.id.row_category_content)
-        EditText mEditTextView;
+        TextView mNameTextView;
 
         @BindView(R.id.arrange_delete)
         View mDeleteView;
@@ -115,9 +114,6 @@ public class CustomCategoryAdapter extends BaseAdapter<ToDoCategory, CustomCateg
                 @Override
                 public void onClick(View v) {
                     removeData(getAdapterPosition() - 1);
-                    if (mCallback != null) {
-                        mCallback.onClickDelete(mCategory);
-                    }
                 }
             });
 
@@ -136,11 +132,43 @@ public class CustomCategoryAdapter extends BaseAdapter<ToDoCategory, CustomCateg
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             helper.startDrag(CustomCategoryViewHolder.this);
-                            mEditTextView.clearFocus();
-                            KeyboardUtil.hide(mContext, mEditTextView.getWindowToken());
                             return true;
                     }
                     return true;
+                }
+            });
+
+            mNameTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final FrameLayout root = (FrameLayout) LayoutInflater.from(mContext).inflate(R.layout.dialog_edit_name, null, false);
+                    final EditText editText = (EditText) root.findViewById(R.id.edit_text_view);
+
+                    if (mCategory != null) {
+                        editText.setText(mCategory.getName());
+                        editText.setSelection(editText.getText().length());
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setView(root)
+                            .setTitle(R.string.edit_category_name_title)
+                            .setPositiveButton(mContext.getString(R.string.ok_adding), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    if (mCategory != null && mNameTextView != null) {
+                                        mCategory.setName(editText.getText().toString());
+                                        mNameTextView.setText(editText.getText().toString());
+                                    }
+                                }
+                            })
+                            .setNegativeButton(mContext.getString(R.string.cancel_adding), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).create().show();
+                    KeyboardUtil.show(mContext, editText, 50);
                 }
             });
         }
@@ -148,31 +176,11 @@ public class CustomCategoryAdapter extends BaseAdapter<ToDoCategory, CustomCateg
         private void bind(final ToDoCategory toDoCategory) {
             mCategory = toDoCategory;
             mCateView.setColor(mCategory.getIntColor());
-            mEditTextView.setText(mCategory.getName());
-            mEditTextView.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    mCategory.setName(s.toString());
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
+            mNameTextView.setText(mCategory.getName());
         }
     }
 
     public interface Callback {
         void onClickSelectCategory(ToDoCategory category);
-
-        void onClickDelete(ToDoCategory category);
-
-        void onArrangeCompleted();
     }
 }
