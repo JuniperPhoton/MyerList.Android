@@ -43,7 +43,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
     Button mButton;
 
     private LoginPresenter mPresenter;
-
+    private int mLoginMode;
     private ProgressDialog mDialog;
 
     @Override
@@ -56,8 +56,8 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     private void initViews() {
         Intent intent = getIntent();
-        int loginMode = intent.getIntExtra(Params.LOGIN_MODE, -1);
-        switch (loginMode) {
+        mLoginMode = intent.getIntExtra(Params.LOGIN_MODE, -1);
+        switch (mLoginMode) {
             case Params.LoginMode.LOGIN:
                 mTitle.setText(getString(R.string.login_title));
                 mSecondPasswordLayout.setVisibility(View.GONE);
@@ -72,8 +72,9 @@ public class LoginActivity extends BaseActivity implements LoginView {
         if (DEBUG) {
             mEmailView.setText("dengweichao@hotmail.com");
             mPasswordView.setText("test");
+            mSecondPasswordView.setText("test");
         }
-        mPresenter = new LoginPresenter(this, loginMode);
+        mPresenter = new LoginPresenter(this, mLoginMode);
     }
 
     @Override
@@ -95,12 +96,17 @@ public class LoginActivity extends BaseActivity implements LoginView {
     void onClickButton() {
         mDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         mDialog.setTitle(getString(R.string.loading_hint));
+        mDialog.setMessage(getString(R.string.waitting));
         mDialog.show();
-        mPresenter.login();
+        if (mLoginMode == Params.LoginMode.LOGIN) {
+            mPresenter.login();
+        } else {
+            mPresenter.register();
+        }
     }
 
     @Override
-    public void afterLogin(boolean ok) {
+    public void navigateToMain(boolean ok) {
         mDialog.dismiss();
         if (ok) {
             Intent intent = new Intent(this, MainActivity.class);

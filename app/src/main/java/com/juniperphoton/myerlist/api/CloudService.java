@@ -8,6 +8,7 @@ import com.juniperphoton.myerlist.api.response.GetOrderResponse;
 import com.juniperphoton.myerlist.api.response.GetSaltResponse;
 import com.juniperphoton.myerlist.api.response.LoginResponse;
 import com.juniperphoton.myerlist.api.response.GetToDosResponse;
+import com.juniperphoton.myerlist.api.response.RegisterResponse;
 import com.juniperphoton.myerlist.util.AppConfig;
 
 import java.util.concurrent.TimeUnit;
@@ -55,6 +56,10 @@ public class CloudService {
 
     public Observable<LoginResponse> login(String email, String pwd) {
         return mRetrofit.create(UserService.class).login(email, pwd);
+    }
+
+    public Observable<RegisterResponse> register(String email, String pwd) {
+        return mRetrofit.create(UserService.class).register(email, pwd);
     }
 
     public Observable<CateResponse> getCategories() {

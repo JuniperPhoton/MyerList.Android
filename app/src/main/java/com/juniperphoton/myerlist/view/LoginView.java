@@ -2,7 +2,7 @@ package com.juniperphoton.myerlist.view;
 
 
 public interface LoginView {
-    void afterLogin(boolean ok);
+    void navigateToMain(boolean ok);
 
     String getEmail();
 

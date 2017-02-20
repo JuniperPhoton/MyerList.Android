@@ -79,5 +79,6 @@
     <string name="pick_a_color">PICK A COLOR</string>
     <string name="edit_category_name_title">EDIT CATEGORY NAME</string>
     <string name="exit_without_saving">Exit without saving?</string>
+    <string name="waitting">Please wait</string>
 
 </resources>

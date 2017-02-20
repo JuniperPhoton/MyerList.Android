@@ -3,8 +3,8 @@ package com.juniperphoton.myerlist.api;
 import com.juniperphoton.myerlist.api.response.CheckUserResponse;
 import com.juniperphoton.myerlist.api.response.GetSaltResponse;
 import com.juniperphoton.myerlist.api.response.LoginResponse;
+import com.juniperphoton.myerlist.api.response.RegisterResponse;
 
-import okhttp3.ResponseBody;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
@@ -18,7 +18,7 @@ public interface UserService {
 
     @FormUrlEncoded
     @POST("User/Register/v1?")
-    Observable<ResponseBody> register(@Field("email") String email, @Field("password") String pwd);
+    Observable<RegisterResponse> register(@Field("email") String email, @Field("password") String pwd);
 
     @FormUrlEncoded
     @POST("User/Login/v1?")

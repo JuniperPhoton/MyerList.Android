@@ -17,8 +17,15 @@ public class User extends RealmObject {
     @SerializedName("access_token")
     private String mAccessToken;
 
+    @SerializedName("Salt")
+    private String mSalt;
+
     public User() {
 
+    }
+
+    public String getSalt() {
+        return mSalt;
     }
 
     public int getSID() {
