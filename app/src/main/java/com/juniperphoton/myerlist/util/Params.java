@@ -10,6 +10,7 @@ public class Params {
     public static final String SETTING_ADD_TO_BOTTOM_KEY = "addToBottom";
 
     public static final String LOGIN_MODE = "login_mode";
+    public static final String LANGUAGE_KEY = "language";
 
     public static class LoginMode {
         public static final int LOGIN = 0;

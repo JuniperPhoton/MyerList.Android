@@ -54,6 +54,7 @@
 
         <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:layout_width="match_parent"
+            android:id="@+id/settings_item_change_lang"
             android:layout_height="wrap_content"
             app:has_checkbox="false"
             app:setting_content="@string/change_lang_hint_english"

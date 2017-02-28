@@ -32,6 +32,8 @@ public class SettingsItemLayout extends FrameLayout {
     @BindView(R.id.settings_item_root)
     View mRootView;
 
+    private Callback mCallback;
+
     private boolean mDefaultValue;
     private String mKey;
     private Context mContext;
@@ -73,12 +75,19 @@ public class SettingsItemLayout extends FrameLayout {
             @Override
             public void onClick(View v) {
                 compoundButton.setChecked(!compoundButton.isChecked());
+                if (mCallback != null) {
+                    mCallback.onClick();
+                }
             }
         });
 
         if (hasCheckbox) {
             initViews();
         }
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     private void initViews() {
@@ -114,6 +123,10 @@ public class SettingsItemLayout extends FrameLayout {
 
     public void setContent(String content) {
         contentTextView.setText(content);
+    }
+
+    public interface Callback {
+        void onClick();
     }
 }
 
