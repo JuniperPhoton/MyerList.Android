@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/MyerListGray"
-                android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/MyerListGray"
+    android:orientation="vertical">
 
-    <include layout="@layout/status_bar_layout"/>
+    <include layout="@layout/status_bar_layout" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,17 +17,17 @@
         <com.juniperphoton.myerlist.widget.CommonTitleBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="@string/settings_title"/>
+            app:title="@string/settings_title" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-            android:layout_marginLeft="@dimen/settings_margin_left"
+            android:layout_marginStart="@dimen/settings_margin_left"
             android:layout_marginTop="@dimen/settings_margin_up_and_down"
             android:text="@string/personalization_setting"
             android:textColor="@color/MyerListBlue"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:id="@+id/setting_item_add_to_bottom"
@@ -38,18 +38,19 @@
             app:key="@string/add_to_bottom"
             app:setting_content="@string/add_to_bottom_hint"
             app:setting_title="@string/add_to_bottom"
-            app:show_divider="true"/>
+            app:show_divider="true" />
 
         <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:id="@+id/setting_item_dark_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:default_checkbox_value="false"
             app:has_checkbox="true"
             app:key="@string/use_dark_theme_key"
             app:setting_content="@string/dark_mode_hint"
             app:setting_title="@string/dark_mode"
-            app:show_divider="true"/>
+            app:show_divider="true" />
 
         <com.juniperphoton.myerlist.widget.SettingsItemLayout
             android:layout_width="match_parent"
@@ -57,17 +58,17 @@
             app:has_checkbox="false"
             app:setting_content="@string/change_lang_hint_english"
             app:setting_title="@string/change_lang"
-            app:show_divider="false"/>
+            app:show_divider="false" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-            android:layout_marginLeft="@dimen/settings_margin_left"
+            android:layout_marginStart="@dimen/settings_margin_left"
             android:layout_marginTop="@dimen/settings_margin_up_and_down"
             android:text="@string/account"
             android:textColor="@color/MyerListBlue"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/settings_logout"
@@ -79,7 +80,7 @@
             android:layout_marginRight="@dimen/settings_margin_left"
             android:layout_marginTop="@dimen/settings_margin_up_and_down"
             android:background="@drawable/ripple_grey"
-            android:text="@string/logout"/>
+            android:text="@string/logout" />
 
     </LinearLayout>
 

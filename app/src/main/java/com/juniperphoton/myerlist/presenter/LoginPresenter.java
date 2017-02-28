@@ -5,7 +5,6 @@ import com.juniperphoton.myerlist.R;
 import com.juniperphoton.myerlist.api.APIException;
 import com.juniperphoton.myerlist.api.CloudService;
 import com.juniperphoton.myerlist.api.response.CheckUserResponse;
-import com.juniperphoton.myerlist.api.response.CommonResponse;
 import com.juniperphoton.myerlist.api.response.GetSaltResponse;
 import com.juniperphoton.myerlist.api.response.LoginResponse;
 import com.juniperphoton.myerlist.api.response.RegisterResponse;
@@ -33,6 +32,39 @@ public class LoginPresenter implements Presenter {
     private String mEmail;
     private String mPassword;
     private String mPassword2;
+    private Func1<LoginResponse, User> getUserFunc = new Func1<LoginResponse, User>() {
+        @Override
+        public User call(LoginResponse loginResponse) {
+            User user = loginResponse.getUser();
+            if (user != null) {
+                return user;
+            }
+            throw Exceptions.propagate(new APIException(loginResponse.getFriendErrorMessage()));
+        }
+    };
+    private Subscriber<User> loginSubscriber = new Subscriber<User>() {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            e.printStackTrace();
+            if (e instanceof APIException) {
+                ToastService.sendShortToast(e.getMessage());
+            }
+            mLoginView.navigateToMain(false);
+        }
+
+        @Override
+        public void onNext(User user) {
+            LocalSettingUtil.putString(App.getInstance(), Params.SID_KEY, String.valueOf(user.getSID()));
+            LocalSettingUtil.putString(App.getInstance(), Params.ACCESS_TOKEN_KEY, user.getAccessToken());
+            LocalSettingUtil.putString(App.getInstance(), Params.EMAIL_KEY, mEmail);
+            mLoginView.navigateToMain(true);
+        }
+    };
 
     public LoginPresenter(LoginView loginView, int mode) {
         mLoginView = loginView;
@@ -77,48 +109,12 @@ public class LoginPresenter implements Presenter {
         return Security.get32MD5Str(Security.get32MD5Str(pwd) + salt);
     }
 
-    private Func1<LoginResponse, User> getUserFunc = new Func1<LoginResponse, User>() {
-        @Override
-        public User call(LoginResponse loginResponse) {
-            User user = loginResponse.getUser();
-            if (user != null) {
-                return user;
-            }
-            throw Exceptions.propagate(new APIException(loginResponse.getFriendErrorMessage()));
-        }
-    };
-
-    private Subscriber<User> loginSubscriber = new Subscriber<User>() {
-        @Override
-        public void onCompleted() {
-
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            if (e instanceof APIException) {
-                ToastService.sendShortToast(e.getMessage());
-            }
-            mLoginView.navigateToMain(false);
-        }
-
-        @Override
-        public void onNext(User user) {
-            LocalSettingUtil.putString(App.getInstance(), Params.SID_KEY, String.valueOf(user.getSID()));
-            LocalSettingUtil.putString(App.getInstance(), Params.ACCESS_TOKEN_KEY, user.getAccessToken());
-            LocalSettingUtil.putString(App.getInstance(), Params.EMAIL_KEY, mEmail);
-            mLoginView.navigateToMain(false);
-        }
-    };
-
     public void register() {
         if (!isDataValid()) {
             mLoginView.navigateToMain(false);
             return;
         }
         CloudService.getInstance().checkUserExist(mEmail)
-                .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<CheckUserResponse, Observable<RegisterResponse>>() {
                     @Override
                     public Observable<RegisterResponse> call(CheckUserResponse response) {

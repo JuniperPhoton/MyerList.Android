@@ -1,6 +1,5 @@
 package com.juniperphoton.myerlist.widget;
 
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.AppCompatCheckBox;
@@ -12,9 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myerlist.R;
-import com.juniperphoton.myerlist.activity.SettingsActivity;
 import com.juniperphoton.myerlist.util.LocalSettingUtil;
-import com.juniperphoton.myerlist.util.Params;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,12 +100,12 @@ public class SettingsItemLayout extends FrameLayout {
         compoundButton.setOnCheckedChangeListener(onCheckedListener);
     }
 
-    public void setChecked(boolean checked) {
-        compoundButton.setChecked(checked);
-    }
-
     public boolean getChecked() {
         return compoundButton.isChecked();
+    }
+
+    public void setChecked(boolean checked) {
+        compoundButton.setChecked(checked);
     }
 
     public void setTitle(String title) {

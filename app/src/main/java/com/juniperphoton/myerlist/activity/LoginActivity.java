@@ -22,26 +22,19 @@ import butterknife.OnClick;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LoginActivity extends BaseActivity implements LoginView {
-    private boolean DEBUG = true;
-
     @BindView(R.id.login_email)
     EditText mEmailView;
-
     @BindView(R.id.login_pwd)
     EditText mPasswordView;
-
     @BindView(R.id.login_second_pwd)
     EditText mSecondPasswordView;
-
     @BindView(R.id.login_second_pwd_layout)
     TextInputLayout mSecondPasswordLayout;
-
     @BindView(R.id.login_title)
     TextView mTitle;
-
     @BindView(R.id.login_btn)
     Button mButton;
-
+    private boolean DEBUG = true;
     private LoginPresenter mPresenter;
     private int mLoginMode;
     private ProgressDialog mDialog;
@@ -97,6 +90,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
         mDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         mDialog.setTitle(getString(R.string.loading_hint));
         mDialog.setMessage(getString(R.string.waitting));
+        mDialog.setCancelable(false);
         mDialog.show();
         if (mLoginMode == Params.LoginMode.LOGIN) {
             mPresenter.login();

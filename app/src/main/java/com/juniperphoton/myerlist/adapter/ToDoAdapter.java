@@ -36,19 +36,6 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
     private boolean mCanDrag = true;
 
     private RecyclerView mRecyclerView;
-
-    public ToDoAdapter() {
-        super();
-    }
-
-    public void setCallback(OnItemOperationCompletedCallback callback) {
-        mCallback = callback;
-    }
-
-    public void setCanDrag(boolean canDrag) {
-        mCanDrag = canDrag;
-    }
-
     private CustomItemTouchHelper helper = new CustomItemTouchHelper(new CustomItemTouchHelper.Callback() {
         private final float SWIPE_THRESHOLD = 0.4f;
 
@@ -64,7 +51,10 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             ToDo toDo = getData(viewHolder.getAdapterPosition());
-            if (toDo != null && toDo.isDeleted()) {
+            if (!toDo.isValid()) {
+                return makeMovementFlags(0, 0);
+            }
+            if (toDo.isDeleted()) {
                 return makeMovementFlags(0, CustomItemTouchHelper.LEFT);
             }
             int dragFlags = CustomItemTouchHelper.UP | CustomItemTouchHelper.DOWN;
@@ -124,7 +114,6 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             //getToDoViewHolder(viewHolder).setBackgroundTransparent();
         }
     });
-
     private RealmChangeListener realmChangeListener = new RealmChangeListener() {
         @Override
         public void onChange(Object element) {
@@ -134,6 +123,18 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             }
         }
     };
+
+    public ToDoAdapter() {
+        super();
+    }
+
+    public void setCallback(OnItemOperationCompletedCallback callback) {
+        mCallback = callback;
+    }
+
+    public void setCanDrag(boolean canDrag) {
+        mCanDrag = canDrag;
+    }
 
     @Override
     protected ToDoAdapter.ToDoViewHolder onCreateItemViewHolder(ViewGroup parent) {
