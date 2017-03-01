@@ -26,6 +26,7 @@ import com.juniperphoton.myerlist.adapter.CategoryAdapter;
 import com.juniperphoton.myerlist.adapter.ToDoAdapter;
 import com.juniperphoton.myerlist.callback.OnDrawerSelectedChanged;
 import com.juniperphoton.myerlist.callback.OnItemOperationCompletedCallback;
+import com.juniperphoton.myerlist.event.ReCreateEvent;
 import com.juniperphoton.myerlist.model.ToDo;
 import com.juniperphoton.myerlist.model.ToDoCategory;
 import com.juniperphoton.myerlist.presenter.MainContract;
@@ -38,6 +39,10 @@ import com.juniperphoton.myerlist.util.StartEndAnimator;
 import com.juniperphoton.myerlist.util.TypefaceUtil;
 import com.juniperphoton.myerlist.widget.AddingView;
 import com.juniperphoton.myerlist.widget.SelectCategoryView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,12 +161,18 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         if (mCateAdapter != null) {
             displayCategories();
         }
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mPresenter.stop();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     /**
@@ -570,5 +581,11 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     @Override
     public void onClickCancel() {
         hideAddingView();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    void receiveEvent(ReCreateEvent event){
+        recreate();
+        EventBus.getDefault().removeAllStickyEvents();
     }
 }

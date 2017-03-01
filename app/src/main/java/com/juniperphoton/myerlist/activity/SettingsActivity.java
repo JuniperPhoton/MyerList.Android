@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 
 import com.juniperphoton.myerlist.App;
 import com.juniperphoton.myerlist.R;
+import com.juniperphoton.myerlist.event.ReCreateEvent;
 import com.juniperphoton.myerlist.util.LocalSettingUtil;
 import com.juniperphoton.myerlist.widget.SettingsItemLayout;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Locale;
 
@@ -75,7 +77,8 @@ public class SettingsActivity extends BaseActivity {
                         if (finalDefaultIndex != which) {
                             config.setLocale(which == 0 ? Locale.ENGLISH : Locale.SIMPLIFIED_CHINESE);
                             resources.updateConfiguration(config, dm);
-                            recreate();
+                            EventBus.getDefault().postSticky(new ReCreateEvent());
+                            finish();
                         }
                     }
                 })

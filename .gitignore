@@ -50,3 +50,10 @@ captures/
 *.jks
 *.psd
 *.stackdump
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/runConfigurations.xml
+.idea/vcs.xml
+app/build.gradle
