@@ -584,7 +584,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    void receiveEvent(ReCreateEvent event){
+    public void receiveEvent(ReCreateEvent event){
         recreate();
         EventBus.getDefault().removeAllStickyEvents();
     }
