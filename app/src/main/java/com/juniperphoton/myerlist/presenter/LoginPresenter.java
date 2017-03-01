@@ -32,43 +32,49 @@ public class LoginPresenter implements Presenter {
     private String mEmail;
     private String mPassword;
     private String mPassword2;
-    private Func1<LoginResponse, User> getUserFunc = new Func1<LoginResponse, User>() {
-        @Override
-        public User call(LoginResponse loginResponse) {
-            User user = loginResponse.getUser();
-            if (user != null) {
-                return user;
-            }
-            throw Exceptions.propagate(new APIException(loginResponse.getFriendErrorMessage()));
-        }
-    };
-    private Subscriber<User> loginSubscriber = new Subscriber<User>() {
-        @Override
-        public void onCompleted() {
-
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            if (e instanceof APIException) {
-                ToastService.sendShortToast(e.getMessage());
-            }
-            mLoginView.navigateToMain(false);
-        }
-
-        @Override
-        public void onNext(User user) {
-            LocalSettingUtil.putString(App.getInstance(), Params.SID_KEY, String.valueOf(user.getSID()));
-            LocalSettingUtil.putString(App.getInstance(), Params.ACCESS_TOKEN_KEY, user.getAccessToken());
-            LocalSettingUtil.putString(App.getInstance(), Params.EMAIL_KEY, mEmail);
-            mLoginView.navigateToMain(true);
-        }
-    };
 
     public LoginPresenter(LoginView loginView, int mode) {
         mLoginView = loginView;
         mMode = mode;
+    }
+
+    private Func1<LoginResponse, User> getUserFunc() {
+        return new Func1<LoginResponse, User>() {
+            @Override
+            public User call(LoginResponse loginResponse) {
+                User user = loginResponse.getUser();
+                if (user != null) {
+                    return user;
+                }
+                throw Exceptions.propagate(new APIException(loginResponse.getFriendErrorMessage()));
+            }
+        };
+    }
+
+    private Subscriber<User> getLoginSubscriber() {
+        return new Subscriber<User>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                e.printStackTrace();
+                if (e instanceof APIException) {
+                    ToastService.sendShortToast(e.getMessage());
+                }
+                mLoginView.navigateToMain(false);
+            }
+
+            @Override
+            public void onNext(User user) {
+                LocalSettingUtil.putString(App.getInstance(), Params.SID_KEY, String.valueOf(user.getSID()));
+                LocalSettingUtil.putString(App.getInstance(), Params.ACCESS_TOKEN_KEY, user.getAccessToken());
+                LocalSettingUtil.putString(App.getInstance(), Params.EMAIL_KEY, mEmail);
+                mLoginView.navigateToMain(true);
+            }
+        };
     }
 
     private boolean isDataValid() {
@@ -105,7 +111,7 @@ public class LoginPresenter implements Presenter {
         return true;
     }
 
-    private String encrpyPwd(String pwd, String salt) {
+    private String encryptPwd(String pwd, String salt) {
         return Security.get32MD5Str(Security.get32MD5Str(pwd) + salt);
     }
 
@@ -115,18 +121,20 @@ public class LoginPresenter implements Presenter {
             return;
         }
         CloudService.getInstance().checkUserExist(mEmail)
+                .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<CheckUserResponse, Observable<RegisterResponse>>() {
                     @Override
                     public Observable<RegisterResponse> call(CheckUserResponse response) {
-                        if (response.getExist()) {
+                        if (!response.getExist()) {
                             return CloudService.getInstance().register(mEmail, mPassword);
                         }
-                        return Observable.error(new APIException(response.getFriendErrorMessage()));
+                        return Observable.error(new APIException(App.getInstance()
+                                .getString(R.string.email_registered)));
                     }
                 })
-                .map(getUserFunc)
+                .map(getUserFunc())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(loginSubscriber);
+                .subscribe(getLoginSubscriber());
     }
 
     public void login() {
@@ -152,14 +160,14 @@ public class LoginPresenter implements Presenter {
                             if (DEBUG) {
                                 return CloudService.getInstance().login(mEmail, "6a311e59630cfd8372904e2a1f03aaf7");
                             }
-                            return CloudService.getInstance().login(mEmail, encrpyPwd(mPassword, response.getSalt()));
+                            return CloudService.getInstance().login(mEmail, encryptPwd(mPassword, response.getSalt()));
                         }
                         return Observable.error(new APIException(response.getFriendErrorMessage()));
                     }
                 })
-                .map(getUserFunc)
+                .map(getUserFunc())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(loginSubscriber);
+                .subscribe(getLoginSubscriber());
     }
 
     @Override

@@ -75,4 +75,5 @@
     <string name="edit_category_name_title">编辑</string>
     <string name="exit_without_saving">不保存吗？</string>
     <string name="waitting">稍等片刻</string>
+    <string name="email_registered">电子邮件已经被注册了</string>
 </resources>

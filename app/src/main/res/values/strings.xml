@@ -48,7 +48,7 @@
     <string name="loading_hint">LOADING...</string>
     <string name="account_drawer">ACCOUNT</string>
 
-    <string name="confirm_to_logout"></string>
+    <string name="confirm_to_logout">Confirm to logout?</string>
     <string name="confirm_ok">OK</string>
     <string name="confirm_cancel">CANCEL</string>
 
@@ -80,5 +80,6 @@
     <string name="edit_category_name_title">EDIT CATEGORY NAME</string>
     <string name="exit_without_saving">Exit without saving?</string>
     <string name="waitting">Please wait</string>
+    <string name="email_registered">The email has been registered</string>
 
 </resources>

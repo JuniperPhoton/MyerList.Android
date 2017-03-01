@@ -1,7 +1,7 @@
 package com.juniperphoton.myerlist.api;
 
 
-public class APIException extends Exception {
+public class APIException extends RuntimeException {
     public APIException(String msg) {
         super(msg);
     }
