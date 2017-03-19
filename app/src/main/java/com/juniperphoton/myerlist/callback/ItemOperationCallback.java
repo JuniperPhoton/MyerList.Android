@@ -3,7 +3,7 @@ package com.juniperphoton.myerlist.callback;
 
 import android.view.View;
 
-public interface OnItemOperationCompletedCallback {
+public interface ItemOperationCallback {
     void onArrangeCompleted();
 
     void onUpdateDone(int position);

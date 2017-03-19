@@ -24,7 +24,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class LoginPresenter implements Presenter {
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
 
     private LoginView mLoginView;
     private int mMode;
@@ -126,7 +126,10 @@ public class LoginPresenter implements Presenter {
                     @Override
                     public Observable<RegisterResponse> call(CheckUserResponse response) {
                         if (!response.getExist()) {
-                            return CloudService.getInstance().register(mEmail, mPassword);
+                            if (DEBUG) {
+                                return CloudService.getInstance().register(mEmail, "6a311e59630cfd8372904e2a1f03aaf7");
+                            }
+                            return CloudService.getInstance().register(mEmail, Security.get32MD5Str(mPassword));
                         }
                         return Observable.error(new APIException(App.getInstance()
                                 .getString(R.string.email_registered)));

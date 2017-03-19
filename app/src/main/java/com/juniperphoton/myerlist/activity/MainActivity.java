@@ -24,8 +24,8 @@ import android.widget.TextView;
 import com.juniperphoton.myerlist.R;
 import com.juniperphoton.myerlist.adapter.CategoryAdapter;
 import com.juniperphoton.myerlist.adapter.ToDoAdapter;
+import com.juniperphoton.myerlist.callback.ItemOperationCallback;
 import com.juniperphoton.myerlist.callback.OnDrawerSelectedChanged;
-import com.juniperphoton.myerlist.callback.OnItemOperationCompletedCallback;
 import com.juniperphoton.myerlist.event.ReCreateEvent;
 import com.juniperphoton.myerlist.model.ToDo;
 import com.juniperphoton.myerlist.model.ToDoCategory;
@@ -57,7 +57,7 @@ import io.realm.Sort;
 
 @SuppressWarnings("UnusedDeclaration")
 public class MainActivity extends BaseActivity implements MainContract.View, OnDrawerSelectedChanged,
-        OnItemOperationCompletedCallback, AddingView.AddingViewCallback {
+        ItemOperationCallback, AddingView.AddingViewCallback {
     private static final String TAG = "MainActivity";
 
     @BindView(R.id.toolbar)
@@ -93,6 +93,15 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     @BindView(R.id.no_item_layout)
     View mNoItemLayout;
 
+    private RealmChangeListener mListener = new RealmChangeListener() {
+        @Override
+        public void onChange(Object element) {
+            if (mToDoAdapter != null) {
+                mToDoAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
     private CategoryAdapter mCateAdapter;
     private ToDoAdapter mToDoAdapter;
 
@@ -107,13 +116,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     private boolean mHandledShortCuts;
 
     private int mModifyingToDoId = -1;
-
-    private RealmChangeListener<RealmResults<ToDo>> mRealmChangeListener = new RealmChangeListener<RealmResults<ToDo>>() {
-        @Override
-        public void onChange(RealmResults<ToDo> element) {
-            //updateNoItemUi(element.getToDos().size() == 0);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +163,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         if (mCateAdapter != null) {
             displayCategories();
         }
-        if(!EventBus.getDefault().isRegistered(this)){
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
     }
@@ -170,7 +172,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     protected void onPause() {
         super.onPause();
         mPresenter.stop();
-        if(EventBus.getDefault().isRegistered(this)){
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
     }
@@ -204,7 +206,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
                 if (mCateAdapter != null && mCateAdapter.getData().size() > 0) {
                     mPresenter.getToDos();
                 } else {
-                    mPresenter.getCates();
+                    mPresenter.getCategories();
                 }
             }
         });
@@ -264,7 +266,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     }
 
     private void initData() {
-        mPresenter.getCates();
+        mPresenter.getCategories();
     }
 
     @OnClick(R.id.drawer_settings)
@@ -343,9 +345,9 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         mRefreshLayout.setRefreshing(true);
 
         Realm realm = RealmUtils.getMainInstance();
-        realm.beginTransaction();
 
         RealmResults<ToDoCategory> categories = realm.where(ToDoCategory.class)
+                .equalTo(ToDoCategory.SID_KEY, LocalSettingUtil.getString(this, Params.SID_KEY))
                 .findAllSorted(ToDoCategory.POSITION_KEY, Sort.ASCENDING);
         List<ToDoCategory> list = new ArrayList<>();
         if (categories != null) {
@@ -356,7 +358,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         list.add(0, ToDoCategory.getAllCategory());
         list.add(ToDoCategory.getDeletedCategory());
         list.add(ToDoCategory.getPersonalizationCategory());
-        realm.commitTransaction();
 
         mCateAdapter.refreshData(list);
         mCateAdapter.selectItem(0);
@@ -369,42 +370,36 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
     @Override
     public void displayToDos() {
         List<ToDo> resultsWrapper = new ArrayList<>();
+        RealmResults<ToDo> results = null;
 
         Realm realm = RealmUtils.getMainInstance();
-        realm.beginTransaction();
 
         switch (mSelectedCategoryId) {
             case ToDoCategory.PERSONALIZATION_ID:
                 break;
             case ToDoCategory.DELETED_ID:
-                RealmResults<ToDo> deletedResults = realm.where(ToDo.class)
+                results = realm.where(ToDo.class)
                         .equalTo(ToDo.DELETED_KEY, Boolean.TRUE)
+                        .equalTo(ToDoCategory.SID_KEY, LocalSettingUtil.getString(this, Params.SID_KEY))
                         .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING);
-                for (ToDo toDo : deletedResults) {
-                    resultsWrapper.add(toDo);
-                }
                 break;
             case ToDoCategory.ALL_ID:
-                RealmResults<ToDo> results = realm.where(ToDo.class).notEqualTo(ToDo.DELETED_KEY, Boolean.TRUE)
+                results = realm.where(ToDo.class).notEqualTo(ToDo.DELETED_KEY, Boolean.TRUE)
                         .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING);
-                for (ToDo toDo : results) {
-                    resultsWrapper.add(toDo);
-                }
                 break;
             default:
-                RealmResults<ToDo> toDos = realm.where(ToDo.class)
+                results = realm.where(ToDo.class)
                         .notEqualTo(ToDo.DELETED_KEY, Boolean.TRUE)
                         .equalTo(ToDo.CATE_KEY, String.valueOf(mSelectedCategoryId))
                         .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING);
-                for (ToDo toDo : toDos) {
-                    resultsWrapper.add(toDo);
-                }
                 break;
+        }
+        results.addChangeListener(mListener);
+        for (ToDo toDo : results) {
+            resultsWrapper.add(toDo);
         }
         updateNoItemUi(resultsWrapper.size() == 0);
         mToDoAdapter.refreshData(resultsWrapper);
-
-        realm.commitTransaction();
 
         updateCount();
         mRefreshLayout.setRefreshing(false);
@@ -414,7 +409,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         int count = 0;
         List<ToDo> toDos = mToDoAdapter.getData();
         for (ToDo todo : toDos) {
-            if (todo.getIsdone().equals("0")) {
+            if (todo.getIsdone().equals(ToDo.IS_NOT_DONE)) {
                 count++;
             }
         }
@@ -583,8 +578,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, OnD
         hideAddingView();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void receiveEvent(ReCreateEvent event){
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void receiveEvent(ReCreateEvent event) {
         recreate();
         EventBus.getDefault().removeAllStickyEvents();
     }

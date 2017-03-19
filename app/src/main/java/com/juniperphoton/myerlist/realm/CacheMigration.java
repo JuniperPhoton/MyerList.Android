@@ -10,7 +10,6 @@ public class CacheMigration implements RealmMigration {
         RealmSchema schema = realm.getSchema();
 
         if (oldVersion == 1) {
-
         }
     }
 }

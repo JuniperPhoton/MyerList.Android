@@ -6,4 +6,6 @@
     <dimen name="settings_margin_up_and_down">12dp</dimen>
     <dimen name="settings_margin_left">20dp</dimen>
     <dimen name="fab_center_margin">28dp</dimen>
+    <dimen name="todo_item_margin">12dp</dimen>
+    <dimen name="todo_item_thumb_size">52dp</dimen>
 </resources>

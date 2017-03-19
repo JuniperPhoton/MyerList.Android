@@ -1,8 +1,10 @@
 package com.juniperphoton.myerlist.presenter;
 
+import android.app.Application;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myerlist.App;
 import com.juniperphoton.myerlist.R;
 import com.juniperphoton.myerlist.api.APIException;
@@ -17,9 +19,13 @@ import com.juniperphoton.myerlist.model.ToDo;
 import com.juniperphoton.myerlist.model.ToDoCategory;
 import com.juniperphoton.myerlist.realm.RealmUtils;
 import com.juniperphoton.myerlist.util.AppConfig;
+import com.juniperphoton.myerlist.util.LocalSettingUtil;
+import com.juniperphoton.myerlist.util.Params;
 import com.juniperphoton.myerlist.util.ToastService;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +40,6 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MainPresenter implements MainContract.Presenter {
-
     private static final String TAG = "MainPresenter";
 
     private MainContract.View mView;
@@ -44,7 +49,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void getCates() {
+    public void getCategories() {
         CloudService.getInstance().getCategories()
                 .subscribeOn(Schedulers.io())
                 .map(new Func1<CateResponse, Object>() {
@@ -315,24 +320,32 @@ public class MainPresenter implements MainContract.Presenter {
         }
     }
 
+    private static String DEFAULT = "{ \\\"modified\\\":true, \\\"cates\\\":[{\\\"name\\\":\\\"Work\\\",\\\"color\\\":\\\"#FF436998\\\",\\\"id\\\":1},{\\\"name\\\":\\\"Life\\\",\\\"color\\\":\\\"#FFFFB542\\\",\\\"id\\\":2},{\\\"name\\\":\\\"Family\\\",\\\"color\\\":\\\"#FFFF395F\\\",\\\"id\\\":3},{\\\"name\\\":\\\"Entertainment\\\",\\\"color\\\":\\\"#FF55C1C1\\\",\\\"id\\\":4}]}";
+
     private void parseCategories(String resp) {
         Gson gson = new Gson();
-        final CategoryRespInformation information = gson.fromJson(resp, CategoryRespInformation.class);
-        if (information.isModified()) {
-            RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    int i = 0;
-                    for (ToDoCategory cate : information.getCates()) {
-                        cate.setPosition(i);
-                        i++;
-                        realm.copyToRealmOrUpdate(cate);
-                    }
-                }
-            });
+        if (resp != null) {
+            final CategoryRespInformation information = gson.fromJson(resp, CategoryRespInformation.class);
+            saveCategoriesToRealm(information.getCates());
         } else {
-            //// TODO: 12/24/2016  handle not modified situation
+            CategoryRespInformation list = gson.fromJson(DEFAULT, CategoryRespInformation.class);
+            saveCategoriesToRealm(list.getCates());
         }
+    }
+
+    private void saveCategoriesToRealm(final List<ToDoCategory> list) {
+        RealmUtils.getMainInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                int i = 0;
+                for (ToDoCategory cate : list) {
+                    cate.setPosition(i);
+                    i++;
+                    cate.setSid(LocalSettingUtil.getString(App.getInstance(), Params.SID_KEY));
+                    realm.copyToRealmOrUpdate(cate);
+                }
+            }
+        });
     }
 
     @Override

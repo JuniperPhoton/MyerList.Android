@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.juniperphoton.myerlist.App;
 import com.juniperphoton.myerlist.R;
-import com.juniperphoton.myerlist.callback.OnItemOperationCompletedCallback;
+import com.juniperphoton.myerlist.callback.ItemOperationCallback;
 import com.juniperphoton.myerlist.model.ToDo;
 import com.juniperphoton.myerlist.model.ToDoCategory;
 import com.juniperphoton.myerlist.realm.RealmUtils;
@@ -32,7 +32,7 @@ import io.realm.RealmChangeListener;
 public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
     private final static String TAG = "ToDoAdapter";
 
-    private OnItemOperationCompletedCallback mCallback;
+    private ItemOperationCallback mCallback;
     private boolean mCanDrag = true;
 
     private RecyclerView mRecyclerView;
@@ -114,21 +114,12 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
             //getToDoViewHolder(viewHolder).setBackgroundTransparent();
         }
     });
-    private RealmChangeListener realmChangeListener = new RealmChangeListener() {
-        @Override
-        public void onChange(Object element) {
-            if (element instanceof ToDo) {
-                ToDo toDo = (ToDo) element;
-                notifyItemChanged(toDo.getPosition());
-            }
-        }
-    };
 
     public ToDoAdapter() {
         super();
     }
 
-    public void setCallback(OnItemOperationCompletedCallback callback) {
+    public void setCallback(ItemOperationCallback callback) {
         mCallback = callback;
     }
 
@@ -152,6 +143,16 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
         super.onAttachedToRecyclerView(recyclerView);
         mRecyclerView = recyclerView;
         helper.attachToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return Long.getLong(getData(position).getId());
     }
 
     class ToDoViewHolder extends BaseAdapter.BaseViewHolder {
@@ -199,7 +200,6 @@ public class ToDoAdapter extends BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder> {
                 return;
             }
             mToDo = todo;
-            todo.addChangeListener(realmChangeListener);
 
             Realm realm = RealmUtils.getMainInstance();
             realm.beginTransaction();

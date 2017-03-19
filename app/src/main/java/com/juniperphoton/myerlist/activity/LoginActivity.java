@@ -64,8 +64,8 @@ public class LoginActivity extends BaseActivity implements LoginView {
         }
         if (DEBUG) {
             mEmailView.setText("dengweichao@hotmail.com");
-            mPasswordView.setText("test");
-            mSecondPasswordView.setText("test");
+            //mPasswordView.setText("test");
+            //mSecondPasswordView.setText("test");
         }
         mPresenter = new LoginPresenter(this, mLoginMode);
     }

@@ -14,7 +14,7 @@ public class MainContract {
     }
 
     public interface Presenter extends com.juniperphoton.myerlist.presenter.Presenter {
-        void getCates();
+        void getCategories();
 
         void getToDos();
 
