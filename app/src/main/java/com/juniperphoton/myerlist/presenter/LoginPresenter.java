@@ -23,9 +23,9 @@ import rx.exceptions.Exceptions;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class LoginPresenter implements Presenter {
-    private boolean DEBUG = false;
+import static com.juniperphoton.myerlist.BuildConfig.DEBUG;
 
+public class LoginPresenter implements Presenter {
     private LoginView mLoginView;
     private int mMode;
 

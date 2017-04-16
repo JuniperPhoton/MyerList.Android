@@ -3,6 +3,7 @@ package com.juniperphoton.myerlist.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.juniperphoton.myerlist.BuildConfig;
 import com.juniperphoton.myerlist.R;
 import com.juniperphoton.myerlist.presenter.LoginPresenter;
 import com.juniperphoton.myerlist.util.Params;
@@ -24,19 +26,26 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity implements LoginView {
     @BindView(R.id.login_email)
     EditText mEmailView;
+
     @BindView(R.id.login_pwd)
     EditText mPasswordView;
+
     @BindView(R.id.login_second_pwd)
     EditText mSecondPasswordView;
+
     @BindView(R.id.login_second_pwd_layout)
     TextInputLayout mSecondPasswordLayout;
+
     @BindView(R.id.login_title)
     TextView mTitle;
+
     @BindView(R.id.login_btn)
     Button mButton;
-    private boolean DEBUG = true;
+
     private LoginPresenter mPresenter;
+
     private int mLoginMode;
+
     private ProgressDialog mDialog;
 
     @Override
@@ -62,7 +71,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
                 mButton.setText(getString(R.string.register));
                 break;
         }
-        if (DEBUG) {
+        if (BuildConfig.DEBUG) {
             mEmailView.setText("dengweichao@hotmail.com");
             //mPasswordView.setText("test");
             //mSecondPasswordView.setText("test");
