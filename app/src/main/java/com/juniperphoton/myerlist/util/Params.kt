@@ -11,6 +11,8 @@ object Params {
     val LOGIN_MODE = "login_mode"
     val LANGUAGE_KEY = "language"
 
+    val SWITCH_CATEGORY_HINT = "SWITCH_CATEGORY_HINT"
+
     object LoginMode {
         val LOGIN = 0
         val REGISTER = 1

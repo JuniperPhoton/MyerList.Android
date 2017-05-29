@@ -19,6 +19,8 @@ import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.util.KeyboardUtil
+import com.juniperphoton.myerlist.util.LocalSettingUtil
+import com.juniperphoton.myerlist.util.Params.SWITCH_CATEGORY_HINT
 
 @Suppress("unused", "unused_parameter")
 class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs), View.OnTouchListener {
@@ -50,6 +52,10 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
     @BindView(R.id.adding_view_title)
     internal var tittleText: TextView? = null
 
+    @JvmField
+    @BindView(R.id.switchCategoryHintView)
+    internal var hintView: View? = null
+
     var onClickOk: ((Int, String, Int) -> Unit)? = null
     var onClickCancel: (() -> Unit)? = null
 
@@ -60,6 +66,10 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         ButterKnife.bind(this)
 
         root!!.setOnTouchListener(this)
+
+        if (LocalSettingUtil.checkKey(context, SWITCH_CATEGORY_HINT)) {
+            hintView?.visibility = View.GONE
+        }
     }
 
     fun setVisibleMode(visibility: Int, mode: Int) {
@@ -89,6 +99,12 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
     internal fun onClickCancel() {
         prepareToHide()
         onClickCancel?.invoke()
+    }
+
+    @OnClick(R.id.switchCategoryHintView)
+    internal fun onClickHint() {
+        LocalSettingUtil.putBoolean(context, SWITCH_CATEGORY_HINT, true)
+        hintView?.visibility = View.GONE
     }
 
     private fun prepareToHide() {
