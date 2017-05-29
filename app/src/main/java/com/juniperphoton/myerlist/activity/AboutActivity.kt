@@ -12,7 +12,7 @@ import com.juniperphoton.myerlist.util.getVersionName
 import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
-@Suppress("unused","unused_parameter")
+@Suppress("unused", "unused_parameter")
 class AboutActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +32,7 @@ class AboutActivity : BaseActivity() {
         emailIntent.type = "message/rfc822"
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("dengweichao@hotmail.com")) // recipients
 
-        val SHARE_SUBJECT = "MyerList for Android %s feedback"
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT, this.getVersionName()))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList for Android ${this.getVersionName()} feedback")
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")
 
         startActivitySafely(emailIntent)
@@ -41,7 +40,7 @@ class AboutActivity : BaseActivity() {
 
     @OnClick(R.id.activity_about_rate_rl)
     internal fun rateClick(view: View) {
-        val uri = Uri.parse("market://details?id=" + packageName)
+        val uri = Uri.parse("market://details?id=$packageName")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }
