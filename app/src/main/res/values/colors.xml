@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF4096C9</color>
-    <color name="colorPrimaryDark">#338dc3</color>
-    <color name="colorAccent">#FF4096C9</color>
+    <color name="colorPrimary">#4cafff</color>
+    <color name="colorPrimaryDark">#2282d0</color>
+    <color name="colorAccent">#4cafff</color>
 
-    <color name="MyerListBlue">#FF4096C9</color>
-    <color name="MyerListBlueLight">#FF47A5DD</color>
-    <color name="MyerListBlueDark">#338dc3</color>
+    <color name="MyerListBlue">#4cafff</color>
+    <color name="MyerListBlueLight">#70befc</color>
+    <color name="MyerListBlueDark">#2282d0</color>
     <color name="MyerListGray">#FFF2F2F2</color>
     <color name="MyerListGrayDark">#ffdddddd</color>
     <color name="DeleteColor">#a9a9a9</color>
