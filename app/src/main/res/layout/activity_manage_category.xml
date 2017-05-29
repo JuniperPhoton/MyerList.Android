@@ -36,7 +36,7 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_category_manage_list"
+        android:id="@+id/categoryManageList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="130dp" />
@@ -54,7 +54,7 @@
         android:padding="12dp">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/activity_cate_per_cancel_view"
+            android:id="@+id/categoryManageCancelView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"

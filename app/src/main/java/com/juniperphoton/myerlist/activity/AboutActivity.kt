@@ -5,22 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-
-import com.juniperphoton.myerlist.R
-
-import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.util.getVersionName
+import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
 @Suppress("unused")
 class AboutActivity : BaseActivity() {
-    @JvmField
-    @BindView(R.id.version_tv)
-    var versionTextView: TextView? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
@@ -30,7 +23,7 @@ class AboutActivity : BaseActivity() {
     }
 
     private fun updateVersion() {
-        versionTextView!!.text = "Version ${this.getVersionName()}"
+        versionTextView.text = "Version ${this.getVersionName()}"
     }
 
     @OnClick(R.id.email_rl)

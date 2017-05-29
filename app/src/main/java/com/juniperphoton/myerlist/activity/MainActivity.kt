@@ -6,20 +6,13 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.widget.TextView
-import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
@@ -35,6 +28,9 @@ import com.juniperphoton.myerlist.util.*
 import com.juniperphoton.myerlist.widget.AddingView
 import io.realm.RealmResults
 import io.realm.Sort
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.navigation_drawer.*
+import kotlinx.android.synthetic.main.no_item_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -45,50 +41,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         private val TAG = "MainActivity"
     }
 
-    @JvmField
-    @BindView(R.id.toolbar)
-    var toolbar: Toolbar? = null
-
-    @JvmField
-    @BindView(R.id.drawer_layout)
-    var drawerLayout: DrawerLayout? = null
-
-    @JvmField
-    @BindView(R.id.activity_drawer_list)
-    var categoryRecyclerView: RecyclerView? = null
-
-    @JvmField
-    @BindView(R.id.todo_list)
-    var toDoRecyclerView: RecyclerView? = null
-
-    @JvmField
-    @BindView(R.id.drawer_root)
-    var drawerRoot: View? = null
-
-    @JvmField
-    @BindView(R.id.add_fab)
-    var addFAB: FloatingActionButton? = null
-
-    @JvmField
-    @BindView(R.id.drawer_account_email)
-    var emailView: TextView? = null
-
-    @JvmField
-    @BindView(R.id.refresh_layout)
-    var refreshLayout: SwipeRefreshLayout? = null
-
-    @JvmField
-    @BindView(R.id.undone_text)
-    var undoneText: TextView? = null
-
-    @JvmField
-    @BindView(R.id.main_adding_view)
-    var addingView: AddingView? = null
-
-    @JvmField
-    @BindView(R.id.no_item_layout)
-    var mNoItemLayout: View? = null
-
     private var cateAdapter: CategoryAdapter? = null
     private var toDoAdapter: ToDoAdapter? = null
 
@@ -97,8 +49,8 @@ class MainActivity : BaseActivity(), MainContract.View {
     private var selectedCategoryId = 0
     private var selectedCategoryPosition = 0
 
-    private var mx: Int = 0
-    private var my: Int = 0
+    private var revealX: Int = 0
+    private var revealY: Int = 0
 
     private var handledShortCuts: Boolean = false
 
@@ -162,9 +114,9 @@ class MainActivity : BaseActivity(), MainContract.View {
      */
     private fun updateNoItemUi(show: Boolean) {
         if (show) {
-            mNoItemLayout!!.visibility = View.VISIBLE
+            noItemLayout!!.visibility = View.VISIBLE
         } else {
-            mNoItemLayout!!.visibility = View.GONE
+            noItemLayout!!.visibility = View.GONE
         }
     }
 
@@ -173,14 +125,14 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         toolbar!!.post { toolbar!!.title = getString(R.string.all) }
 
-        refreshLayout!!.setOnRefreshListener {
+        mainRefreshLayout!!.setOnRefreshListener {
             if (cateAdapter != null && cateAdapter!!.data!!.size > 0) {
                 presenter!!.getToDos()
             } else {
                 presenter!!.getCategories()
             }
         }
-        emailView!!.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
+        drawerEmailView!!.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
 
         cateAdapter = CategoryAdapter()
         categoryRecyclerView!!.layoutManager = LinearLayoutManager(this,
@@ -324,7 +276,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         startActivity(intent)
     }
 
-    @OnClick(R.id.add_fab)
+    @OnClick(R.id.addFAB)
     internal fun onClickFAB() {
         if (selectedCategoryId == ToDoCategory.DELETED_ID) {
             if (toDoAdapter!!.data!!.size == 0) {
@@ -370,7 +322,7 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun displayCategories() {
-        refreshLayout!!.isRefreshing = true
+        mainRefreshLayout!!.isRefreshing = true
 
         val realm = RealmUtils.mainInstance
 
@@ -390,7 +342,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         addingView!!.makeCategoriesSelection()
 
-        refreshLayout!!.isRefreshing = false
+        mainRefreshLayout!!.isRefreshing = false
     }
 
     override fun displayToDos() {
@@ -422,7 +374,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         toDoAdapter!!.refreshData(resultsWrapper)
 
         updateCount()
-        refreshLayout!!.isRefreshing = false
+        mainRefreshLayout!!.isRefreshing = false
     }
 
     private fun updateCount() {
@@ -432,8 +384,8 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     private fun startRevealAnimation(x: Int, y: Int, animator: StartEndAnimator) {
-        mx = x
-        my = y
+        revealX = x
+        revealY = y
         val width = window.decorView.width
         val height = window.decorView.height
 
@@ -445,7 +397,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private fun hideRevealAnimation(animator: StartEndAnimator) {
         val radius = Math.max(window.decorView.width, window.decorView.height)
-        val anim = ViewAnimationUtils.createCircularReveal(addingView, mx, my, radius.toFloat(), 0f)
+        val anim = ViewAnimationUtils.createCircularReveal(addingView, revealX, revealY, radius.toFloat(), 0f)
         anim.addListener(animator)
         anim.start()
     }

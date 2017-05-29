@@ -4,29 +4,17 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.View
-
+import butterknife.ButterKnife
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.PickColorAdapter
 import com.juniperphoton.myerlist.util.ColorUtil
-
-import butterknife.BindView
-import butterknife.ButterKnife
+import kotlinx.android.synthetic.main.activity_color_picker.*
 
 class PickColorActivity : BaseActivity() {
     companion object {
         private val SPAN_COUNT = 6
         val RESULT_KEY = "picked_color"
     }
-
-    @JvmField
-    @BindView(R.id.color_picker_list)
-    var recyclerView: RecyclerView? = null
-
-    @JvmField
-    @BindView(R.id.color_picker_root)
-    var root: View? = null
 
     private var colors: MutableList<Int>? = null
     private var adapter: PickColorAdapter? = null
@@ -36,7 +24,7 @@ class PickColorActivity : BaseActivity() {
         setContentView(R.layout.activity_color_picker)
         ButterKnife.bind(this)
         init()
-        root!!.setOnClickListener { finish() }
+        colorPickerRoot!!.setOnClickListener { finish() }
     }
 
     fun init() {
@@ -49,8 +37,8 @@ class PickColorActivity : BaseActivity() {
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-        recyclerView!!.layoutManager = GridLayoutManager(this, SPAN_COUNT)
-        recyclerView!!.adapter = adapter
+        colorPickList!!.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+        colorPickList!!.adapter = adapter
         adapter!!.refreshData(colors!!)
     }
 }

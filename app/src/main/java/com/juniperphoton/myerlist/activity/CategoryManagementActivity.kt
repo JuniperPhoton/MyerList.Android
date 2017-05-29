@@ -10,27 +10,19 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CustomCategoryAdapter
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.CustomCategoryContract
 import com.juniperphoton.myerlist.presenter.CustomCategoryPresenter
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.juniperphoton.myerlist.util.*
+import com.juniperphoton.myerlist.util.KeyboardUtil
+import com.juniperphoton.myerlist.util.getDimenInPixel
+import com.juniperphoton.myerlist.util.toColorString
+import kotlinx.android.synthetic.main.activity_manage_category.*
 
 class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
-    @JvmField
-    @BindView(R.id.activity_category_manage_list)
-    var categoryList: RecyclerView? = null
-
-    @JvmField
-    @BindView(R.id.activity_cate_per_cancel_view)
-    var cancelView: View? = null
-
     private var adapter: CustomCategoryAdapter? = null
     private var presenter: CustomCategoryContract.Presenter? = null
     private var progressDialog: ProgressDialog? = null
@@ -82,10 +74,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             startActivityForResult(intent, 0)
         }
         adapter!!.headerView = headerView
-        categoryList!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        categoryList!!.adapter = adapter
+        categoryManageList!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        categoryManageList!!.adapter = adapter
 
-        cancelView!!.requestFocus()
+        categoryManageCancelView!!.requestFocus()
     }
 
     private fun createHeader() {
@@ -115,15 +107,15 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     override fun hideDialog(delay: Int) {
         if (progressDialog != null) {
-            cancelView!!.postDelayed({ progressDialog!!.hide() }, delay.toLong())
+            categoryManageCancelView!!.postDelayed({ progressDialog!!.hide() }, delay.toLong())
         }
     }
 
     override fun hideKeyboard() {
-        KeyboardUtil.hide(this, cancelView!!.windowToken)
+        KeyboardUtil.hide(this, categoryManageCancelView!!.windowToken)
     }
 
-    @OnClick(R.id.activity_cate_per_cancel_view)
+    @OnClick(R.id.categoryManageCancelView)
     fun onClickCancel() {
         prepareToExit()
     }

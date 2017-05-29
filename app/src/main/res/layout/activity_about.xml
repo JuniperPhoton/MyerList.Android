@@ -86,7 +86,7 @@
                 card_view:cardElevation="0dp">
 
                 <TextView
-                    android:id="@+id/version_tv"
+                    android:id="@+id/versionTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"

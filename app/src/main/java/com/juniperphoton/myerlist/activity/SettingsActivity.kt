@@ -4,27 +4,18 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.event.ReCreateEvent
 import com.juniperphoton.myerlist.util.LocalSettingUtil
-import com.juniperphoton.myerlist.widget.SettingsItemLayout
-
-import org.greenrobot.eventbus.EventBus
-
-import java.util.Locale
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.juniperphoton.myerlist.util.getResString
+import kotlinx.android.synthetic.main.activity_settings.*
+import org.greenrobot.eventbus.EventBus
+import java.util.*
 
 class SettingsActivity : BaseActivity() {
-    @JvmField
-    @BindView(R.id.settings_item_change_lang)
-    var changeLangView: SettingsItemLayout? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)

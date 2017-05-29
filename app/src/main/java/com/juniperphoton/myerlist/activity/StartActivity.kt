@@ -2,12 +2,10 @@ package com.juniperphoton.myerlist.activity
 
 import android.content.Intent
 import android.os.Bundle
-
-import com.juniperphoton.myerlist.R
-import com.juniperphoton.myerlist.util.Params
-
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.util.Params
 
 class StartActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +14,7 @@ class StartActivity : BaseActivity() {
         ButterKnife.bind(this)
     }
 
-    @OnClick(R.id.login_btn)
+    @OnClick(R.id.loginButton)
     fun onClickLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.putExtra(Params.LOGIN_MODE, Params.LoginMode.LOGIN)

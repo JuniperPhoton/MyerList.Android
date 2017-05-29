@@ -1,6 +1,7 @@
 package com.juniperphoton.myerlist.presenter
 
 import com.juniperphoton.myerlist.App
+import com.juniperphoton.myerlist.BuildConfig.DEBUG
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.api.APIException
 import com.juniperphoton.myerlist.api.CloudService
@@ -9,17 +10,14 @@ import com.juniperphoton.myerlist.api.response.GetSaltResponse
 import com.juniperphoton.myerlist.api.response.LoginResponse
 import com.juniperphoton.myerlist.api.response.RegisterResponse
 import com.juniperphoton.myerlist.model.User
+import com.juniperphoton.myerlist.util.*
 import com.juniperphoton.myerlist.view.LoginView
-
 import rx.Observable
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.exceptions.Exceptions
 import rx.functions.Func1
 import rx.schedulers.Schedulers
-
-import com.juniperphoton.myerlist.BuildConfig.DEBUG
-import com.juniperphoton.myerlist.util.*
 
 class LoginPresenter(private val loginView: LoginView, private val mode: Int) : Presenter {
     private var email: String? = null
@@ -108,7 +106,7 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
                         if (DEBUG) {
                             return@Func1 CloudService.register(email!!, "6a311e59630cfd8372904e2a1f03aaf7")
                         }
-                        return@Func1 CloudService.register(email!!, Security.get32MD5Str(password))
+                        return@Func1 CloudService.register(email!!, Security.get32MD5Str(password!!))
                     }
                     Observable.error<RegisterResponse>(APIException(App.instance!!
                             .getString(R.string.email_registered)))
