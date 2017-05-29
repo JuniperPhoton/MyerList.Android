@@ -12,7 +12,7 @@ import rx.Observable
 
 interface CategoryService {
     @GET("User/GetCateInfo/v1?")
-    fun getCategory(@Query("sid") sid: String, @Query("access_token") token: String): Observable<CateResponse>
+    fun getCategory(@Query("sid") sid: String, @Query("access_token") token: String): Observable<CateResponse?>
 
     @POST("User/UpdateCateInfo/v1?")
     @FormUrlEncoded

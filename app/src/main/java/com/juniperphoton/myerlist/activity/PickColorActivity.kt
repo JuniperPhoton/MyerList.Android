@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
-import butterknife.ButterKnife
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.PickColorAdapter
 import com.juniperphoton.myerlist.util.ColorUtil
@@ -23,7 +22,6 @@ class PickColorActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_color_picker)
-        ButterKnife.bind(this)
         init()
         colorPickerRoot.setOnClickListener { finish() }
     }

@@ -65,11 +65,15 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         }
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-            val realm = RealmUtils.mainInstance
-            realm.beginTransaction()
-            Collections.swap(data!!, viewHolder.adapterPosition, target.adapterPosition)
-            notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
-            realm.commitTransaction()
+            RealmUtils.mainInstance.executeTransaction {
+                Collections.swap(data!!, viewHolder.adapterPosition, target.adapterPosition)
+                notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
+            }
+
+            if (isItemValid(viewHolder.adapterPosition)) {
+                return false
+            }
+
             onArrangeCompleted?.invoke()
             return false
         }
@@ -79,10 +83,18 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             Log.d(TAG, "direction" + direction)
             when (direction) {
                 CustomItemTouchHelper.RIGHT -> {
+                    if (isItemValid(viewHolder.adapterPosition)) {
+                        return
+                    }
                     getToDoViewHolder(viewHolder).toggleDone()
                     onUpdateDone?.invoke(viewHolder.adapterPosition)
                 }
-                CustomItemTouchHelper.LEFT -> onDelete?.invoke(viewHolder.adapterPosition)
+                CustomItemTouchHelper.LEFT -> {
+                    if (isItemValid(viewHolder.adapterPosition)) {
+                        return
+                    }
+                    onDelete?.invoke(viewHolder.adapterPosition)
+                }
             }
             super.clearView(recyclerView, viewHolder)
         }
@@ -109,6 +121,11 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             //getToDoViewHolder(viewHolder).setBackgroundTransparent();
         }
     })
+
+    fun isItemValid(pos: Int): Boolean {
+        val todo = getData(pos)
+        return !todo.isManaged && todo.isLoaded && todo.isValid
+    }
 
     override fun onCreateItemViewHolder(parent: ViewGroup): ToDoAdapter.ToDoViewHolder {
         val view = LayoutInflater.from(App.instance).inflate(R.layout.row_todo, parent, false)

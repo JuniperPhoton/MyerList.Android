@@ -43,7 +43,7 @@ object CloudService {
         return retrofit.create(UserService::class.java).register(email, pwd)
     }
 
-    fun getCategories(): Observable<CateResponse> = retrofit.create(CategoryService::class.java)
+    fun getCategories(): Observable<CateResponse?> = retrofit.create(CategoryService::class.java)
             .getCategory(AppConfig.sid!!, AppConfig.accessToken!!)
 
     fun getToDos(): Observable<GetToDosResponse> = retrofit.create(ToDoService::class.java)

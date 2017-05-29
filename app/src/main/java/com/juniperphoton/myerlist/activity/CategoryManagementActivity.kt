@@ -22,7 +22,7 @@ import com.juniperphoton.myerlist.util.getDimenInPixel
 import com.juniperphoton.myerlist.util.toColorString
 import kotlinx.android.synthetic.main.activity_manage_category.*
 
-@Suppress("unused","unused_parameter")
+@Suppress("unused", "unused_parameter")
 class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     private var adapter: CustomCategoryAdapter? = null
     private var presenter: CustomCategoryContract.Presenter? = null
@@ -63,6 +63,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     override fun onPause() {
         super.onPause()
         presenter!!.stop()
+        progressDialog?.dismiss()
     }
 
     private fun initUi() {
@@ -106,9 +107,9 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
         progressDialog!!.show()
     }
 
-    override fun hideDialog(delay: Int) {
+    override fun hideDialog(delay: Long) {
         if (progressDialog != null) {
-            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delay.toLong())
+            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delay)
         }
     }
 
@@ -124,6 +125,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     @OnClick(R.id.activity_cate_per_commit_view)
     fun onClickOk() {
         presenter!!.commit()
+    }
+
+    override fun postDelay(runnable: Runnable, delayMillis: Long) {
+        categoryManageCancelView.postDelayed(runnable, delayMillis)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

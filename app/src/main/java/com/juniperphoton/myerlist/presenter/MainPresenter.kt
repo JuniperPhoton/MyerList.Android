@@ -26,12 +26,11 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
     override fun getCategories() {
         CloudService.getCategories()
                 .subscribeOn(Schedulers.io())
-                .map({ cateResponse ->
-                    parseCategories(cateResponse.rawString)
-                    null
-                })
+                .map { cateResponse ->
+                    parseCategories(cateResponse?.rawString)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Subscriber<Any>() {
+                .subscribe(object : Subscriber<Unit>() {
                     override fun onCompleted() {
 
                     }
@@ -40,8 +39,8 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
                         e.printStackTrace()
                     }
 
-                    override fun onNext(cateResponse: Any) {
-                        mView.displayCategories()
+                    override fun onNext(cateResponse: Unit) {
+                        mView.refreshCategoryList()
                         getToDos()
                     }
                 })
@@ -176,7 +175,7 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
                             }
                             realm.commitTransaction()
 
-                            mView.displayToDos()
+                            mView.refreshToDoList()
                             mView.uploadOrders()
                         }
                     }
@@ -216,7 +215,7 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
         }
         realm.commitTransaction()
 
-        mView.displayToDos()
+        mView.refreshToDoList()
     }
 
     override fun recoverToDo(toDo: ToDo) {
@@ -225,12 +224,14 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
         realm.beginTransaction()
         toDo.deleteFromRealm()
         realm.commitTransaction()
-        mView.displayToDos()
+        mView.refreshToDoList()
     }
 
     private fun orderToDos(getOrderResponse: GetOrderResponse) {
         val order = getOrderResponse.order
         if (order != null) {
+            Log.d(TAG, "todo order$order")
+
             val orders = order.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
             val realm = RealmUtils.mainInstance
@@ -246,13 +247,14 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
 
             realm.commitTransaction()
             ToastService.sendShortToast(App.instance!!.getString(R.string.fetch_hint))
-            mView.displayToDos()
+            mView.refreshToDoList()
         } else {
             Log.d(TAG, "Can't get order.")
         }
     }
 
     private fun parseCategories(resp: String?) {
+        Log.d(TAG, "cate resp$resp")
         val gson = Gson()
         if (resp != null) {
             val information = gson.fromJson(resp, CategoryRespInformation::class.java)

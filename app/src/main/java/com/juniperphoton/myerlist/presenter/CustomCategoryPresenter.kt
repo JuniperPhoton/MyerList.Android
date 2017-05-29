@@ -6,6 +6,7 @@ import com.juniperphoton.myerlist.api.CloudService
 import com.juniperphoton.myerlist.api.response.CommonResponse
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
+import com.juniperphoton.myerlist.util.AppConfig
 import com.juniperphoton.myerlist.util.ToastService
 
 import java.util.ArrayList
@@ -16,16 +17,22 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
 class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : CustomCategoryContract.Presenter {
+    companion object {
+        private const val DELAY_MILLIS = 500L
+    }
+
     private var list: MutableList<ToDoCategory>? = null
 
     override fun commit() {
         view.hideKeyboard()
+        view.showDialog()
 
         val realm = RealmUtils.mainInstance
         realm.beginTransaction()
         realm.delete(ToDoCategory::class.java)
         for ((i, category) in list!!.withIndex()) {
             category.position = i
+            category.setSid(AppConfig.sid!!)
             realm.copyToRealmOrUpdate(category)
         }
         realm.commitTransaction()
@@ -35,11 +42,11 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
     private fun upload() {
         val jsonArray = JsonArray()
         for (category in list!!) {
-            val `object` = JsonObject()
-            `object`.addProperty("name", category.name)
-            `object`.addProperty("color", category.color)
-            `object`.addProperty("id", category.id)
-            jsonArray.add(`object`)
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("name", category.name)
+            jsonObject.addProperty("color", category.color)
+            jsonObject.addProperty("id", category.id)
+            jsonArray.add(jsonObject)
         }
         val jsonObject = JsonObject()
         jsonObject.addProperty("modified", true)
@@ -48,22 +55,23 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
 
         CloudService.updateToDoCategories(str)
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe({ view.showDialog() })
-                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<CommonResponse>() {
                     override fun onCompleted() {
-                        view.hideDialog(500)
                     }
 
                     override fun onError(e: Throwable) {
-
+                        view.hideDialog(DELAY_MILLIS)
+                        e.printStackTrace()
                     }
 
                     override fun onNext(commonResponse: CommonResponse) {
+                        view.hideDialog(DELAY_MILLIS)
                         if (commonResponse.ok) {
                             ToastService.sendShortToast("Updated")
-                            view.finish()
+                            view.postDelay(Runnable {
+                                view.finish()
+                            }, DELAY_MILLIS)
                         } else {
                             ToastService.sendShortToast("Failed to update category")
                         }

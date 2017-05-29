@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewAnimationUtils
 import butterknife.ButterKnife
@@ -36,7 +37,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
-@Suppress("unused","unused_parameter")
+@Suppress("unused", "unused_parameter")
 class MainActivity : BaseActivity(), MainContract.View {
     companion object {
         private val TAG = "MainActivity"
@@ -86,15 +87,18 @@ class MainActivity : BaseActivity(), MainContract.View {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "destroyed")
-        //RealmUtils.getMainInstance().close();
     }
 
     override fun onResume() {
         super.onResume()
         presenter!!.start()
         if (cateAdapter != null) {
-            displayCategories()
+            refreshCategoryList()
         }
+        if (toDoAdapter != null) {
+            refreshToDoList()
+        }
+        drawerLayout?.closeDrawer(Gravity.START)
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
@@ -131,17 +135,14 @@ class MainActivity : BaseActivity(), MainContract.View {
         drawerEmailView.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
 
         cateAdapter = CategoryAdapter()
-        categoryRecyclerView.layoutManager = LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false)
-        categoryRecyclerView.adapter = cateAdapter
-        cateAdapter!!.onSelected = { category, position ->
+        cateAdapter!!.onSelected = handler@ { category, position ->
             if (selectedCategoryId == category.id) {
-                Unit
+                return@handler
             }
             if (category.id == ToDoCategory.PERSONALIZATION_ID) {
                 val intent = Intent(this@MainActivity, CategoryManagementActivity::class.java)
                 startActivity(intent)
-                Unit
+                return@handler
             }
 
             selectedCategoryPosition = position
@@ -159,15 +160,16 @@ class MainActivity : BaseActivity(), MainContract.View {
 
             drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
 
-            displayToDos()
+            refreshToDoList()
         }
 
-        toDoAdapter = ToDoAdapter()
+        categoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        categoryRecyclerView.adapter = cateAdapter
 
+        toDoAdapter = ToDoAdapter()
         toDoAdapter!!.onArrangeCompleted = {
             uploadOrders()
         }
-
         toDoAdapter!!.onClickItem = { position, cateView ->
             val location = IntArray(2)
             cateView.getLocationOnScreen(location)
@@ -192,18 +194,15 @@ class MainActivity : BaseActivity(), MainContract.View {
                 }
             })
         }
-
         toDoAdapter!!.onClickRecover = { position ->
             val toDo = toDoAdapter!!.getData(position)
             presenter!!.recoverToDo(toDo)
         }
-
         toDoAdapter!!.onUpdateDone = { position ->
             val toDo = toDoAdapter!!.getData(position)
             presenter!!.updateIsDone(toDo)
             updateCount()
         }
-
         toDoAdapter!!.onDelete = { position ->
             val toDo = toDoAdapter!!.getData(position)
             presenter!!.deleteToDo(toDo)
@@ -238,8 +237,8 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
 
-        displayCategories()
-        displayToDos()
+        refreshCategoryList()
+        refreshToDoList()
         handleShortcutsAction()
     }
 
@@ -316,8 +315,10 @@ class MainActivity : BaseActivity(), MainContract.View {
         })
     }
 
-    override fun displayCategories() {
-        mainRefreshLayout.isRefreshing = true
+    override fun refreshCategoryList() {
+        mainRefreshLayout.post {
+            mainRefreshLayout.isRefreshing = true
+        }
 
         val realm = RealmUtils.mainInstance
 
@@ -337,10 +338,16 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         addingView.makeCategoriesSelection()
 
-        mainRefreshLayout.isRefreshing = false
+        mainRefreshLayout.post {
+            mainRefreshLayout.isRefreshing = false
+        }
     }
 
-    override fun displayToDos() {
+    override fun refreshToDoList() {
+        mainRefreshLayout.post {
+            mainRefreshLayout.isRefreshing = true
+        }
+
         var results: RealmResults<ToDo>? = null
 
         val realm = RealmUtils.mainInstance
@@ -369,7 +376,9 @@ class MainActivity : BaseActivity(), MainContract.View {
         toDoAdapter!!.refreshData(resultsWrapper)
 
         updateCount()
-        mainRefreshLayout.isRefreshing = false
+        mainRefreshLayout.post {
+            mainRefreshLayout.isRefreshing = false
+        }
     }
 
     private fun updateCount() {
@@ -422,7 +431,7 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun notifyToDoDeleted(pos: Int) {
-        displayToDos()
+        refreshToDoList()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
