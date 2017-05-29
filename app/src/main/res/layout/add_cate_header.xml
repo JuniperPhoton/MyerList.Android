@@ -1,26 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="52dp"
     android:background="@drawable/ripple_clip"
-    android:orientation="vertical">
+    android:clickable="true"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:id="@+id/row_category_color_view_root"
+        android:layout_width="52dp"
+        android:layout_height="52dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="+"
+            android:textSize="20sp" />
+    </FrameLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/row_category_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="20dp"
-        android:text="+"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="60dp"
-        android:text="@string/add_header"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="130dp"
+        android:layout_toEndOf="@+id/row_category_color_view_root"
+        android:background="@android:color/transparent"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:text="@string/add"
         android:textColor="@android:color/black"
         android:textSize="15sp" />
-</FrameLayout>
+
+</RelativeLayout>

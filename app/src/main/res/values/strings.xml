@@ -48,7 +48,7 @@
     <string name="loading_hint">LOADING...</string>
     <string name="account_drawer">ACCOUNT</string>
 
-    <string name="confirm_to_logout"></string>
+    <string name="confirm_to_logout">Confirm to logout?</string>
     <string name="confirm_ok">OK</string>
     <string name="confirm_cancel">CANCEL</string>
 
@@ -75,5 +75,11 @@
     <string name="use_dark_theme_key">use_dark_theme_key</string>
     <string name="language_key">language_key</string>
     <string name="add_header">ADD</string>
+    <string name="add">ADD</string>
+    <string name="pick_a_color">PICK A COLOR</string>
+    <string name="edit_category_name_title">EDIT CATEGORY NAME</string>
+    <string name="exit_without_saving">Exit without saving?</string>
+    <string name="waitting">Please wait</string>
+    <string name="email_registered">The email has been registered</string>
 
 </resources>

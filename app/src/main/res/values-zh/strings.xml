@@ -50,8 +50,8 @@
     <string name="add_to_bottom">添加到底部</string>
     <string name="add_to_bottom_hint">新的待办事项将会添加到底部</string>
     <string name="change_lang">更改语言</string>
-    <string name="change_lang_hint_chinese">中文</string>
-    <string name="change_lang_hint_english">英文</string>
+    <string name="change_lang_hint_chinese">简体中文</string>
+    <string name="change_lang_hint_english">English</string>
     <string name="confirm_cancel">取消</string>
     <string name="confirm_ok">确认</string>
     <string name="confirm_to_logout">确认登出吗？</string>
@@ -69,4 +69,11 @@
     <string name="add_to_bottom_key">add_to_bottom_key</string>
     <string name="use_dark_theme_key">use_dark_theme_key</string>
     <string name="language_key">language_key</string>
+    <string name="add">添加</string>
+    <string name="add_header">添加</string>
+    <string name="pick_a_color">选取一个颜色</string>
+    <string name="edit_category_name_title">编辑</string>
+    <string name="exit_without_saving">不保存吗？</string>
+    <string name="waitting">稍等片刻</string>
+    <string name="email_registered">电子邮件已经被注册了</string>
 </resources>

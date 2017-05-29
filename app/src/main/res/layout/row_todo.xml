@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="#FFFFFF"
-                android:clickable="true"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="@android:color/white"
+    android:clickable="true">
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/item_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,8 +18,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            />
+            android:layout_marginLeft="20dp" />
 
         <TextView
             android:id="@+id/row_todo_content"
@@ -34,36 +31,36 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
-            />
+            android:textSize="15sp" />
 
         <ImageView
             android:id="@+id/recover_icon"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="@dimen/todo_item_thumb_size"
+            android:layout_height="@dimen/todo_item_thumb_size"
             android:layout_alignParentRight="true"
-            android:alpha="0.4"
-            android:padding="12dp"
+            android:alpha="0.3"
+            android:padding="@dimen/todo_item_margin"
             android:src="@drawable/ic_recover_black"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/done_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/todo_item_margin"
+            android:layout_marginRight="@dimen/todo_item_margin"
+            android:alpha="0.3"
+            android:background="@android:color/black" />
 
         <ImageView
             android:id="@+id/arrange_thumb"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="@dimen/todo_item_thumb_size"
+            android:layout_height="@dimen/todo_item_thumb_size"
             android:layout_alignParentRight="true"
-            android:alpha="0.4"
-            android:src="@drawable/ic_arrange_thumb"/>
+            android:background="@android:color/white"
+            android:src="@drawable/ic_arrange_thumb" />
     </RelativeLayout>
 
-    <View
-        android:id="@+id/done_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="52dp"
-        android:alpha="0.3"
-        android:background="@android:color/black"/>
 </RelativeLayout>

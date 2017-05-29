@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/drawer_root"
-                android:layout_width="250dp"
-                android:layout_height="match_parent"
-                android:background="@color/MyerListBlue"
-                android:clickable="true"
-                android:gravity="start"
-                android:orientation="vertical"
-    >
+    android:id="@+id/drawer_root"
+    android:layout_width="250dp"
+    android:layout_height="match_parent"
+    android:background="@color/MyerListBlue"
+    android:clickable="true"
+    android:gravity="start"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,21 +24,22 @@
                 android:id="@+id/undone_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
+                android:clickable="false"
                 android:gravity="center"
                 android:text="0"
                 android:textColor="@android:color/white"
                 android:textSize="100sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="false"
                 android:gravity="center"
                 android:text="@string/left"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal" />
         </LinearLayout>
 
 
@@ -52,19 +52,18 @@
             android:orientation="vertical">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="@string/account_drawer"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
@@ -72,9 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </RelativeLayout>
@@ -87,15 +85,14 @@
         android:layout_marginTop="250dp"
         android:background="@android:color/transparent"
         android:clickable="true"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:id="@+id/activity_drawer_bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:id="@+id/drawer_settings"
@@ -115,7 +112,7 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/vector_ic_settings"/>
+                    android:src="@drawable/vector_ic_settings" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -123,7 +120,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="12dp"
                     android:text="@string/settings"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white" />
             </LinearLayout>
 
         </RelativeLayout>
@@ -146,7 +143,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/vector_ic_emoticon"/>
+                    android:src="@drawable/vector_ic_emoticon" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -155,7 +152,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="12dp"
                     android:text="@string/about"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white" />
             </LinearLayout>
 
 
