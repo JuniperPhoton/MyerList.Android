@@ -31,7 +31,9 @@
     <string name="modify_adding">MODIFY</string>
     <string name="cancel_adding">CANCEL</string>
     <string name="ok_adding">OK</string>
-    <string name="e_g_have_coffee_with_my_friends_at_5_clock">e.g. Have coffee with my friends at 5\'clock.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="e_g_have_coffee_with_my_friends_at_5_clock">e.g. Have coffee with revealY friends at 5\'clock.</string>
     <string name="personalization_title">PERSONALIZATION</string>
     <string name="about">ABOUT</string>
     <string name="settings">SETTINGS</string>
@@ -79,7 +81,9 @@
     <string name="pick_a_color">PICK A COLOR</string>
     <string name="edit_category_name_title">EDIT CATEGORY NAME</string>
     <string name="exit_without_saving">Exit without saving?</string>
-    <string name="waitting">Please wait</string>
+    <string name="waiting">Talking to server...</string>
     <string name="email_registered">The email has been registered</string>
+    <string name="set_it_done">SET IT DONE</string>
+    <string name="delete_it">DELETE IT</string>
 
 </resources>

@@ -20,8 +20,14 @@ import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.util.KeyboardUtil
 
-@Suppress("Unused")
+@Suppress("unused", "unused_parameter")
 class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs), View.OnTouchListener {
+    companion object {
+        private val FLING_THRESHOLD = 20f
+        val ADD_MODE = 1
+        val MODIFY_MODE = 1 shl 1
+    }
+
     private var mode = ADD_MODE
 
     @JvmField
@@ -108,7 +114,10 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
     }
 
     fun showInputPane() {
-        editText!!.requestFocus()
+        editText?.let {
+            it.requestFocus()
+            it.setSelection(it.length(), it.length())
+        }
         postDelayed({
             val inputMethodManager = ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.showSoftInput(editText, 0)
@@ -147,13 +156,5 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
             }
         }
         return true
-    }
-
-    companion object {
-
-        private val FLING_THRESHOLD = 20f
-
-        val ADD_MODE = 1
-        val MODIFY_MODE = 1 shl 1
     }
 }

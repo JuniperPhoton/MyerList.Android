@@ -24,6 +24,7 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
     val hasFooter: Boolean = footerView != null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        parent.clipChildren = false
         return when (viewType) {
             HEADER -> BaseViewHolder(headerView)
             FOOTER -> BaseViewHolder(footerView)
@@ -36,8 +37,9 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
             val index: Int
             if (headerView != null) {
                 index = holder.adapterPosition - 1
-            } else
+            } else {
                 index = holder.adapterPosition
+            }
             onBindItemViewHolder(holder as U, index)
         }
     }

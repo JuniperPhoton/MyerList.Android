@@ -23,6 +23,8 @@
     <string name="add_shortcuts">添加</string>
     <string name="all_adding">所有</string>
     <string name="ok_adding">确认</string>
+    <string name="yes">是的</string>
+    <string name="no">我改变主意了</string>
     <string name="personalization_title">个性化</string>
     <string name="account">账户</string>
     <string name="adding_adding">添加</string>
@@ -74,6 +76,9 @@
     <string name="pick_a_color">选取一个颜色</string>
     <string name="edit_category_name_title">编辑</string>
     <string name="exit_without_saving">不保存吗？</string>
-    <string name="waitting">稍等片刻</string>
+    <string name="waiting">跟服务器通讯中...</string>
     <string name="email_registered">电子邮件已经被注册了</string>
+
+    <string name="set_it_done">完成</string>
+    <string name="delete_it">删除</string>
 </resources>

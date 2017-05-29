@@ -4,11 +4,15 @@ import com.juniperphoton.myerlist.model.ToDo
 
 class MainContract {
     interface View {
-        fun displayCategories()
+        fun refreshCategoryList()
 
-        fun displayToDos()
+        fun refreshToDoList()
+
+        fun notifyDataSetChanged()
 
         fun uploadOrders()
+
+        fun toggleRefreshing(show: Boolean)
 
         fun notifyToDoDeleted(pos: Int)
     }

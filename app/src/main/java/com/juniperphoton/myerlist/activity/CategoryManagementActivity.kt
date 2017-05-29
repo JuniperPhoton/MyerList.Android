@@ -10,27 +10,21 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CustomCategoryAdapter
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.CustomCategoryContract
 import com.juniperphoton.myerlist.presenter.CustomCategoryPresenter
+import com.juniperphoton.myerlist.util.KeyboardUtil
+import com.juniperphoton.myerlist.util.getDimenInPixel
+import com.juniperphoton.myerlist.util.getResString
+import com.juniperphoton.myerlist.util.toColorString
+import kotlinx.android.synthetic.main.activity_manage_category.*
 
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.juniperphoton.myerlist.util.*
-
+@Suppress("unused", "unused_parameter")
 class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
-    @JvmField
-    @BindView(R.id.activity_category_manage_list)
-    var categoryList: RecyclerView? = null
-
-    @JvmField
-    @BindView(R.id.activity_cate_per_cancel_view)
-    var cancelView: View? = null
-
     private var adapter: CustomCategoryAdapter? = null
     private var presenter: CustomCategoryContract.Presenter? = null
     private var progressDialog: ProgressDialog? = null
@@ -54,11 +48,11 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     private fun prepareToExit() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.exit_without_saving)
-                .setPositiveButton(R.string.ok_adding) { dialog, _ ->
+                .setPositiveButton(R.string.yes) { dialog, _ ->
                     dialog.dismiss()
                     super@CategoryManagementActivity.onBackPressed()
                 }
-                .setNegativeButton(R.string.cancel_adding) { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
                 .create().show()
     }
 
@@ -70,6 +64,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     override fun onPause() {
         super.onPause()
         presenter!!.stop()
+        progressDialog?.dismiss()
     }
 
     private fun initUi() {
@@ -82,10 +77,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             startActivityForResult(intent, 0)
         }
         adapter!!.headerView = headerView
-        categoryList!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        categoryList!!.adapter = adapter
+        categoryManageList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        categoryManageList.adapter = adapter
 
-        cancelView!!.requestFocus()
+        categoryManageCancelView.requestFocus()
     }
 
     private fun createHeader() {
@@ -96,12 +91,16 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             val category = ToDoCategory()
             category.name = "New cate"
             category.color = "#FF4096C9"
+            var maxId = adapter!!.data!!.maxBy {
+                it.id
+            }!!.id
+            category.id = maxId + 1
             adapter!!.addData(category)
         }
     }
 
     override fun initData(data: MutableList<ToDoCategory>) {
-        if (adapter == null || data == null) {
+        if (adapter == null) {
             return
         }
         adapter!!.refreshData(data)
@@ -109,21 +108,22 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     override fun showDialog() {
         progressDialog = ProgressDialog(this, ProgressDialog.STYLE_SPINNER)
-        progressDialog!!.setTitle(getString(R.string.loading_hint))
+        progressDialog!!.setTitle(R.string.loading_hint.getResString()!!)
+        progressDialog!!.setMessage(R.string.waiting.getResString()!!)
         progressDialog!!.show()
     }
 
-    override fun hideDialog(delay: Int) {
+    override fun hideDialog(delayMillis: Long) {
         if (progressDialog != null) {
-            cancelView!!.postDelayed({ progressDialog!!.hide() }, delay.toLong())
+            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delayMillis)
         }
     }
 
     override fun hideKeyboard() {
-        KeyboardUtil.hide(this, cancelView!!.windowToken)
+        KeyboardUtil.hide(this, categoryManageCancelView.windowToken)
     }
 
-    @OnClick(R.id.activity_cate_per_cancel_view)
+    @OnClick(R.id.categoryManageCancelView)
     fun onClickCancel() {
         prepareToExit()
     }
@@ -131,6 +131,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     @OnClick(R.id.activity_cate_per_commit_view)
     fun onClickOk() {
         presenter!!.commit()
+    }
+
+    override fun postDelay(runnable: Runnable, delayMillis: Long) {
+        categoryManageCancelView.postDelayed(runnable, delayMillis)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

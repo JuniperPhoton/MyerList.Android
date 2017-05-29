@@ -100,7 +100,7 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
                 onClickSelectCategory?.invoke(category)
             }
 
-            thumb!!.setOnTouchListener(View.OnTouchListener { v, event ->
+            thumb!!.setOnTouchListener(View.OnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         helper.startDrag(this@CustomCategoryViewHolder)

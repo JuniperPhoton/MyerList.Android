@@ -1,7 +1,9 @@
 package com.juniperphoton.myerlist.view
 
 interface LoginView {
-    fun navigateToMain(ok: Boolean)
+    fun navigateToMain()
+
+    fun dismissDialog()
 
     val email: String
 

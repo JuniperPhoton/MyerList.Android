@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="52dp"
-    android:background="@android:color/white"
-    android:clickable="true">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="52dp"
+             android:background="@android:color/white"
+             android:clickable="true"
+             android:clipChildren="false">
+
+    <TextView
+        android:layout_width="500dp"
+        android:layout_height="match_parent"
+        android:background="@color/DoneGreenColor"
+        android:gravity="right|center_vertical"
+        android:paddingRight="20dp"
+        android:text="@string/set_it_done"
+        android:textColor="@android:color/white"
+        android:translationX="-500dp"/>
+
+    <TextView
+        android:layout_width="500dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@color/DeleteRedColor"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="20dp"
+        android:text="@string/delete_it"
+        android:textColor="@android:color/white"
+        android:translationX="500dp"/>
 
     <RelativeLayout
         android:id="@+id/item_root"
@@ -18,7 +40,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="20dp"/>
 
         <TextView
             android:id="@+id/row_todo_content"
@@ -31,7 +53,7 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@android:color/black"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <ImageView
             android:id="@+id/recover_icon"
@@ -41,7 +63,7 @@
             android:alpha="0.3"
             android:padding="@dimen/todo_item_margin"
             android:src="@drawable/ic_recover_black"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/done_line"
@@ -52,7 +74,7 @@
             android:layout_marginLeft="@dimen/todo_item_margin"
             android:layout_marginRight="@dimen/todo_item_margin"
             android:alpha="0.3"
-            android:background="@android:color/black" />
+            android:background="@android:color/black"/>
 
         <ImageView
             android:id="@+id/arrange_thumb"
@@ -60,7 +82,7 @@
             android:layout_height="@dimen/todo_item_thumb_size"
             android:layout_alignParentRight="true"
             android:background="@android:color/white"
-            android:src="@drawable/ic_arrange_thumb" />
+            android:src="@drawable/ic_arrange_thumb"/>
     </RelativeLayout>
 
-</RelativeLayout>
+</FrameLayout>

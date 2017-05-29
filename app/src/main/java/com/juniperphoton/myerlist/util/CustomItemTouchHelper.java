@@ -1317,7 +1317,7 @@ public class CustomItemTouchHelper extends RecyclerView.ItemDecoration
      * <p>
      * If user drags an item, ItemTouchHelper will call
      * {@link CustomItemTouchHelper.Callback#onMove(RecyclerView, RecyclerView.ViewHolder, RecyclerView.ViewHolder)
-     * onMove(recyclerView, dragged, target)}.
+     * onMove(colorPickList, dragged, target)}.
      * Upon receiving this callback, you should move the item from the old position
      * ({@code dragged.getAdapterPosition()}) to new position ({@code target.getAdapterPosition()})
      * in your adapter and also call {@link RecyclerView.Adapter#notifyItemMoved(int, int)}.
@@ -1394,7 +1394,7 @@ public class CustomItemTouchHelper extends RecyclerView.ItemDecoration
          * For example, if you have a use case where you only want the text to move when user
          * swipes over the view, you can do the following:
          * <pre>
-         *     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder){
+         *     public void clearView(RecyclerView colorPickList, RecyclerView.ViewHolder viewHolder){
          *         getDefaultUIUtil().clearView(((ItemTouchViewHolder) viewHolder).textView);
          *     }
          *     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
@@ -1402,18 +1402,18 @@ public class CustomItemTouchHelper extends RecyclerView.ItemDecoration
          *             getDefaultUIUtil().onSelected(((ItemTouchViewHolder) viewHolder).textView);
          *         }
          *     }
-         *     public void onChildDraw(Canvas c, RecyclerView recyclerView,
+         *     public void onChildDraw(Canvas c, RecyclerView colorPickList,
          *             RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState,
          *             boolean isCurrentlyActive) {
-         *         getDefaultUIUtil().onDraw(c, recyclerView,
+         *         getDefaultUIUtil().onDraw(c, colorPickList,
          *                 ((ItemTouchViewHolder) viewHolder).textView, dX, dY,
          *                 actionState, isCurrentlyActive);
          *         return true;
          *     }
-         *     public void onChildDrawOver(Canvas c, RecyclerView recyclerView,
+         *     public void onChildDrawOver(Canvas c, RecyclerView colorPickList,
          *             RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState,
          *             boolean isCurrentlyActive) {
-         *         getDefaultUIUtil().onDrawOver(c, recyclerView,
+         *         getDefaultUIUtil().onDrawOver(c, colorPickList,
          *                 ((ItemTouchViewHolder) viewHolder).textView, dX, dY,
          *                 actionState, isCurrentlyActive);
          *         return true;
@@ -2143,7 +2143,7 @@ public class CustomItemTouchHelper extends RecyclerView.ItemDecoration
      * ItemTouchHelper mIth = new ItemTouchHelper(
      *     new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
      *         ItemTouchHelper.LEFT) {
-     *         public abstract boolean onMove(RecyclerView recyclerView,
+     *         public abstract boolean onMove(RecyclerView colorPickList,
      *             ViewHolder viewHolder, ViewHolder target) {
      *             final int fromPos = viewHolder.getAdapterPosition();
      *             final int toPos = target.getAdapterPosition();

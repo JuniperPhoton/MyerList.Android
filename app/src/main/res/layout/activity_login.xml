@@ -16,41 +16,17 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:elevation="4dp">
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
             android:layout_height="6dp"
-            android:orientation="horizontal">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#6c5c80"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#fcc842"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#12b5b1"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#ff6482"/>
-        </LinearLayout>
+            android:background="@color/MyerListBlue"
+            android:orientation="horizontal"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +35,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/login_title"
+                android:id="@+id/loginTitleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -82,7 +58,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/login_email"
+                    android:id="@+id/emailView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
@@ -94,7 +70,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/login_pwd"
+                    android:id="@+id/passwordView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
@@ -102,12 +78,12 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/login_second_pwd_layout"
+                android:id="@+id/passwordSecViewRoot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/login_second_pwd"
+                    android:id="@+id/passwordSecView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/input_password_again"
@@ -115,7 +91,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/login_btn"
+                android:id="@+id/loginButton"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -123,15 +99,6 @@
                 android:background="@drawable/ripple_theme"
                 android:text="@string/login_btn"
                 android:textColor="@android:color/white"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/ripple_clip"
-                android:padding="4dp"
-                android:text="@string/forget_password"/>
         </LinearLayout>
-
     </android.support.v7.widget.CardView>
 </RelativeLayout>

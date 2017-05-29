@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_root"
+    android:id="@+id/drawerRoot"
     android:layout_width="250dp"
     android:layout_height="match_parent"
     android:background="@color/MyerListBlue"
@@ -21,7 +21,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/undone_text"
+                android:id="@+id/undoneText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="false"
@@ -67,7 +67,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/drawer_account_email"
+                android:id="@+id/drawerEmailView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -78,7 +78,7 @@
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_drawer_list"
+        android:id="@+id/categoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="50dp"

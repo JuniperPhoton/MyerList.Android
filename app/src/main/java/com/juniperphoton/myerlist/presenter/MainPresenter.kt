@@ -21,17 +21,15 @@ import rx.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainPresenter(private val mView: MainContract.View) : MainContract.Presenter {
-
+class MainPresenter(private val view: MainContract.View) : MainContract.Presenter {
     override fun getCategories() {
         CloudService.getCategories()
                 .subscribeOn(Schedulers.io())
-                .map({ cateResponse ->
-                    parseCategories(cateResponse.rawString)
-                    null
-                })
+                .map { cateResponse ->
+                    parseCategories(cateResponse?.rawString)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Subscriber<Any>() {
+                .subscribe(object : Subscriber<Unit>() {
                     override fun onCompleted() {
 
                     }
@@ -40,8 +38,8 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
                         e.printStackTrace()
                     }
 
-                    override fun onNext(cateResponse: Any) {
-                        mView.displayCategories()
+                    override fun onNext(cateResponse: Unit) {
+                        view.refreshCategoryList()
                         getToDos()
                     }
                 })
@@ -75,58 +73,81 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
     }
 
     private fun mergeToDos(toDos: List<ToDo>) {
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        val shouldDeleted = realm.where(ToDo::class.java)
-                .notEqualTo(ToDo.DELETED_KEY, java.lang.Boolean.TRUE).findAll()
-        for (toDo in shouldDeleted) {
-            toDo.deleteFromRealm()
+        RealmUtils.mainInstance.executeTransaction { realm ->
+            val localWithoutDeleteFlag = realm.where(ToDo::class.java)
+                    .notEqualTo(ToDo.DELETED_KEY, java.lang.Boolean.TRUE).findAll()
+            localWithoutDeleteFlag.forEach {
+                it.deleteFromRealm()
+            }
+            toDos.forEach {
+                realm.copyToRealmOrUpdate(it)
+            }
         }
-        for (toDo in toDos) {
-            realm.copyToRealmOrUpdate(toDo)
-        }
-        realm.commitTransaction()
-
-        Log.d(TAG, "got to-dos")
+        Log.d(TAG, "mergeToDos")
     }
 
     override fun updateOrders(order: String) {
         CloudService.setOrders(order).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d(TAG, "updateOrders") })
+                .subscribe(object : Subscriber<CommonResponse>() {
+                    override fun onError(e: Throwable?) {
+                        e?.printStackTrace()
+                    }
+
+                    override fun onCompleted() {
+                    }
+
+                    override fun onNext(t: CommonResponse?) {
+                        Log.d(TAG, "updateOrders")
+                    }
+                })
     }
 
     override fun updateIsDone(toDo: ToDo) {
         CloudService.setIsDone(toDo.id!!, toDo.isdone!!).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d(TAG, "updateIsDone") })
+                .subscribe(object : Subscriber<CommonResponse>() {
+                    override fun onError(e: Throwable?) {
+                        e?.printStackTrace()
+                    }
+
+                    override fun onCompleted() {
+                    }
+
+                    override fun onNext(t: CommonResponse?) {
+                        Log.d(TAG, "updateIsDone")
+                    }
+                })
     }
 
     override fun modifyToDo(cate: String, content: String, id: String) {
         val dateStr = dateStr
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        val toDo = realm.where(ToDo::class.java).equalTo("id", id).findFirst()
-        if (toDo != null) {
-            toDo.content = content
-            toDo.cate = cate
-            toDo.time = dateStr
+        RealmUtils.mainInstance.executeTransaction {
+            val toDo = it.where(ToDo::class.java).equalTo(ToDo.ID_KEY, id).findFirst()
+            if (toDo != null) {
+                toDo.content = content
+                toDo.cate = cate
+                toDo.time = dateStr
+            }
         }
-        realm.commitTransaction()
+
+        view.notifyDataSetChanged()
+        view.toggleRefreshing(true)
 
         CloudService.updateToDo(id, dateStr, content, cate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<CommonResponse>() {
                     override fun onCompleted() {
-
                     }
 
                     override fun onError(e: Throwable) {
-
+                        view.toggleRefreshing(false)
+                        e.printStackTrace()
                     }
 
                     override fun onNext(commonResponse: CommonResponse) {
+                        view.toggleRefreshing(false)
                         if (commonResponse.ok) {
                             ToastService.sendShortToast(R.string.modified_hint.getResString()!!)
                         } else {
@@ -146,6 +167,7 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
 
     override fun addToDo(cate: String, content: String) {
         val dateStr = dateStr
+        view.toggleRefreshing(true)
         CloudService.addToDo(dateStr, content, ToDo.IS_NOT_DONE, cate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -157,27 +179,25 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
                     override fun onError(e: Throwable) {
                         e.printStackTrace()
                         ToastService.sendShortToast(e.message!!)
+                        view.toggleRefreshing(false)
                     }
 
                     override fun onNext(addToDoResponse: AddToDoResponse) {
+                        view.toggleRefreshing(false)
                         val toDo = addToDoResponse.toDo
                         if (toDo != null) {
-                            val realm = RealmUtils.mainInstance
-                            realm.beginTransaction()
-
-                            val managedToDo = realm.copyToRealm(toDo)
-
-                            if (AppConfig.addToBottom()) {
-                                var pos = realm.where(ToDo::class.java).findAll().max(ToDo.POSITION_KEY).toInt()
-                                managedToDo.position = ++pos
-                            } else {
-                                var pos = realm.where(ToDo::class.java).findAll().min(ToDo.POSITION_KEY).toInt()
-                                managedToDo.position = --pos
+                            RealmUtils.mainInstance.executeTransaction {
+                                val managedToDo = it.copyToRealm(toDo)
+                                if (AppConfig.addToBottom()) {
+                                    var pos = it.where(ToDo::class.java).findAll().max(ToDo.POSITION_KEY).toInt()
+                                    managedToDo.position = ++pos
+                                } else {
+                                    var pos = it.where(ToDo::class.java).findAll().min(ToDo.POSITION_KEY).toInt()
+                                    managedToDo.position = --pos
+                                }
                             }
-                            realm.commitTransaction()
-
-                            mView.displayToDos()
-                            mView.uploadOrders()
+                            view.refreshToDoList()
+                            view.uploadOrders()
                         }
                     }
                 })
@@ -188,71 +208,80 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
         val alreadyDeleted = toDo.deleted
         val position = toDo.position
 
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        if (!alreadyDeleted) {
-            toDo.deleted = true
-        } else {
-            toDo.deleteFromRealm()
+        RealmUtils.mainInstance.executeTransaction {
+            if (!alreadyDeleted) {
+                toDo.deleted = true
+            } else {
+                toDo.deleteFromRealm()
+            }
         }
-        realm.commitTransaction()
 
-        mView.notifyToDoDeleted(position)
+        view.notifyToDoDeleted(position)
 
         if (!alreadyDeleted) {
             CloudService.deleteToDo(id!!).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ Log.d(TAG, "deleteToDo") })
+                    .subscribe(object : Subscriber<CommonResponse>() {
+                        override fun onError(e: Throwable?) {
+                            e?.printStackTrace()
+                        }
+
+                        override fun onCompleted() {
+                        }
+
+                        override fun onNext(t: CommonResponse?) {
+                            Log.d(TAG, "updateOrders")
+                        }
+                    })
         }
     }
 
     override fun clearDeletedList() {
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        val deletedList = realm.where(ToDo::class.java).equalTo(ToDo.DELETED_KEY, true)
-                .findAll()
-        for (todo in deletedList) {
-            todo.deleteFromRealm()
+        RealmUtils.mainInstance.executeTransaction {
+            val deletedList = it.where(ToDo::class.java).equalTo(ToDo.DELETED_KEY, true)
+                    .findAll()
+            for (todo in deletedList) {
+                todo.deleteFromRealm()
+            }
         }
-        realm.commitTransaction()
 
-        mView.displayToDos()
+        view.refreshToDoList()
     }
 
     override fun recoverToDo(toDo: ToDo) {
         addToDo(toDo.cate!!, toDo.content!!)
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        toDo.deleteFromRealm()
-        realm.commitTransaction()
-        mView.displayToDos()
+        RealmUtils.mainInstance.executeTransaction {
+            toDo.deleteFromRealm()
+        }
+        view.refreshToDoList()
     }
 
     private fun orderToDos(getOrderResponse: GetOrderResponse) {
         val order = getOrderResponse.order
         if (order != null) {
+            Log.d(TAG, "todo order$order")
+
             val orders = order.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-            val realm = RealmUtils.mainInstance
-            realm.beginTransaction()
-
-            val localToDos = realm.where(ToDo::class.java).findAll()
-            for (i in orders.indices) {
-                val toDo = localToDos.where().equalTo(ToDo.ID_KEY, orders[i]).findFirst()
-                if (toDo != null) {
-                    toDo.position = i
+            RealmUtils.mainInstance.executeTransaction {
+                val localToDos = it.where(ToDo::class.java).findAll()
+                orders.indices.forEach {
+                    val toDo = localToDos.where().equalTo(ToDo.ID_KEY, orders[it]).findFirst()
+                    if (toDo != null) {
+                        toDo.position = it
+                    }
                 }
             }
 
-            realm.commitTransaction()
             ToastService.sendShortToast(App.instance!!.getString(R.string.fetch_hint))
-            mView.displayToDos()
+            view.refreshToDoList()
         } else {
             Log.d(TAG, "Can't get order.")
         }
     }
 
     private fun parseCategories(resp: String?) {
+        Log.d(TAG, "cate resp$resp")
         val gson = Gson()
         if (resp != null) {
             val information = gson.fromJson(resp, CategoryRespInformation::class.java)
@@ -274,11 +303,9 @@ class MainPresenter(private val mView: MainContract.View) : MainContract.Present
     }
 
     override fun start() {
-
     }
 
     override fun stop() {
-
     }
 
     companion object {
