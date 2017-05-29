@@ -23,7 +23,7 @@ class AboutActivity : BaseActivity() {
     }
 
     private fun updateVersion() {
-        versionTextView.text = "Version ${this.getVersionName()}"
+        versionTextView.text = "${this.getVersionName()}"
     }
 
     @OnClick(R.id.email_rl)
