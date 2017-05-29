@@ -69,7 +69,7 @@ class LoginActivity : BaseActivity(), LoginView {
     fun onClickButton() {
         dialog = ProgressDialog(this, ProgressDialog.STYLE_SPINNER)
         dialog!!.setTitle(getString(R.string.loading_hint))
-        dialog!!.setMessage(getString(R.string.waitting))
+        dialog!!.setMessage(getString(R.string.waiting))
         dialog!!.setCancelable(false)
         dialog!!.show()
         if (loginMode == Params.LoginMode.LOGIN) {

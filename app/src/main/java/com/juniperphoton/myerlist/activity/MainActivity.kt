@@ -362,7 +362,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         }
 
         updateNoItemUi(results!!.size == 0)
-        toDoAdapter!!.refreshData(results!!.toMutableList())
+        toDoAdapter!!.refreshData(results.toMutableList())
 
         updateCount()
 

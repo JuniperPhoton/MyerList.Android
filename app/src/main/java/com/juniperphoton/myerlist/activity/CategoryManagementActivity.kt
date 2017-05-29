@@ -19,6 +19,7 @@ import com.juniperphoton.myerlist.presenter.CustomCategoryContract
 import com.juniperphoton.myerlist.presenter.CustomCategoryPresenter
 import com.juniperphoton.myerlist.util.KeyboardUtil
 import com.juniperphoton.myerlist.util.getDimenInPixel
+import com.juniperphoton.myerlist.util.getResString
 import com.juniperphoton.myerlist.util.toColorString
 import kotlinx.android.synthetic.main.activity_manage_category.*
 
@@ -90,6 +91,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             val category = ToDoCategory()
             category.name = "New cate"
             category.color = "#FF4096C9"
+            var maxId = adapter!!.data!!.maxBy {
+                it.id
+            }!!.id
+            category.id = maxId + 1
             adapter!!.addData(category)
         }
     }
@@ -103,7 +108,8 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     override fun showDialog() {
         progressDialog = ProgressDialog(this, ProgressDialog.STYLE_SPINNER)
-        progressDialog!!.setTitle(getString(R.string.loading_hint))
+        progressDialog!!.setTitle(R.string.loading_hint.getResString()!!)
+        progressDialog!!.setMessage(R.string.waiting.getResString()!!)
         progressDialog!!.show()
     }
 

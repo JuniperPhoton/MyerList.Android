@@ -81,7 +81,7 @@
     <string name="pick_a_color">PICK A COLOR</string>
     <string name="edit_category_name_title">EDIT CATEGORY NAME</string>
     <string name="exit_without_saving">Exit without saving?</string>
-    <string name="waitting">Please wait</string>
+    <string name="waiting">Talking to server...</string>
     <string name="email_registered">The email has been registered</string>
     <string name="set_it_done">SET IT DONE</string>
     <string name="delete_it">DELETE IT</string>
