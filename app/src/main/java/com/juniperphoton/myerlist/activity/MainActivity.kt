@@ -367,15 +367,12 @@ class MainActivity : BaseActivity(), MainContract.View {
                     .equalTo(ToDo.CATE_KEY, selectedCategoryId.toString())
                     .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING)
         }
-        results!!.addChangeListener { _ ->
-            toDoAdapter?.notifyDataSetChanged()
-        }
 
-        val resultsWrapper = results.toMutableList()
-        updateNoItemUi(resultsWrapper.size == 0)
-        toDoAdapter!!.refreshData(resultsWrapper)
+        updateNoItemUi(results!!.size == 0)
+        toDoAdapter!!.refreshData(results!!.toMutableList())
 
         updateCount()
+
         mainRefreshLayout.post {
             mainRefreshLayout.isRefreshing = false
         }

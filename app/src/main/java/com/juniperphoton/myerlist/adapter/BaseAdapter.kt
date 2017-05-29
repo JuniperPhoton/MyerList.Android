@@ -24,6 +24,7 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
     val hasFooter: Boolean = footerView != null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        parent.clipChildren = false
         return when (viewType) {
             HEADER -> BaseViewHolder(headerView)
             FOOTER -> BaseViewHolder(footerView)

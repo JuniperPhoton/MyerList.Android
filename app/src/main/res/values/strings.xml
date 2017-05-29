@@ -83,5 +83,7 @@
     <string name="exit_without_saving">Exit without saving?</string>
     <string name="waitting">Please wait</string>
     <string name="email_registered">The email has been registered</string>
+    <string name="set_it_done">SET IT DONE</string>
+    <string name="delete_it">DELETE IT</string>
 
 </resources>

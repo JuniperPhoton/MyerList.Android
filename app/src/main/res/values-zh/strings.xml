@@ -78,4 +78,7 @@
     <string name="exit_without_saving">不保存吗？</string>
     <string name="waitting">稍等片刻</string>
     <string name="email_registered">电子邮件已经被注册了</string>
+
+    <string name="set_it_done">完成</string>
+    <string name="delete_it">删除</string>
 </resources>

@@ -1,9 +1,5 @@
 package com.juniperphoton.myerlist.adapter
 
-import android.animation.ValueAnimator
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -42,7 +38,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     private var recyclerView: RecyclerView? = null
 
     private val helper = CustomItemTouchHelper(object : CustomItemTouchHelper.Callback() {
-        private val SWIPE_THRESHOLD = 0.4f
+        private val SWIPE_THRESHOLD = 0.3f
 
         private fun getToDoViewHolder(viewHolder: RecyclerView.ViewHolder): ToDoViewHolder {
             return viewHolder as ToDoViewHolder
@@ -104,22 +100,8 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             return SWIPE_THRESHOLD
         }
 
-        override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                                 dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-            val holder = getToDoViewHolder(viewHolder)
-            if (dX > recyclerView.width * SWIPE_THRESHOLD) {
-                holder.setBackgroundGreen()
-            } else if (dX < -recyclerView.width * SWIPE_THRESHOLD) {
-                holder.setBackgroundRed()
-            } else {
-                holder.setBackgroundTransparent()
-            }
-        }
-
         override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
             super.clearView(recyclerView, viewHolder)
-            //getToDoViewHolder(viewHolder).setBackgroundTransparent();
         }
     })
 
@@ -152,11 +134,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     }
 
     inner class ToDoViewHolder(itemView: View) : BaseViewHolder(itemView) {
-        private val RED_ON_FLAG = 0b10
-        private val RED_OFF_FLAG = 0b00
-        private val GREEN_ON_FLAG = 0b01
-        private val GREEN_OFF_FLAG = 0b00
-
         @JvmField
         @BindView(R.id.row_todo_color_view)
         var circleView: CircleView? = null
@@ -181,7 +158,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         @BindView(R.id.item_root)
         var root: View? = null
 
-        private var colorFlag: Int = 0b00
         private var toDo: ToDo? = null
 
         init {
@@ -227,7 +203,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
                     when (event.action) {
                         MotionEvent.ACTION_DOWN -> {
                             helper.startDrag(this@ToDoViewHolder)
-                            setBackgroundGrey()
                             return@OnTouchListener true
                         }
                     }
@@ -261,45 +236,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             } else {
                 doneView!!.visibility = View.GONE
             }
-        }
-
-        fun setBackgroundGrey() {
-            val fromColor = (rootView!!.background as ColorDrawable).color
-            val greyColor = ContextCompat.getColor(App.instance, R.color.MyerListGray)
-            animateColor(fromColor, greyColor)
-        }
-
-        fun setBackgroundGreen() {
-            Log.d(TAG, "set green:" + this.hashCode())
-            if (colorFlag and GREEN_ON_FLAG == GREEN_ON_FLAG) return
-            colorFlag = GREEN_ON_FLAG
-            val fromColor = (rootView!!.background as ColorDrawable).color
-            val toColor = ContextCompat.getColor(App.instance, R.color.DoneGreenColor)
-            animateColor(fromColor, toColor)
-        }
-
-        fun setBackgroundRed() {
-            if (colorFlag and RED_ON_FLAG == GREEN_ON_FLAG) return
-            colorFlag = RED_ON_FLAG
-            val fromColor = (rootView!!.background as ColorDrawable).color
-            val toColor = ContextCompat.getColor(App.instance, R.color.DeleteRedColor)
-            animateColor(fromColor, toColor)
-        }
-
-        fun animateColor(fromColor: Int, toColor: Int) {
-            val valueAnimator = ValueAnimator.ofArgb(fromColor, toColor)
-            valueAnimator.duration = 300
-            valueAnimator.addUpdateListener { animation -> rootView!!.background = ColorDrawable(animation.animatedValue as Int) }
-            valueAnimator.start()
-        }
-
-        fun setBackgroundTransparent() {
-            Log.d(TAG, "set Transparent:" + this.hashCode())
-
-            colorFlag = 0b00
-            val fromColor = (rootView!!.background as ColorDrawable).color
-            val toColor = Color.WHITE
-            animateColor(fromColor, toColor)
         }
     }
 }
