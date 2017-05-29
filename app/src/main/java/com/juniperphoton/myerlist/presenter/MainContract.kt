@@ -8,7 +8,11 @@ class MainContract {
 
         fun refreshToDoList()
 
+        fun notifyDataSetChanged()
+
         fun uploadOrders()
+
+        fun toggleRefreshing(show: Boolean)
 
         fun notifyToDoDeleted(pos: Int)
     }

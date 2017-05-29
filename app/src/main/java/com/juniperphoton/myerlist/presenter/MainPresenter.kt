@@ -98,7 +98,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                     }
 
                     override fun onNext(t: CommonResponse?) {
-                        Log.d(TAG,"updateOrders")
+                        Log.d(TAG, "updateOrders")
                     }
                 })
     }
@@ -115,22 +115,24 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                     }
 
                     override fun onNext(t: CommonResponse?) {
-                        Log.d(TAG,"updateIsDone")
+                        Log.d(TAG, "updateIsDone")
                     }
                 })
     }
 
     override fun modifyToDo(cate: String, content: String, id: String) {
         val dateStr = dateStr
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        val toDo = realm.where(ToDo::class.java).equalTo("id", id).findFirst()
-        if (toDo != null) {
-            toDo.content = content
-            toDo.cate = cate
-            toDo.time = dateStr
+        RealmUtils.mainInstance.executeTransaction {
+            val toDo = it.where(ToDo::class.java).equalTo(ToDo.ID_KEY, id).findFirst()
+            if (toDo != null) {
+                toDo.content = content
+                toDo.cate = cate
+                toDo.time = dateStr
+            }
         }
-        realm.commitTransaction()
+
+        view.notifyDataSetChanged()
+        view.toggleRefreshing(true)
 
         CloudService.updateToDo(id, dateStr, content, cate)
                 .subscribeOn(Schedulers.io())
@@ -140,10 +142,12 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                     }
 
                     override fun onError(e: Throwable) {
+                        view.toggleRefreshing(false)
                         e.printStackTrace()
                     }
 
                     override fun onNext(commonResponse: CommonResponse) {
+                        view.toggleRefreshing(false)
                         if (commonResponse.ok) {
                             ToastService.sendShortToast(R.string.modified_hint.getResString()!!)
                         } else {
@@ -163,6 +167,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
 
     override fun addToDo(cate: String, content: String) {
         val dateStr = dateStr
+        view.toggleRefreshing(true)
         CloudService.addToDo(dateStr, content, ToDo.IS_NOT_DONE, cate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -174,9 +179,11 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                     override fun onError(e: Throwable) {
                         e.printStackTrace()
                         ToastService.sendShortToast(e.message!!)
+                        view.toggleRefreshing(false)
                     }
 
                     override fun onNext(addToDoResponse: AddToDoResponse) {
+                        view.toggleRefreshing(false)
                         val toDo = addToDoResponse.toDo
                         if (toDo != null) {
                             RealmUtils.mainInstance.executeTransaction {
@@ -201,14 +208,13 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
         val alreadyDeleted = toDo.deleted
         val position = toDo.position
 
-        val realm = RealmUtils.mainInstance
-        realm.beginTransaction()
-        if (!alreadyDeleted) {
-            toDo.deleted = true
-        } else {
-            toDo.deleteFromRealm()
+        RealmUtils.mainInstance.executeTransaction {
+            if (!alreadyDeleted) {
+                toDo.deleted = true
+            } else {
+                toDo.deleteFromRealm()
+            }
         }
-        realm.commitTransaction()
 
         view.notifyToDoDeleted(position)
 
@@ -224,7 +230,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                         }
 
                         override fun onNext(t: CommonResponse?) {
-                            Log.d(TAG,"updateOrders")
+                            Log.d(TAG, "updateOrders")
                         }
                     })
         }

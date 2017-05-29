@@ -371,6 +371,10 @@ class MainActivity : BaseActivity(), MainContract.View {
         }
     }
 
+    override fun notifyDataSetChanged() {
+        toDoAdapter?.notifyDataSetChanged()
+    }
+
     private fun updateCount() {
         val toDos = toDoAdapter!!.data
         val count = toDos!!.count { it.isdone == ToDo.IS_NOT_DONE }
@@ -407,6 +411,12 @@ class MainActivity : BaseActivity(), MainContract.View {
             cateAdapter!!.selectItem(0)
         } else {
             super.onBackPressed()
+        }
+    }
+
+    override fun toggleRefreshing(show: Boolean) {
+        mainRefreshLayout?.post {
+            mainRefreshLayout?.isRefreshing = show
         }
     }
 
