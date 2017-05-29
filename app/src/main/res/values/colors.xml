@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4cafff</color>
-    <color name="colorPrimaryDark">#2282d0</color>
-    <color name="colorAccent">#4cafff</color>
-
     <color name="MyerListBlue">#4cafff</color>
     <color name="MyerListBlueLight">#70befc</color>
     <color name="MyerListBlueDark">#2282d0</color>

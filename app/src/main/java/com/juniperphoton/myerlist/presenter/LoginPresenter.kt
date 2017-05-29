@@ -36,7 +36,6 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
     private val loginSubscriber: Subscriber<User>
         get() = object : Subscriber<User>() {
             override fun onCompleted() {
-
             }
 
             override fun onError(e: Throwable) {
@@ -44,14 +43,14 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
                 if (e is APIException) {
                     ToastService.sendShortToast(e.message!!)
                 }
-                loginView.navigateToMain(false)
+                loginView.dismissDialog()
             }
 
             override fun onNext(user: User) {
                 LocalSettingUtil.putString(App.instance!!, Params.SID_KEY, user.sid.toString())
                 LocalSettingUtil.putString(App.instance!!, Params.ACCESS_TOKEN_KEY, user.accessToken!!)
                 LocalSettingUtil.putString(App.instance!!, Params.EMAIL_KEY, email!!)
-                loginView.navigateToMain(true)
+                loginView.navigateToMain()
             }
         }
 
@@ -96,7 +95,7 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
 
     fun register() {
         if (!isDataValid) {
-            loginView.navigateToMain(false)
+            loginView.dismissDialog()
             return
         }
         CloudService.checkUserExist(email!!)
@@ -118,7 +117,7 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
 
     fun login() {
         if (!isDataValid) {
-            loginView.navigateToMain(false)
+            loginView.dismissDialog()
             return
         }
         CloudService.checkUserExist(email!!)
@@ -144,10 +143,8 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
     }
 
     override fun start() {
-
     }
 
     override fun stop() {
-
     }
 }

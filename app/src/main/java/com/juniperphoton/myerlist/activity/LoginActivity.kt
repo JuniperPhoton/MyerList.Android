@@ -13,7 +13,7 @@ import com.juniperphoton.myerlist.util.Params
 import com.juniperphoton.myerlist.view.LoginView
 import kotlinx.android.synthetic.main.activity_login.*
 
-@Suppress("unused","unused_parameter")
+@Suppress("unused", "unused_parameter")
 class LoginActivity : BaseActivity(), LoginView {
     private var presenter: LoginPresenter? = null
 
@@ -51,6 +51,11 @@ class LoginActivity : BaseActivity(), LoginView {
         presenter = LoginPresenter(this, loginMode)
     }
 
+    override fun onPause() {
+        super.onPause()
+        dialog?.dismiss()
+    }
+
     override val email: String
         get() = emailView.text.toString()
 
@@ -74,12 +79,13 @@ class LoginActivity : BaseActivity(), LoginView {
         }
     }
 
-    override fun navigateToMain(ok: Boolean) {
-        dialog!!.dismiss()
-        if (ok) {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }
+    override fun dismissDialog() {
+        dialog?.dismiss()
+    }
+
+    override fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 }

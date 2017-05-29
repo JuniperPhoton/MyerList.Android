@@ -73,15 +73,8 @@ class MainActivity : BaseActivity(), MainContract.View {
             drawerLayout.post { toggle.syncState() }
         }
 
-        if (!AppConfig.logined) {
-            val intent = Intent()
-            intent.setClass(this, StartActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        } else {
-            initViews()
-            initData()
-        }
+        initViews()
+        initData()
     }
 
     override fun onDestroy() {

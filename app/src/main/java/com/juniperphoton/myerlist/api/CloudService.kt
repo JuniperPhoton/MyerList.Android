@@ -47,14 +47,14 @@ object CloudService {
             .getCategory(AppConfig.sid!!, AppConfig.accessToken!!)
 
     fun getToDos(): Observable<GetToDosResponse> = retrofit.create(ToDoService::class.java)
-            .getToDos(AppConfig.sid!!, AppConfig.accessToken!!, AppConfig.sid)
+            .getToDos(AppConfig.sid!!, AppConfig.accessToken!!, AppConfig.sid!!)
 
     fun getOrders(): Observable<GetOrderResponse> = retrofit.create(ToDoService::class.java)
-            .getOrders(AppConfig.sid!!, AppConfig.accessToken!!, AppConfig.sid)
+            .getOrders(AppConfig.sid!!, AppConfig.accessToken!!, AppConfig.sid!!)
 
     fun setOrders(order: String): Observable<CommonResponse> {
         return retrofit.create(ToDoService::class.java)
-                .setOrders(AppConfig.sid!!, AppConfig.accessToken!!, AppConfig.sid, order)
+                .setOrders(AppConfig.sid!!, AppConfig.accessToken!!, AppConfig.sid!!, order)
     }
 
     fun setIsDone(id: String, isDone: String): Observable<CommonResponse> {
@@ -68,7 +68,7 @@ object CloudService {
 
     fun addToDo(time: String, content: String, isDone: String, cate: String): Observable<AddToDoResponse> {
         return retrofit.create(ToDoService::class.java).addToDo(AppConfig.sid!!, AppConfig.accessToken!!,
-                AppConfig.sid, time, content, isDone, cate)
+                AppConfig.sid!!, time, content, isDone, cate)
     }
 
     fun updateToDo(id: String, time: String, content: String, cate: String): Observable<CommonResponse> {
@@ -78,6 +78,6 @@ object CloudService {
 
     fun updateToDoCategories(str: String): Observable<CommonResponse> {
         return retrofit.create(CategoryService::class.java).setCategory(AppConfig.sid!!, AppConfig.accessToken!!,
-                str, AppConfig.sid, AppConfig.accessToken)
+                str, AppConfig.sid!!, AppConfig.accessToken!!)
     }
 }
