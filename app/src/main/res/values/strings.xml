@@ -31,6 +31,8 @@
     <string name="modify_adding">MODIFY</string>
     <string name="cancel_adding">CANCEL</string>
     <string name="ok_adding">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="e_g_have_coffee_with_my_friends_at_5_clock">e.g. Have coffee with revealY friends at 5\'clock.</string>
     <string name="personalization_title">PERSONALIZATION</string>
     <string name="about">ABOUT</string>

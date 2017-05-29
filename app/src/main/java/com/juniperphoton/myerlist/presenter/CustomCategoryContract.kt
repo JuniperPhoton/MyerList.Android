@@ -10,7 +10,7 @@ class CustomCategoryContract {
 
         fun hideDialog(delayMillis: Long)
 
-        fun postDelay(block: Runnable, delayMillis: Long)
+        fun postDelay(runnable: Runnable, delayMillis: Long)
 
         fun hideKeyboard()
 

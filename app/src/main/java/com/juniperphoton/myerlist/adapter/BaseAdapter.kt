@@ -36,8 +36,9 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
             val index: Int
             if (headerView != null) {
                 index = holder.adapterPosition - 1
-            } else
+            } else {
                 index = holder.adapterPosition
+            }
             onBindItemViewHolder(holder as U, index)
         }
     }

@@ -40,6 +40,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     var canDrag: Boolean = true
 
     private var recyclerView: RecyclerView? = null
+
     private val helper = CustomItemTouchHelper(object : CustomItemTouchHelper.Callback() {
         private val SWIPE_THRESHOLD = 0.4f
 
@@ -151,6 +152,11 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     }
 
     inner class ToDoViewHolder(itemView: View) : BaseViewHolder(itemView) {
+        private val RED_ON_FLAG = 0b10
+        private val RED_OFF_FLAG = 0b00
+        private val GREEN_ON_FLAG = 0b01
+        private val GREEN_OFF_FLAG = 0b00
+
         @JvmField
         @BindView(R.id.row_todo_color_view)
         var circleView: CircleView? = null
@@ -175,8 +181,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         @BindView(R.id.item_root)
         var root: View? = null
 
-        private var isGreen: Boolean = false
-        private var isRed: Boolean = false
+        private var colorFlag: Int = 0b00
         private var toDo: ToDo? = null
 
         init {
@@ -218,7 +223,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             contentView!!.text = todo.content
             if (canDrag) {
                 thumb!!.visibility = View.VISIBLE
-                thumb!!.setOnTouchListener(View.OnTouchListener { v, event ->
+                thumb!!.setOnTouchListener(View.OnTouchListener { _, event ->
                     when (event.action) {
                         MotionEvent.ACTION_DOWN -> {
                             helper.startDrag(this@ToDoViewHolder)
@@ -265,21 +270,20 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         }
 
         fun setBackgroundGreen() {
-            if (isGreen) return
-            isRed = false
+            Log.d(TAG, "set green:" + this.hashCode())
+            if (colorFlag and GREEN_ON_FLAG == GREEN_ON_FLAG) return
+            colorFlag = GREEN_ON_FLAG
             val fromColor = (rootView!!.background as ColorDrawable).color
             val toColor = ContextCompat.getColor(App.instance, R.color.DoneGreenColor)
             animateColor(fromColor, toColor)
-            isGreen = true
         }
 
         fun setBackgroundRed() {
-            if (isRed) return
-            isGreen = false
+            if (colorFlag and RED_ON_FLAG == GREEN_ON_FLAG) return
+            colorFlag = RED_ON_FLAG
             val fromColor = (rootView!!.background as ColorDrawable).color
             val toColor = ContextCompat.getColor(App.instance, R.color.DeleteRedColor)
             animateColor(fromColor, toColor)
-            isRed = true
         }
 
         fun animateColor(fromColor: Int, toColor: Int) {
@@ -290,8 +294,9 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         }
 
         fun setBackgroundTransparent() {
-            isGreen = false
-            isRed = false
+            Log.d(TAG, "set Transparent:" + this.hashCode())
+
+            colorFlag = 0b00
             val fromColor = (rootView!!.background as ColorDrawable).color
             val toColor = Color.WHITE
             animateColor(fromColor, toColor)

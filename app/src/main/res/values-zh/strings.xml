@@ -23,6 +23,8 @@
     <string name="add_shortcuts">添加</string>
     <string name="all_adding">所有</string>
     <string name="ok_adding">确认</string>
+    <string name="yes">是的</string>
+    <string name="no">我改变主意了</string>
     <string name="personalization_title">个性化</string>
     <string name="account">账户</string>
     <string name="adding_adding">添加</string>

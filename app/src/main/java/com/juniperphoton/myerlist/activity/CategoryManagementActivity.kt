@@ -47,11 +47,11 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     private fun prepareToExit() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.exit_without_saving)
-                .setPositiveButton(R.string.ok_adding) { dialog, _ ->
+                .setPositiveButton(R.string.yes) { dialog, _ ->
                     dialog.dismiss()
                     super@CategoryManagementActivity.onBackPressed()
                 }
-                .setNegativeButton(R.string.cancel_adding) { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
                 .create().show()
     }
 
@@ -107,9 +107,9 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
         progressDialog!!.show()
     }
 
-    override fun hideDialog(delay: Long) {
+    override fun hideDialog(delayMillis: Long) {
         if (progressDialog != null) {
-            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delay)
+            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delayMillis)
         }
     }
 
