@@ -12,7 +12,7 @@ import com.juniperphoton.myerlist.util.getVersionName
 import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
-@Suppress("unused")
+@Suppress("unused","unused_parameter")
 class AboutActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

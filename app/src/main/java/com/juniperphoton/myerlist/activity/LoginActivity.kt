@@ -13,7 +13,7 @@ import com.juniperphoton.myerlist.util.Params
 import com.juniperphoton.myerlist.view.LoginView
 import kotlinx.android.synthetic.main.activity_login.*
 
-@Suppress("unused")
+@Suppress("unused","unused_parameter")
 class LoginActivity : BaseActivity(), LoginView {
     private var presenter: LoginPresenter? = null
 
@@ -33,18 +33,18 @@ class LoginActivity : BaseActivity(), LoginView {
         loginMode = intent.getIntExtra(Params.LOGIN_MODE, -1)
         when (loginMode) {
             Params.LoginMode.LOGIN -> {
-                loginTitleView!!.text = getString(R.string.login_title)
-                passwordSecViewRoot!!.visibility = View.GONE
-                loginButton!!.text = getString(R.string.login)
+                loginTitleView.text = getString(R.string.login_title)
+                passwordSecViewRoot.visibility = View.GONE
+                loginButton.text = getString(R.string.login)
             }
             Params.LoginMode.REGISTER -> {
-                loginTitleView!!.text = getString(R.string.register_title)
-                passwordSecViewRoot!!.visibility = View.VISIBLE
-                loginButton!!.text = getString(R.string.register)
+                loginTitleView.text = getString(R.string.register_title)
+                passwordSecViewRoot.visibility = View.VISIBLE
+                loginButton.text = getString(R.string.register)
             }
         }
         if (BuildConfig.DEBUG) {
-            emailView!!.setText("dengweichao@hotmail.com")
+            emailView.setText("dengweichao@hotmail.com")
             passwordView.setText("test");
             //passwordSecView.setText("test");
         }
@@ -52,13 +52,13 @@ class LoginActivity : BaseActivity(), LoginView {
     }
 
     override val email: String
-        get() = emailView!!.text.toString()
+        get() = emailView.text.toString()
 
     override val password: String
-        get() = passwordView!!.text.toString()
+        get() = passwordView.text.toString()
 
     override val secondPassword: String
-        get() = passwordSecView!!.text.toString()
+        get() = passwordSecView.text.toString()
 
     @OnClick(R.id.loginButton)
     fun onClickButton() {

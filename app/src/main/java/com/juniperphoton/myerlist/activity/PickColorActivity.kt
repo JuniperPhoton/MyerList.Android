@@ -10,6 +10,7 @@ import com.juniperphoton.myerlist.adapter.PickColorAdapter
 import com.juniperphoton.myerlist.util.ColorUtil
 import kotlinx.android.synthetic.main.activity_color_picker.*
 
+@Suppress("unused","unused_parameter")
 class PickColorActivity : BaseActivity() {
     companion object {
         private val SPAN_COUNT = 6
@@ -24,7 +25,7 @@ class PickColorActivity : BaseActivity() {
         setContentView(R.layout.activity_color_picker)
         ButterKnife.bind(this)
         init()
-        colorPickerRoot!!.setOnClickListener { finish() }
+        colorPickerRoot.setOnClickListener { finish() }
     }
 
     fun init() {
@@ -37,8 +38,8 @@ class PickColorActivity : BaseActivity() {
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-        colorPickList!!.layoutManager = GridLayoutManager(this, SPAN_COUNT)
-        colorPickList!!.adapter = adapter
+        colorPickList.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+        colorPickList.adapter = adapter
         adapter!!.refreshData(colors!!)
     }
 }

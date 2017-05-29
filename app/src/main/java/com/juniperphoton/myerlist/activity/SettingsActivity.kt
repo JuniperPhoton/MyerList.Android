@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
+@Suppress("unused","unused_parameter")
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,13 +29,12 @@ class SettingsActivity : BaseActivity() {
 
     private fun updateLocal() {
         val resources = resources
-        val dm = resources.displayMetrics
         val config = resources.configuration
         val locale = config.locale
         if (locale == Locale.SIMPLIFIED_CHINESE) {
-            changeLangView!!.content = R.string.change_lang_hint_chinese.getResString()!!
+            changeLangView.content = R.string.change_lang_hint_chinese.getResString()!!
         } else {
-            changeLangView!!.content = R.string.change_lang_hint_english.getResString()!!
+            changeLangView.content = R.string.change_lang_hint_english.getResString()!!
         }
     }
 

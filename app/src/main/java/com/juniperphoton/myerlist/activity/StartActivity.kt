@@ -7,6 +7,7 @@ import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.util.Params
 
+@Suppress("unused","unused_parameter")
 class StartActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

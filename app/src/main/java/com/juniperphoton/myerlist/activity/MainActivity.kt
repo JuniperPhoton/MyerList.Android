@@ -36,6 +36,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
+@Suppress("unused","unused_parameter")
 class MainActivity : BaseActivity(), MainContract.View {
     companion object {
         private val TAG = "MainActivity"
@@ -67,8 +68,8 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (drawerLayout != null) {
             val toggle = ActionBarDrawerToggle(
                     this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-            drawerLayout!!.addDrawerListener(toggle)
-            drawerLayout!!.post { toggle.syncState() }
+            drawerLayout.addDrawerListener(toggle)
+            drawerLayout.post { toggle.syncState() }
         }
 
         if (!AppConfig.logined) {
@@ -107,37 +108,32 @@ class MainActivity : BaseActivity(), MainContract.View {
         }
     }
 
-    /**
-     * 更新没有 Item 的 UI
-
-     * @param show 是否显示
-     */
     private fun updateNoItemUi(show: Boolean) {
         if (show) {
-            noItemLayout!!.visibility = View.VISIBLE
+            noItemLayout.visibility = View.VISIBLE
         } else {
-            noItemLayout!!.visibility = View.GONE
+            noItemLayout.visibility = View.GONE
         }
     }
 
     private fun initViews() {
-        addingView!!.visibility = View.GONE
+        addingView.visibility = View.GONE
 
-        toolbar!!.post { toolbar!!.title = getString(R.string.all) }
+        toolbar.post { toolbar.title = getString(R.string.all) }
 
-        mainRefreshLayout!!.setOnRefreshListener {
+        mainRefreshLayout.setOnRefreshListener {
             if (cateAdapter != null && cateAdapter!!.data!!.size > 0) {
                 presenter!!.getToDos()
             } else {
                 presenter!!.getCategories()
             }
         }
-        drawerEmailView!!.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
+        drawerEmailView.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
 
         cateAdapter = CategoryAdapter()
-        categoryRecyclerView!!.layoutManager = LinearLayoutManager(this,
+        categoryRecyclerView.layoutManager = LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false)
-        categoryRecyclerView!!.adapter = cateAdapter
+        categoryRecyclerView.adapter = cateAdapter
         cateAdapter!!.onSelected = { category, position ->
             if (selectedCategoryId == category.id) {
                 Unit
@@ -151,17 +147,17 @@ class MainActivity : BaseActivity(), MainContract.View {
             selectedCategoryPosition = position
             selectedCategoryId = category.id
             toDoAdapter!!.canDrag = selectedCategoryId == 0
-            drawerRoot!!.background = ColorDrawable(category.intColor)
-            addFAB!!.backgroundTintList = ColorStateList.valueOf(category.intColor)
-            toolbar!!.title = category.name
+            drawerRoot.background = ColorDrawable(category.intColor)
+            addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
+            toolbar.title = category.name
 
             if (selectedCategoryId == ToDoCategory.DELETED_ID) {
-                addFAB!!.setImageResource(R.drawable.ic_delete)
+                addFAB.setImageResource(R.drawable.ic_delete)
             } else {
-                addFAB!!.setImageResource(R.drawable.ic_add)
+                addFAB.setImageResource(R.drawable.ic_add)
             }
 
-            drawerLayout!!.postDelayed({ drawerLayout!!.closeDrawer(GravityCompat.START) }, 300)
+            drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
 
             displayToDos()
         }
@@ -175,7 +171,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         toDoAdapter!!.onClickItem = { position, cateView ->
             val location = IntArray(2)
             cateView.getLocationOnScreen(location)
-            val radius = Math.max(window.decorView.width, window.decorView.height)
             val x = location[0] + cateView.width / 2
             val y = location[1] + cateView.height / 2
 
@@ -187,13 +182,13 @@ class MainActivity : BaseActivity(), MainContract.View {
             modifyingToDoId = Integer.parseInt(toDo.id)
             startRevealAnimation(x, y, object : StartEndAnimator() {
                 override fun onAnimationStart(animation: Animator) {
-                    addingView!!.setVisibleMode(View.VISIBLE, AddingView.MODIFY_MODE)
-                    addingView!!.setSelected(index)
-                    addingView!!.setContent(toDo.content!!)
+                    addingView.setVisibleMode(View.VISIBLE, AddingView.MODIFY_MODE)
+                    addingView.setSelected(index)
+                    addingView.setContent(toDo.content!!)
                 }
 
                 override fun onAnimationEnd(animation: Animator) {
-                    addingView!!.showInputPane()
+                    addingView.showInputPane()
                 }
             })
         }
@@ -214,17 +209,17 @@ class MainActivity : BaseActivity(), MainContract.View {
             presenter!!.deleteToDo(toDo)
         }
 
-        toDoRecyclerView!!.layoutManager = LinearLayoutManager(this,
+        toDoRecyclerView.layoutManager = LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false)
-        (toDoRecyclerView!!.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        toDoRecyclerView!!.adapter = toDoAdapter
+        (toDoRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        toDoRecyclerView.adapter = toDoAdapter
 
-        addingView!!.setOnSelectionChangedCallback { position ->
+        addingView.setOnSelectionChangedCallback { position ->
             val toDoCategory = cateAdapter!!.getData(position)
-            addingView!!.updateCategory(toDoCategory)
+            addingView.updateCategory(toDoCategory)
         }
 
-        addingView!!.onClickOk = { cateIndex, content, mode ->
+        addingView.onClickOk = { cateIndex, content, mode ->
             hideAddingView()
             val category = cateAdapter!!.getData(cateIndex)
             when (mode) {
@@ -237,11 +232,11 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
         }
 
-        addingView!!.onClickCancel = {
+        addingView.onClickCancel = {
             hideAddingView()
         }
 
-        TypefaceUtil.setTypeFace(undoneText!!, "fonts/AGENCYB.TTF", this)
+        TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
 
         displayCategories()
         displayToDos()
@@ -254,7 +249,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             "action.add" -> {
                 if (!handledShortCuts) {
                     handledShortCuts = true
-                    addingView!!.post { onClickFAB() }
+                    addingView.post { onClickFAB() }
                 }
             }
         }
@@ -290,19 +285,19 @@ class MainActivity : BaseActivity(), MainContract.View {
             return
         }
         val location = IntArray(2)
-        addFAB!!.getLocationOnScreen(location)
+        addFAB.getLocationOnScreen(location)
 
         val x = location[0] + resources.getDimensionPixelSize(R.dimen.fab_center_margin)
         val y = location[1] + resources.getDimensionPixelSize(R.dimen.fab_center_margin)
 
         startRevealAnimation(x, y, object : StartEndAnimator() {
             override fun onAnimationStart(animation: Animator) {
-                addingView!!.setVisibleMode(View.VISIBLE, AddingView.ADD_MODE)
-                addingView!!.setSelected(selectedCategoryPosition)
+                addingView.setVisibleMode(View.VISIBLE, AddingView.ADD_MODE)
+                addingView.setSelected(selectedCategoryPosition)
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                addingView!!.showInputPane()
+                addingView.showInputPane()
             }
         })
     }
@@ -314,15 +309,15 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                addingView!!.setSelected(0)
-                addingView!!.visibility = View.GONE
-                addingView!!.reset()
+                addingView.setSelected(0)
+                addingView.visibility = View.GONE
+                addingView.reset()
             }
         })
     }
 
     override fun displayCategories() {
-        mainRefreshLayout!!.isRefreshing = true
+        mainRefreshLayout.isRefreshing = true
 
         val realm = RealmUtils.mainInstance
 
@@ -340,9 +335,9 @@ class MainActivity : BaseActivity(), MainContract.View {
         cateAdapter!!.refreshData(list)
         cateAdapter!!.selectItem(0)
 
-        addingView!!.makeCategoriesSelection()
+        addingView.makeCategoriesSelection()
 
-        mainRefreshLayout!!.isRefreshing = false
+        mainRefreshLayout.isRefreshing = false
     }
 
     override fun displayToDos() {
@@ -374,13 +369,13 @@ class MainActivity : BaseActivity(), MainContract.View {
         toDoAdapter!!.refreshData(resultsWrapper)
 
         updateCount()
-        mainRefreshLayout!!.isRefreshing = false
+        mainRefreshLayout.isRefreshing = false
     }
 
     private fun updateCount() {
         val toDos = toDoAdapter!!.data
         val count = toDos!!.count { it.isdone == ToDo.IS_NOT_DONE }
-        undoneText!!.text = count.toString()
+        undoneText.text = count.toString()
     }
 
     private fun startRevealAnimation(x: Int, y: Int, animator: StartEndAnimator) {
@@ -403,11 +398,11 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun onBackPressed() {
-        if (drawerLayout!!.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout!!.closeDrawer(GravityCompat.START)
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
             return
         }
-        if (addingView!!.visibility == View.VISIBLE) {
+        if (addingView.visibility == View.VISIBLE) {
             hideAddingView()
         } else if (selectedCategoryId != 0) {
             cateAdapter!!.selectItem(0)

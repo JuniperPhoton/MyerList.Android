@@ -22,6 +22,7 @@ import com.juniperphoton.myerlist.util.getDimenInPixel
 import com.juniperphoton.myerlist.util.toColorString
 import kotlinx.android.synthetic.main.activity_manage_category.*
 
+@Suppress("unused","unused_parameter")
 class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     private var adapter: CustomCategoryAdapter? = null
     private var presenter: CustomCategoryContract.Presenter? = null
@@ -74,10 +75,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             startActivityForResult(intent, 0)
         }
         adapter!!.headerView = headerView
-        categoryManageList!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        categoryManageList!!.adapter = adapter
+        categoryManageList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        categoryManageList.adapter = adapter
 
-        categoryManageCancelView!!.requestFocus()
+        categoryManageCancelView.requestFocus()
     }
 
     private fun createHeader() {
@@ -93,7 +94,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     }
 
     override fun initData(data: MutableList<ToDoCategory>) {
-        if (adapter == null || data == null) {
+        if (adapter == null) {
             return
         }
         adapter!!.refreshData(data)
@@ -107,12 +108,12 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     override fun hideDialog(delay: Int) {
         if (progressDialog != null) {
-            categoryManageCancelView!!.postDelayed({ progressDialog!!.hide() }, delay.toLong())
+            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delay.toLong())
         }
     }
 
     override fun hideKeyboard() {
-        KeyboardUtil.hide(this, categoryManageCancelView!!.windowToken)
+        KeyboardUtil.hide(this, categoryManageCancelView.windowToken)
     }
 
     @OnClick(R.id.categoryManageCancelView)
