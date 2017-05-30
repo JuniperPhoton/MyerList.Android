@@ -86,5 +86,5 @@
     <string name="set_it_done">SET IT DONE</string>
     <string name="delete_it">DELETE IT</string>
     <string name="switch_category_hint">*Hint: swipe to switch categories</string>
-
+    <string name="default_category_name">New category</string>
 </resources>

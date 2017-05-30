@@ -82,4 +82,6 @@
     <string name="set_it_done">完成</string>
     <string name="delete_it">删除</string>
     <string name="switch_category_hint">*提示：可以通过滑动切换类别</string>
+
+    <string name="default_category_name">新类别</string>
 </resources>

@@ -89,11 +89,14 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
                 this.getDimenInPixel(52))
         headerView!!.setOnClickListener {
             val category = ToDoCategory()
-            category.name = "New cate"
-            category.color = "#FF4096C9"
-            var maxId = adapter!!.data!!.maxBy {
+            category.name = R.string.default_category_name.getResString()
+            category.color = R.color.MyerListBlue.toColorString()
+            var maxId = adapter?.data?.maxBy {
                 it.id
-            }!!.id
+            }?.id
+            if (maxId == null) {
+                maxId = 0
+            }
             category.id = maxId + 1
             adapter!!.addData(category)
         }

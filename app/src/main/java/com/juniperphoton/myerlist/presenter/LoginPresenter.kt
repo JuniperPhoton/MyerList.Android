@@ -102,7 +102,7 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
                 .subscribeOn(Schedulers.io())
                 .flatMap(Func1<CheckUserResponse, Observable<RegisterResponse>> { response ->
                     if (!response.exist) {
-                        if (DEBUG) {
+                        if (DEBUG && password.isNullOrBlank()) {
                             return@Func1 CloudService.register(email!!, "6a311e59630cfd8372904e2a1f03aaf7")
                         }
                         return@Func1 CloudService.register(email!!, Security.get32MD5Str(password!!))
@@ -130,7 +130,7 @@ class LoginPresenter(private val loginView: LoginView, private val mode: Int) : 
                 })
                 .flatMap(Func1<GetSaltResponse, Observable<LoginResponse>> { response ->
                     if (response.salt != null) {
-                        if (DEBUG) {
+                        if (DEBUG && password.isNullOrBlank()) {
                             return@Func1 CloudService.login(email!!, "6a311e59630cfd8372904e2a1f03aaf7")
                         }
                         return@Func1 CloudService.login(email!!, encryptPwd(password!!, response.salt))
