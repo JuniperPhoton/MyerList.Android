@@ -84,4 +84,6 @@
     <string name="switch_category_hint">*提示：可以通过滑动切换类别</string>
 
     <string name="default_category_name">新类别</string>
+
+    <string name="donate_your_code">贡献代码</string>
 </resources>
