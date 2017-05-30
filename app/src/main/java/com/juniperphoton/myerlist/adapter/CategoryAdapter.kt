@@ -1,6 +1,5 @@
 package com.juniperphoton.myerlist.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import butterknife.ButterKnife
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDoCategory
+import com.juniperphoton.myerlist.util.toColor
 import com.juniperphoton.myerlist.widget.CircleView
 
 class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHolder>() {
@@ -73,7 +73,7 @@ class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHo
         }
 
         fun bind(category: ToDoCategory) {
-            circleView!!.setColor(Color.parseColor(category.color))
+            circleView!!.color = category.color!!.toColor()
             nameView!!.text = category.name
             if (adapterPosition == selectedIndex) {
                 setSelected()

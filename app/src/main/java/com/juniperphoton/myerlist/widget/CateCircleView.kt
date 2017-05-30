@@ -11,12 +11,36 @@ import android.util.AttributeSet
 import com.juniperphoton.myerlist.R
 
 class CateCircleView(ctx: Context, attrs: AttributeSet?) : CircleView(ctx, attrs) {
-    private var selected: Boolean = false
-
     private val darkPaint = Paint()
     private val paint = Paint()
 
     private var radius = 0
+
+    override var color: Int = Color.WHITE
+        set(value) {
+            field = value
+            paint.color = value
+            darkPaint.color = Color.argb(255, (Color.red(value) * 0.4).toInt(),
+                    (Color.green(value) * 0.4).toInt(),
+                    (Color.blue(value) * 0.4).toInt())
+            invalidate()
+        }
+
+    var inSelected: Boolean = false
+        set(newValue) {
+            if (field == newValue) {
+                return
+            }
+            field = newValue
+            val value = (layoutParams.width / 2 * 0.5).toInt()
+            val valueAnimator = ValueAnimator.ofInt(if (newValue) 0 else value, if (newValue) value else 0)
+            valueAnimator.addUpdateListener { animation ->
+                radius = animation.animatedValue as Int
+                invalidate()
+            }
+            valueAnimator.duration = 300
+            valueAnimator.start()
+        }
 
     init {
         background = ContextCompat.getDrawable(ctx, R.drawable.ripple_borderless)
@@ -26,34 +50,11 @@ class CateCircleView(ctx: Context, attrs: AttributeSet?) : CircleView(ctx, attrs
         paint.isAntiAlias = true
     }
 
-    override fun setColor(color: Int) {
-        super.setColor(color)
-        paint.color = color
-        darkPaint.color = Color.argb(255, (Color.red(color) * 0.4).toInt(),
-                (Color.green(color) * 0.4).toInt(),
-                (Color.blue(color) * 0.4).toInt())
-    }
-
-    override fun setSelected(selected: Boolean) {
-        if (this.selected == selected) {
-            return
-        }
-        this.selected = selected
-        val value = (layoutParams.width / 2 * 0.5).toInt()
-        val valueAnimator = ValueAnimator.ofInt(if (selected) 0 else value, if (selected) value else 0)
-        valueAnimator.addUpdateListener { animation ->
-            radius = animation.animatedValue as Int
-            invalidate()
-        }
-        valueAnimator.duration = 300
-        valueAnimator.start()
-    }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), (width / 2).toFloat(), darkPaint)
         canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), (width / 2 * 0.8).toInt().toFloat(), paint)
-        if (selected) {
+        if (inSelected) {
             canvas.drawCircle((width / 2).toFloat(), (height / 2).toFloat(), radius.toFloat(), darkPaint)
         }
     }

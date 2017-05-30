@@ -19,6 +19,8 @@ import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.util.KeyboardUtil
+import com.juniperphoton.myerlist.util.LocalSettingUtil
+import com.juniperphoton.myerlist.util.Params.SWITCH_CATEGORY_HINT
 
 @Suppress("unused", "unused_parameter")
 class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs), View.OnTouchListener {
@@ -27,8 +29,6 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         val ADD_MODE = 1
         val MODIFY_MODE = 1 shl 1
     }
-
-    private var mode = ADD_MODE
 
     @JvmField
     @BindView(R.id.adding_view_root)
@@ -50,32 +50,45 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
     @BindView(R.id.adding_view_title)
     internal var tittleText: TextView? = null
 
+    @JvmField
+    @BindView(R.id.switchCategoryHintView)
+    internal var hintView: View? = null
+
     var onClickOk: ((Int, String, Int) -> Unit)? = null
     var onClickCancel: (() -> Unit)? = null
 
-    private var inputText: String? = null
+    private val inputText: String?
+        get() = editText?.text?.toString()
+
+    var content: String
+        get() = editText?.text?.toString() ?: ""
+        set(value) {
+            editText?.setText(value)
+        }
+
+    var mode = ADD_MODE
+        set(value) {
+            field = value
+            when (value) {
+                ADD_MODE -> tittleText!!.text = App.instance!!.getString(R.string.adding_adding)
+                MODIFY_MODE -> tittleText!!.text = App.instance!!.getString(R.string.modify_adding)
+            }
+        }
+
+    var selectedIndex: Int = 0
+        set(value) {
+            field = value
+            selectCategoryView!!.selectedIndex = value
+        }
 
     init {
         LayoutInflater.from(ctx).inflate(R.layout.view_adding, this, true)
         ButterKnife.bind(this)
 
         root!!.setOnTouchListener(this)
-    }
 
-    fun setVisibleMode(visibility: Int, mode: Int) {
-        setVisibility(visibility)
-        this.mode = mode
-        updateUi()
-    }
-
-    fun setContent(text: String) {
-        editText!!.setText(text)
-    }
-
-    private fun updateUi() {
-        when (mode) {
-            ADD_MODE -> tittleText!!.text = App.instance!!.getString(R.string.adding_adding)
-            MODIFY_MODE -> tittleText!!.text = App.instance!!.getString(R.string.modify_adding)
+        if (LocalSettingUtil.checkKey(context, SWITCH_CATEGORY_HINT)) {
+            hintView?.visibility = View.GONE
         }
     }
 
@@ -91,17 +104,18 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         onClickCancel?.invoke()
     }
 
+    @OnClick(R.id.switchCategoryHintView)
+    internal fun onClickHint() {
+        LocalSettingUtil.putBoolean(context, SWITCH_CATEGORY_HINT, true)
+        hintView?.visibility = View.GONE
+    }
+
     private fun prepareToHide() {
         KeyboardUtil.hide(ctx, editText!!.windowToken)
-        inputText = editText!!.editableText.toString()
     }
 
     fun reset() {
         editText!!.setText("")
-    }
-
-    fun setSelected(index: Int) {
-        selectCategoryView!!.setSelected(index)
     }
 
     fun setOnSelectionChangedCallback(callback: ((Int) -> Unit)?) {
@@ -138,8 +152,8 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         valueAnimator.start()
     }
 
-    internal var startX: Float = 0.toFloat()
-    internal var dx: Float = 0.toFloat()
+    private var startX: Float = 0F
+    private var dx: Float = 0F
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {

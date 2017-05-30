@@ -10,17 +10,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.util.CustomItemTouchHelper
 import com.juniperphoton.myerlist.util.KeyboardUtil
 import com.juniperphoton.myerlist.widget.CircleView
-
-import java.util.Collections
-
-import butterknife.BindView
-import butterknife.ButterKnife
+import java.util.*
 
 class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCategory, CustomCategoryAdapter.CustomCategoryViewHolder>() {
     var onClickSelectCategory: ((ToDoCategory?) -> Unit)? = null
@@ -136,7 +133,7 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
 
         fun bind(toDoCategory: ToDoCategory?) {
             category = toDoCategory
-            cateView!!.setColor(category!!.intColor)
+            cateView!!.color = category!!.intColor
             nameTextView!!.text = category!!.name
         }
     }

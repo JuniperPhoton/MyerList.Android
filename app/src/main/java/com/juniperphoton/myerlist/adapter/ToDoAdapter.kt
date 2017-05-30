@@ -1,6 +1,5 @@
 package com.juniperphoton.myerlist.adapter
 
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,19 +7,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.CustomItemTouchHelper
+import com.juniperphoton.myerlist.util.toResColor
 import com.juniperphoton.myerlist.widget.CircleView
-
-import java.util.Collections
-
-import butterknife.BindView
-import butterknife.ButterKnife
+import java.util.*
 
 class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     companion object {
@@ -177,19 +174,18 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             }
             toDo = todo
 
-            val realm = RealmUtils.mainInstance
-            realm.beginTransaction()
-            val cate = Integer.valueOf(todo.cate)!!
-            if (cate > 0) {
-                val category = realm.where(ToDoCategory::class.java).equalTo(ToDoCategory.ID_KEY,
-                        cate).findFirst()
-                if (category != null) {
-                    circleView!!.setColor(category.intColor)
+            var color: Int = R.color.MyerListBlue.toResColor()
+            RealmUtils.mainInstance.executeTransaction {
+                val cate = Integer.valueOf(todo.cate)!!
+                if (cate > 0) {
+                    val category = it.where(ToDoCategory::class.java).equalTo(ToDoCategory.ID_KEY,
+                            cate).findFirst()
+                    if (category != null) {
+                        color = category.intColor
+                    }
                 }
-            } else if (cate == 0) {
-                circleView!!.setColor(ContextCompat.getColor(App.instance, R.color.MyerListBlue))
             }
-            realm.commitTransaction()
+            circleView?.color = color
 
             if (todo.isdone == ToDo.IS_DONE) {
                 doneView!!.visibility = View.VISIBLE

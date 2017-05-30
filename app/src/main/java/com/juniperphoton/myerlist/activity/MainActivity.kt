@@ -25,7 +25,10 @@ import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
 import com.juniperphoton.myerlist.presenter.MainPresenter
 import com.juniperphoton.myerlist.realm.RealmUtils
-import com.juniperphoton.myerlist.util.*
+import com.juniperphoton.myerlist.util.LocalSettingUtil
+import com.juniperphoton.myerlist.util.Params
+import com.juniperphoton.myerlist.util.StartEndAnimator
+import com.juniperphoton.myerlist.util.TypefaceUtil
 import com.juniperphoton.myerlist.widget.AddingView
 import io.realm.RealmResults
 import io.realm.Sort
@@ -163,23 +166,24 @@ class MainActivity : BaseActivity(), MainContract.View {
         toDoAdapter!!.onArrangeCompleted = {
             uploadOrders()
         }
-        toDoAdapter!!.onClickItem = { position, cateView ->
+        toDoAdapter!!.onClickItem = onClick@ { position, cateView ->
             val location = IntArray(2)
             cateView.getLocationOnScreen(location)
             val x = location[0] + cateView.width / 2
             val y = location[1] + cateView.height / 2
 
             val toDo = toDoAdapter!!.getData(position)
-            val index = cateAdapter!!.getItemIndexById(toDo.cate!!)
-            if (index < 0) {
-                Unit
+            var index = cateAdapter!!.getItemIndexById(toDo.cate!!)
+            if (index < 0 || index >= cateAdapter!!.data!!.size) {
+                index = 0
             }
             modifyingToDoId = Integer.parseInt(toDo.id)
             startRevealAnimation(x, y, object : StartEndAnimator() {
                 override fun onAnimationStart(animation: Animator) {
-                    addingView.setVisibleMode(View.VISIBLE, AddingView.MODIFY_MODE)
-                    addingView.setSelected(index)
-                    addingView.setContent(toDo.content!!)
+                    addingView.visibility = View.VISIBLE
+                    addingView.mode = AddingView.MODIFY_MODE
+                    addingView.content = toDo.content!!
+                    addingView.selectedIndex = index
                 }
 
                 override fun onAnimationEnd(animation: Animator) {
@@ -284,8 +288,9 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         startRevealAnimation(x, y, object : StartEndAnimator() {
             override fun onAnimationStart(animation: Animator) {
-                addingView.setVisibleMode(View.VISIBLE, AddingView.ADD_MODE)
-                addingView.setSelected(selectedCategoryPosition)
+                addingView.visibility = View.VISIBLE
+                addingView.mode = AddingView.ADD_MODE
+                addingView.selectedIndex = selectedCategoryPosition
             }
 
             override fun onAnimationEnd(animation: Animator) {
@@ -301,7 +306,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                addingView.setSelected(0)
+                addingView.selectedIndex = 0
                 addingView.visibility = View.GONE
                 addingView.reset()
             }
