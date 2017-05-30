@@ -8,19 +8,19 @@ import android.util.AttributeSet
 import android.view.View
 
 open class CircleView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    private var color: Int = 0
     private val paint: Paint = Paint()
+
+    open var color: Int = Color.WHITE
+        set(value) {
+            field = value
+            paint.color = this.color
+            invalidate()
+        }
 
     init {
         paint.color = Color.WHITE
         paint.isDither = true
         paint.isAntiAlias = true
-    }
-
-    open fun setColor(color: Int) {
-        this.color = color
-        paint.color = this.color
-        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {

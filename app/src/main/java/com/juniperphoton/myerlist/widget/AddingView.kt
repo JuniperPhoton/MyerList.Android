@@ -30,8 +30,6 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         val MODIFY_MODE = 1 shl 1
     }
 
-    private var mode = ADD_MODE
-
     @JvmField
     @BindView(R.id.adding_view_root)
     internal var root: RelativeLayout? = null
@@ -59,7 +57,29 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
     var onClickOk: ((Int, String, Int) -> Unit)? = null
     var onClickCancel: (() -> Unit)? = null
 
-    private var inputText: String? = null
+    private val inputText: String?
+        get() = editText?.text?.toString()
+
+    var content: String
+        get() = editText?.text?.toString() ?: ""
+        set(value) {
+            editText?.setText(value)
+        }
+
+    var mode = ADD_MODE
+        set(value) {
+            field = value
+            when (value) {
+                ADD_MODE -> tittleText!!.text = App.instance!!.getString(R.string.adding_adding)
+                MODIFY_MODE -> tittleText!!.text = App.instance!!.getString(R.string.modify_adding)
+            }
+        }
+
+    var selectedIndex: Int = 0
+        set(value) {
+            field = value
+            selectCategoryView!!.selectedIndex = value
+        }
 
     init {
         LayoutInflater.from(ctx).inflate(R.layout.view_adding, this, true)
@@ -69,23 +89,6 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
 
         if (LocalSettingUtil.checkKey(context, SWITCH_CATEGORY_HINT)) {
             hintView?.visibility = View.GONE
-        }
-    }
-
-    fun setVisibleMode(visibility: Int, mode: Int) {
-        setVisibility(visibility)
-        this.mode = mode
-        updateUi()
-    }
-
-    fun setContent(text: String) {
-        editText!!.setText(text)
-    }
-
-    private fun updateUi() {
-        when (mode) {
-            ADD_MODE -> tittleText!!.text = App.instance!!.getString(R.string.adding_adding)
-            MODIFY_MODE -> tittleText!!.text = App.instance!!.getString(R.string.modify_adding)
         }
     }
 
@@ -109,15 +112,10 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
 
     private fun prepareToHide() {
         KeyboardUtil.hide(ctx, editText!!.windowToken)
-        inputText = editText!!.editableText.toString()
     }
 
     fun reset() {
         editText!!.setText("")
-    }
-
-    fun setSelected(index: Int) {
-        selectCategoryView!!.setSelected(index)
     }
 
     fun setOnSelectionChangedCallback(callback: ((Int) -> Unit)?) {
@@ -154,8 +152,8 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         valueAnimator.start()
     }
 
-    internal var startX: Float = 0.toFloat()
-    internal var dx: Float = 0.toFloat()
+    private var startX: Float = 0F
+    private var dx: Float = 0F
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {
