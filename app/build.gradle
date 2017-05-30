@@ -24,6 +24,15 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+
+    productFlavors {
+        legacy {
+            applicationId "com.juniperphoton.myerlist"
+        }
+        googlePlay {
+            applicationId "com.juniperphoton.myerlist.new"
+        }
+    }
 }
 
 dependencies {
