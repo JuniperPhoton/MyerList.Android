@@ -86,5 +86,8 @@
     <string name="set_it_done">SET IT DONE</string>
     <string name="delete_it">DELETE IT</string>
     <string name="switch_category_hint">*Hint: swipe to switch categories</string>
-
+    <string name="default_category_name">New category</string>
+    <string name="github_url" translatable="false">https://github.com/JuniperPhoton/MyerListAndroid</string>
+    <string name="twitter_url" translatable="false">https://twitter.com/juniperphoton</string>
+    <string name="donate_your_code">Donate your code</string>
 </resources>

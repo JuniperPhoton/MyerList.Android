@@ -94,7 +94,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (toDoAdapter != null) {
             refreshToDoList()
         }
-        drawerLayout?.closeDrawer(Gravity.START)
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
@@ -136,6 +135,7 @@ class MainActivity : BaseActivity(), MainContract.View {
                 return@handler
             }
             if (category.id == ToDoCategory.PERSONALIZATION_ID) {
+                drawerLayout?.closeDrawer(Gravity.START)
                 val intent = Intent(this@MainActivity, CategoryManagementActivity::class.java)
                 startActivity(intent)
                 return@handler
@@ -257,12 +257,14 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     @OnClick(R.id.drawer_settings)
     internal fun onClickSettings() {
+        drawerLayout?.closeDrawer(Gravity.START)
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
     @OnClick(R.id.drawer_about)
     internal fun onClickAbout() {
+        drawerLayout?.closeDrawer(Gravity.START)
         val intent = Intent(this, AboutActivity::class.java)
         startActivity(intent)
     }

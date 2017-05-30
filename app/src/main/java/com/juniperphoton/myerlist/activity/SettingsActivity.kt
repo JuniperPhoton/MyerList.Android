@@ -9,13 +9,14 @@ import butterknife.OnClick
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.event.ReCreateEvent
+import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.LocalSettingUtil
 import com.juniperphoton.myerlist.util.getResString
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
-@Suppress("unused","unused_parameter")
+@Suppress("unused", "unused_parameter")
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +71,9 @@ class SettingsActivity : BaseActivity() {
         builder.setTitle(R.string.confirm_to_logout.getResString()!!)
                 .setPositiveButton(R.string.confirm_ok.getResString()!!) { _, _ ->
                     LocalSettingUtil.clearAll(App.instance!!)
+                    RealmUtils.mainInstance.executeTransaction {
+                        it.deleteAll()
+                    }
                     val intent = Intent(App.instance!!, StartActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
