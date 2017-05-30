@@ -23,8 +23,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
 
         <FrameLayout
             android:id="@+id/arrange_delete"
@@ -47,7 +48,7 @@
             android:layout_height="52dp"
             android:layout_alignParentRight="true"
             android:alpha="0.4"
-            android:src="@drawable/ic_arrange_thumb" />
+            android:src="@drawable/vector_reorder_thumb" />
     </LinearLayout>
 
     <TextView

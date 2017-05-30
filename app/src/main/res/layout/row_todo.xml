@@ -82,7 +82,7 @@
             android:layout_height="@dimen/todo_item_thumb_size"
             android:layout_alignParentRight="true"
             android:background="@android:color/white"
-            android:src="@drawable/ic_arrange_thumb"/>
+            android:src="@drawable/vector_reorder_thumb"/>
     </RelativeLayout>
 
 </FrameLayout>
