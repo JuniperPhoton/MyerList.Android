@@ -86,4 +86,6 @@
     <string name="default_category_name">新类别</string>
 
     <string name="donate_your_code">贡献代码</string>
+
+    <string name="empty_input_hint">请输入内容</string>
 </resources>

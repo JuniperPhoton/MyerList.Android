@@ -21,6 +21,7 @@ import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.util.KeyboardUtil
 import com.juniperphoton.myerlist.util.LocalSettingUtil
 import com.juniperphoton.myerlist.util.Params.SWITCH_CATEGORY_HINT
+import com.juniperphoton.myerlist.util.ToastService
 
 @Suppress("unused", "unused_parameter")
 class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs), View.OnTouchListener {
@@ -94,6 +95,9 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
 
     @OnClick(R.id.adding_view_ok)
     internal fun onClickOk() {
+        if (!checkInput()) {
+            return
+        }
         prepareToHide()
         onClickOk?.invoke(selectCategoryView!!.selectedIndex, inputText!!, mode)
     }
@@ -108,6 +112,14 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
     internal fun onClickHint() {
         LocalSettingUtil.putBoolean(context, SWITCH_CATEGORY_HINT, true)
         hintView?.visibility = View.GONE
+    }
+
+    private fun checkInput(): Boolean {
+        if (!editText?.text?.toString().isNullOrBlank()) {
+            return true
+        }
+        ToastService.sendShortToast(R.string.empty_input_hint);
+        return false
     }
 
     private fun prepareToHide() {

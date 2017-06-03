@@ -21,6 +21,10 @@ object ToastService {
         }
     }
 
+    fun sendShortToast(resId: Int) {
+        sendShortToast(App.instance!!.getString(resId))
+    }
+
     private fun sendInternal(str: String) {
         val inflater = LayoutInflater.from(App.instance)
         val view = inflater.inflate(R.layout.toast_layout, null)

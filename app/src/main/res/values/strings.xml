@@ -90,4 +90,6 @@
     <string name="github_url" translatable="false">https://github.com/JuniperPhoton/MyerListAndroid</string>
     <string name="twitter_url" translatable="false">https://twitter.com/juniperphoton</string>
     <string name="donate_your_code">Donate your code</string>
+
+    <string name="empty_input_hint">Please input something</string>
 </resources>
