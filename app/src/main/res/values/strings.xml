@@ -47,7 +47,7 @@
     <string name="login_to_sync_your_to_dos">Login to sync your to-dos</string>
     <string name="login_btn">Login</string>
     <string name="password">Password</string>
-    <string name="loading_hint">LOADING...</string>
+    <string name="loading_hint">LOADING…</string>
     <string name="account_drawer">ACCOUNT</string>
 
     <string name="confirm_to_logout">Confirm to logout?</string>
@@ -81,7 +81,7 @@
     <string name="pick_a_color">PICK A COLOR</string>
     <string name="edit_category_name_title">EDIT CATEGORY NAME</string>
     <string name="exit_without_saving">Exit without saving?</string>
-    <string name="waiting">Talking to server...</string>
+    <string name="waiting">Talking to server…</string>
     <string name="email_registered">The email has been registered</string>
     <string name="set_it_done">SET IT DONE</string>
     <string name="delete_it">DELETE IT</string>
@@ -92,4 +92,5 @@
     <string name="donate_your_code">Donate your code</string>
 
     <string name="empty_input_hint">Please input something</string>
+    <string name="email_dev" translatable="false">dengweichao@hotmail.com</string>
 </resources>

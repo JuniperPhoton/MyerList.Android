@@ -6,7 +6,7 @@
         android:shortcutShortLabel="@string/add_shortcuts">
         <intent
             android:action="action.add"
-            android:targetClass="com.juniperphoton.myerlist.activity.MainActivity"
+            android:targetClass="com.juniperphoton.myerlist.activity.SplashActivity"
             android:targetPackage="com.juniperphoton.myerlist" />
     </shortcut>
 </shortcuts>
