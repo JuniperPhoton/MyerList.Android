@@ -8,12 +8,14 @@ import android.widget.LinearLayout
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
-import com.juniperphoton.myerlist.util.getDimenInPixel
+import com.juniperphoton.myerlist.util.dpToPixel
 import com.juniperphoton.myerlist.util.toResColor
 
 class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     companion object {
         private val TAG = "SelectCategoryView"
+        val CATE_VIEW_SIZE_DP = 24
+        val CATE_VIEW_MARGIN_lEFT = 8
     }
 
     var onSelectionChanged: ((Int) -> Unit)? = null
@@ -37,33 +39,36 @@ class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(c
     fun makeViews() {
         removeAllViews()
         val categories = RealmUtils.mainInstance.where(ToDoCategory::class.java).findAll()
-        for (toDoCategory in categories) {
-            if (toDoCategory.id >= 0) {
-                val circleView = CateCircleView(context, null)
-                val layoutParams = LinearLayout.LayoutParams(context.getDimenInPixel(24), context.getDimenInPixel(24))
-                layoutParams.setMargins(context.getDimenInPixel(8), 0, 0, 0)
-                circleView.layoutParams = layoutParams
-                circleView.color = toDoCategory.intColor
-                circleView.setOnClickListener {
-                    selectedIndex = indexOfChild(it)
-                }
-                addView(circleView)
+        categories.filterIndexed handle@ { index, _ ->
+            return@handle index >= 0
+        }.forEach {
+            val circleView = CateCircleView(context, null)
+            val layoutParams = LinearLayout.LayoutParams(context.dpToPixel(CATE_VIEW_SIZE_DP), context.dpToPixel(CATE_VIEW_SIZE_DP))
+            layoutParams.setMargins(context.dpToPixel(CATE_VIEW_MARGIN_lEFT), 0, 0, 0)
+            circleView.layoutParams = layoutParams
+            circleView.color = it.intColor
+            circleView.setOnClickListener {
+                selectedIndex = indexOfChild(it)
             }
+            addView(circleView)
         }
+
         val circleView = CateCircleView(context, null)
-        val layoutParams = LinearLayout.LayoutParams(context.getDimenInPixel(24), context.getDimenInPixel(24))
+        val layoutParams = LinearLayout.LayoutParams(context.dpToPixel(CATE_VIEW_SIZE_DP), context.dpToPixel(CATE_VIEW_SIZE_DP))
         circleView.layoutParams = layoutParams
         circleView.color = R.color.MyerListBlue.toResColor()
         circleView.setOnClickListener {
             selectedIndex = indexOfChild(it)
         }
         addView(circleView, 0)
-        getChildAt(0).isSelected = true
+        selectedIndex = 0
     }
 
     private fun updateUi(circleView: CateCircleView) {
         (0..childCount - 1)
                 .map { getChildAt(it) as CateCircleView }
-                .forEach { it.inSelected = it === circleView }
+                .forEach {
+                    it.inSelected = it === circleView
+                }
     }
 }

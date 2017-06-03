@@ -9,7 +9,7 @@ import com.juniperphoton.myerlist.App
 
 fun Context.getDpi(): Float = this.resources.displayMetrics.density
 
-fun Context.getDimenInPixel(valueInDp: Int): Int = (valueInDp * this.getDpi()).toInt()
+fun Context.dpToPixel(valueInDp: Int): Int = (valueInDp * this.getDpi()).toInt()
 
 fun Context.getVersionCode(): Int {
     try {

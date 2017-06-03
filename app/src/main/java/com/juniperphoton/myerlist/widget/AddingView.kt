@@ -118,7 +118,7 @@ class AddingView(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ct
         if (!editText?.text?.toString().isNullOrBlank()) {
             return true
         }
-        ToastService.sendShortToast(R.string.empty_input_hint);
+        ToastService.sendShortToast(R.string.empty_input_hint)
         return false
     }
 
