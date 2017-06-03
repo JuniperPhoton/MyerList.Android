@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -114,6 +115,25 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
 
     override fun onBindItemViewHolder(holder: ToDoAdapter.ToDoViewHolder, dataPosition: Int) {
         holder.bind(holder.adapterPosition)
+        animateContainer(holder.itemView, holder.adapterPosition)
+    }
+
+    private fun animateContainer(container: View, position: Int) {
+        val delay = 100L * position
+        val duration = 400L
+
+        val startAlpha = 0f
+        val startTranslation = 100f
+
+        container.alpha = startAlpha
+        container.translationX = startTranslation
+
+        container.animate().alpha(1.0f)
+                .translationX(0f)
+                .setStartDelay(delay)
+                .setDuration(duration)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {

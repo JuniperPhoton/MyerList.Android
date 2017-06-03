@@ -4,17 +4,17 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.juniperphoton.myerlist.api.CloudService
 import com.juniperphoton.myerlist.api.response.CommonResponse
+import com.juniperphoton.myerlist.event.RefreshToDoEvent
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.AppConfig
 import com.juniperphoton.myerlist.util.ToastService
-
-import java.util.ArrayList
-
 import io.realm.Sort
+import org.greenrobot.eventbus.EventBus
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.util.*
 
 class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : CustomCategoryContract.Presenter {
     companion object {
@@ -72,6 +72,7 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
                             view.postDelay(Runnable {
                                 view.finish()
                             }, DELAY_MILLIS)
+                            EventBus.getDefault().postSticky(RefreshToDoEvent())
                         } else {
                             ToastService.sendShortToast("Failed to update category")
                         }

@@ -20,6 +20,7 @@ import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CategoryAdapter
 import com.juniperphoton.myerlist.adapter.ToDoAdapter
 import com.juniperphoton.myerlist.event.ReCreateEvent
+import com.juniperphoton.myerlist.event.RefreshToDoEvent
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
@@ -90,9 +91,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         presenter!!.start()
         if (cateAdapter != null) {
             refreshCategoryList()
-        }
-        if (toDoAdapter != null) {
-            refreshToDoList()
         }
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -235,7 +233,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
 
         refreshCategoryList()
-        refreshToDoList()
+        //refreshToDoList()
         handleShortcutsAction()
     }
 
@@ -316,10 +314,6 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun refreshCategoryList() {
-        mainRefreshLayout.post {
-            mainRefreshLayout.isRefreshing = true
-        }
-
         val realm = RealmUtils.mainInstance
 
         val categories = realm.where(ToDoCategory::class.java)
@@ -337,17 +331,9 @@ class MainActivity : BaseActivity(), MainContract.View {
         cateAdapter!!.selectItem(0)
 
         addingView.makeCategoriesSelection()
-
-        mainRefreshLayout.post {
-            mainRefreshLayout.isRefreshing = false
-        }
     }
 
     override fun refreshToDoList() {
-        mainRefreshLayout.post {
-            mainRefreshLayout.isRefreshing = true
-        }
-
         var results: RealmResults<ToDo>? = null
 
         val realm = RealmUtils.mainInstance
@@ -372,10 +358,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         toDoAdapter!!.refreshData(results.toMutableList())
 
         updateCount()
-
-        mainRefreshLayout.post {
-            mainRefreshLayout.isRefreshing = false
-        }
     }
 
     override fun notifyDataSetChanged() {
@@ -444,6 +426,12 @@ class MainActivity : BaseActivity(), MainContract.View {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun receiveEvent(event: ReCreateEvent) {
         recreate()
+        EventBus.getDefault().removeAllStickyEvents()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun receiveRefreshToDoEvent(event: RefreshToDoEvent) {
+        refreshToDoList()
         EventBus.getDefault().removeAllStickyEvents()
     }
 }
