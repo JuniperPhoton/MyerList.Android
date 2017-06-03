@@ -1,0 +1,12 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:icon="@drawable/ic_add_shortcut"
+        android:shortcutId="add"
+        android:shortcutLongLabel="@string/add_shortcuts"
+        android:shortcutShortLabel="@string/add_shortcuts">
+        <intent
+            android:action="action.add"
+            android:targetClass="com.juniperphoton.myerlist.activity.SplashActivity"
+            android:targetPackage="com.juniperphoton.myerlist.new" />
+    </shortcut>
+</shortcuts>

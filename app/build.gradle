@@ -25,18 +25,41 @@ android {
         abortOnError false
     }
 
+    sourceSets {
+        main {
+            res.srcDirs = ['src/main/res']
+        }
+        legacy {
+            java.srcDirs = ['src/main/java']
+            //es.srcDirs = ['src/main/res']
+        }
+        googlePlay {
+            java.srcDirs = ['src/googlePlay/java']
+            //res.srcDirs = ['src/googlePlay/res']
+        }
+    }
+
     productFlavors {
         legacy {
             applicationId "com.juniperphoton.myerlist"
+
+            manifestPlaceholders = [
+                    APP_ID: "com.juniperphoton.myerlist"
+            ]
         }
         googlePlay {
             applicationId "com.juniperphoton.myerlist.new"
+
+            manifestPlaceholders = [
+                    APP_ID: "com.juniperphoton.myerlist.new"
+            ]
         }
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
