@@ -4,11 +4,9 @@
     android:viewportHeight="184"
     android:viewportWidth="184">
     <path
-        android:name="椭圆 1"
-        android:fillColor="#eeeeee"
+        android:fillColor="#f1f1f1"
         android:pathData="m91.5 8c46.12 0 83.5 37.38 83.5 83.5c0 46.12 -37.38 83.5 -83.5 83.5c-46.12 0 -83.5 -37.38 -83.5 -83.5c0 -46.12 37.38 -83.5 83.5 -83.5z" />
     <path
-        android:name="矩形 1 拷贝"
-        android:fillColor="#55abdf"
+        android:fillColor="#000000"
         android:pathData="m86.86 56v30.86h-30.86v10.29h30.86v30.86h10.29v-30.86h30.86v-10.29h-30.86v-30.86z" />
 </vector>
