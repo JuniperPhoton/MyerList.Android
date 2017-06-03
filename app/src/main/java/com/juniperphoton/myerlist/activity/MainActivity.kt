@@ -396,8 +396,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         }
         if (addingView.visibility == View.VISIBLE) {
             hideAddingView()
-        } else if (selectedCategoryId != 0) {
-            cateAdapter!!.selectItem(0)
         } else {
             super.onBackPressed()
         }
