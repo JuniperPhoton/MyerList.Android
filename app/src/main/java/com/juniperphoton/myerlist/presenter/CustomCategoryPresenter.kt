@@ -92,7 +92,7 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
         val realm = RealmUtils.mainInstance
         realm.beginTransaction()
         val realmResults = realm.where(ToDoCategory::class.java)
-                .findAllSorted(ToDoCategory.POSITION_KEY, Sort.ASCENDING)
+                .findAllSorted(ToDoCategory.KEY_POSITION, Sort.ASCENDING)
         realm.commitTransaction()
         list = ArrayList<ToDoCategory>()
 

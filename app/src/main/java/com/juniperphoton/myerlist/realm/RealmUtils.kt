@@ -23,5 +23,8 @@ object RealmUtils {
     }
 
     val mainInstance: Realm
+        get() = sMainInstance!!
+
+    val newInstance: Realm
         get() = Realm.getInstance(sConfiguration!!)
 }

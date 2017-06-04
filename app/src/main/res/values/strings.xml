@@ -93,4 +93,5 @@
 
     <string name="empty_input_hint">Please input something</string>
     <string name="email_dev" translatable="false">dengweichao@hotmail.com</string>
+    <string name="undone_title">Undone</string>
 </resources>

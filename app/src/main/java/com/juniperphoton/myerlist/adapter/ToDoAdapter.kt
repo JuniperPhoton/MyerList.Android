@@ -21,7 +21,7 @@ import java.util.*
 
 class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     companion object {
-        private val TAG = "ToDoAdapter"
+        private const val TAG = "ToDoAdapter"
     }
 
     var onArrangeCompleted: (() -> Unit)? = null
@@ -36,10 +36,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
 
     private val helper = CustomItemTouchHelper(object : CustomItemTouchHelper.Callback() {
         private val SWIPE_THRESHOLD = 0.3f
-
-        private fun getToDoViewHolder(viewHolder: RecyclerView.ViewHolder): ToDoViewHolder {
-            return viewHolder as ToDoViewHolder
-        }
 
         override fun isLongPressDragEnabled(): Boolean {
             return false
@@ -80,7 +76,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
                     if (isItemValid(viewHolder.adapterPosition)) {
                         return
                     }
-                    getToDoViewHolder(viewHolder).toggleDone()
                     onUpdateDone?.invoke(viewHolder.adapterPosition)
                 }
                 CustomItemTouchHelper.LEFT -> {
@@ -130,7 +125,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         return getData(position).id!!.toLong()
     }
 
-    inner class ToDoViewHolder(itemView: View) : BaseViewHolder(itemView) {
+    inner class ToDoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @JvmField
         @BindView(R.id.row_todo_color_view)
         var circleView: CircleView? = null
@@ -178,7 +173,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             RealmUtils.mainInstance.executeTransaction {
                 val cate = Integer.valueOf(todo.cate)!!
                 if (cate > 0) {
-                    val category = it.where(ToDoCategory::class.java).equalTo(ToDoCategory.ID_KEY,
+                    val category = it.where(ToDoCategory::class.java).equalTo(ToDoCategory.KEY_ID,
                             cate).findFirst()
                     if (category != null) {
                         color = category.intColor
@@ -187,7 +182,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             }
             circleView?.color = color
 
-            if (todo.isdone == ToDo.IS_DONE) {
+            if (todo.isdone == ToDo.VALUE_DONE) {
                 doneView!!.visibility = View.VISIBLE
             } else {
                 doneView!!.visibility = View.GONE
@@ -215,22 +210,6 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             }
             recoverView!!.setOnClickListener {
                 onClickRecover?.invoke(adapterPosition)
-            }
-        }
-
-        fun toggleDone() {
-            val todo = getData(adapterPosition)
-            RealmUtils.mainInstance.executeTransaction {
-                if (todo.isdone == ToDo.IS_DONE) {
-                    todo.isdone = ToDo.IS_NOT_DONE
-                } else {
-                    todo.isdone = ToDo.IS_DONE
-                }
-            }
-            if (todo.isdone == ToDo.IS_DONE) {
-                doneView!!.visibility = View.VISIBLE
-            } else {
-                doneView!!.visibility = View.GONE
             }
         }
     }
