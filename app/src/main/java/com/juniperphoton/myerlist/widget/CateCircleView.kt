@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
-
 import com.juniperphoton.myerlist.R
 
 class CateCircleView(ctx: Context, attrs: AttributeSet?) : CircleView(ctx, attrs) {
@@ -26,6 +25,8 @@ class CateCircleView(ctx: Context, attrs: AttributeSet?) : CircleView(ctx, attrs
             invalidate()
         }
 
+    private var valueAnimator: ValueAnimator? = null
+
     var inSelected: Boolean = false
         set(newValue) {
             if (field == newValue) {
@@ -33,13 +34,15 @@ class CateCircleView(ctx: Context, attrs: AttributeSet?) : CircleView(ctx, attrs
             }
             field = newValue
             val value = (layoutParams.width / 2 * 0.5).toInt()
-            val valueAnimator = ValueAnimator.ofInt(if (newValue) 0 else value, if (newValue) value else 0)
-            valueAnimator.addUpdateListener { animation ->
-                radius = animation.animatedValue as Int
-                invalidate()
+            valueAnimator = ValueAnimator.ofInt(if (newValue) 0 else value, if (newValue) value else 0)
+            valueAnimator?.let {
+                it.addUpdateListener { animation ->
+                    radius = animation.animatedValue as Int
+                    invalidate()
+                }
+                it.duration = 300
+                it.start()
             }
-            valueAnimator.duration = 300
-            valueAnimator.start()
         }
 
     init {

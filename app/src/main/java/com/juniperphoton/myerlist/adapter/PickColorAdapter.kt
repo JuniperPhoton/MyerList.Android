@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-
-import com.juniperphoton.myerlist.R
-
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.juniperphoton.myerlist.R
 
 class PickColorAdapter(private val context: Context) : BaseAdapter<Int, PickColorAdapter.PickColorHolder>() {
     var onSelectColor: ((Int) -> Unit)? = null
@@ -24,8 +22,8 @@ class PickColorAdapter(private val context: Context) : BaseAdapter<Int, PickColo
     }
 
     private fun animateContainer(container: View, position: Int) {
-        val delay = 10 * position
-        val duration = 400
+        val delay = 10L * position
+        val duration = 400L
 
         val startAlpha = 0f
         val startTranslation = 40
@@ -35,8 +33,8 @@ class PickColorAdapter(private val context: Context) : BaseAdapter<Int, PickColo
 
         container.animate().alpha(1.0f)
                 .translationX(0f)
-                .setStartDelay(delay.toLong())
-                .setDuration(duration.toLong())
+                .setStartDelay(delay)
+                .setDuration(duration)
                 .setInterpolator(DecelerateInterpolator())
                 .start()
     }

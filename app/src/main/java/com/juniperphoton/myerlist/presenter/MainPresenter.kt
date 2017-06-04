@@ -23,6 +23,7 @@ import java.util.*
 
 class MainPresenter(private val view: MainContract.View) : MainContract.Presenter {
     override fun getCategories() {
+        view.toggleRefreshing(true)
         CloudService.getCategories()
                 .subscribeOn(Schedulers.io())
                 .map { cateResponse ->
@@ -31,11 +32,12 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<Unit>() {
                     override fun onCompleted() {
-
                     }
 
                     override fun onError(e: Throwable) {
                         e.printStackTrace()
+                        view.toggleRefreshing(false)
+                        view.refreshToDoList()
                     }
 
                     override fun onNext(cateResponse: Unit) {
@@ -46,6 +48,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
     }
 
     override fun getToDos() {
+        view.toggleRefreshing(true)
         CloudService.getToDos()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -60,9 +63,13 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<GetOrderResponse>() {
                     override fun onCompleted() {
+                        view.toggleRefreshing(false)
+                        view.refreshToDoList()
                     }
 
                     override fun onError(e: Throwable) {
+                        view.toggleRefreshing(false)
+                        view.refreshToDoList()
                     }
 
                     override fun onNext(getOrderResponse: GetOrderResponse) {
@@ -274,7 +281,6 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
             }
 
             ToastService.sendShortToast(App.instance!!.getString(R.string.fetch_hint))
-            view.refreshToDoList()
         } else {
             Log.d(TAG, "Can't get order.")
         }

@@ -31,7 +31,7 @@ class AboutActivity : BaseActivity() {
     internal fun onClickEmail(view: View) {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "message/rfc822"
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("dengweichao@hotmail.com")) // recipients
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_dev)))
 
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList for Android ${this.getVersionName()} feedback")
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")

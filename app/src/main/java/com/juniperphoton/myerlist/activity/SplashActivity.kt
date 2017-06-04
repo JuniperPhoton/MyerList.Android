@@ -13,6 +13,9 @@ class SplashActivity : BaseActivity() {
             startActivity(intent)
         } else {
             val intent = Intent(this, MainActivity::class.java)
+            getIntent()?.let {
+                intent.action = it.action
+            }
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }

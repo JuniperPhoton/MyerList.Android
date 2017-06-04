@@ -20,8 +20,10 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
     var headerView: View? = null
     var footerView: View? = null
 
-    val hasHeader: Boolean = headerView != null
-    val hasFooter: Boolean = footerView != null
+    val hasHeader: Boolean
+        get() = headerView != null
+    val hasFooter: Boolean
+        get() = footerView != null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         parent.clipChildren = false

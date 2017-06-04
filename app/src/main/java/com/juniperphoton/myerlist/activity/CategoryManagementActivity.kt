@@ -18,7 +18,7 @@ import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.CustomCategoryContract
 import com.juniperphoton.myerlist.presenter.CustomCategoryPresenter
 import com.juniperphoton.myerlist.util.KeyboardUtil
-import com.juniperphoton.myerlist.util.getDimenInPixel
+import com.juniperphoton.myerlist.util.dpToPixel
 import com.juniperphoton.myerlist.util.getResString
 import com.juniperphoton.myerlist.util.toColorString
 import kotlinx.android.synthetic.main.activity_manage_category.*
@@ -86,7 +86,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     private fun createHeader() {
         headerView = LayoutInflater.from(this).inflate(R.layout.add_cate_header, null, false)
         headerView!!.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                this.getDimenInPixel(52))
+                this.dpToPixel(52))
         headerView!!.setOnClickListener {
             val category = ToDoCategory()
             category.name = R.string.default_category_name.getResString()
