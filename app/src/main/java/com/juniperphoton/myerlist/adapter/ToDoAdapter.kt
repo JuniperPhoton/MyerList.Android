@@ -11,11 +11,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.CustomItemTouchHelper
-import com.juniperphoton.myerlist.util.toResColor
 import com.juniperphoton.myerlist.widget.CircleView
 import java.util.*
 

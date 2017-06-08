@@ -10,10 +10,11 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.BuildConfig
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.createIntent
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.presenter.LoginPresenter
 import com.juniperphoton.myerlist.util.KeyboardUtil
 import com.juniperphoton.myerlist.util.Params
-import com.juniperphoton.myerlist.util.getResString
 import com.juniperphoton.myerlist.view.LoginView
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -24,6 +25,15 @@ class LoginActivity : BaseActivity(), LoginView {
     private var loginMode: Int = 0
 
     private var dialog: ProgressDialog? = null
+
+    override val email: String
+        get() = emailView.text.toString()
+
+    override val password: String
+        get() = passwordView.text.toString()
+
+    override val secondPassword: String
+        get() = passwordSecView.text.toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +57,7 @@ class LoginActivity : BaseActivity(), LoginView {
                 loginButton.text = R.string.register.getResString()
             }
         }
+
         if (BuildConfig.DEBUG) {
             emailView.setText(R.string.email_dev.getResString())
         }
@@ -71,26 +82,19 @@ class LoginActivity : BaseActivity(), LoginView {
         dialog?.dismiss()
     }
 
-    override val email: String
-        get() = emailView.text.toString()
-
-    override val password: String
-        get() = passwordView.text.toString()
-
-    override val secondPassword: String
-        get() = passwordSecView.text.toString()
-
     @OnClick(R.id.loginButton)
     fun onClickButton() {
         dialog = ProgressDialog(this, ProgressDialog.STYLE_SPINNER)
-        dialog!!.setTitle(R.string.loading_hint.getResString())
-        dialog!!.setMessage(R.string.waiting.getResString())
-        dialog!!.setCancelable(false)
-        dialog!!.show()
-        if (loginMode == Params.LoginMode.LOGIN) {
-            presenter!!.login()
-        } else {
-            presenter!!.register()
+        dialog?.apply {
+            setTitle(R.string.loading_hint.getResString())
+            setMessage(R.string.waiting.getResString())
+            setCancelable(false)
+            show()
+            if (loginMode == Params.LoginMode.LOGIN) {
+                presenter!!.login()
+            } else {
+                presenter!!.register()
+            }
         }
     }
 
@@ -99,7 +103,7 @@ class LoginActivity : BaseActivity(), LoginView {
     }
 
     override fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = createIntent<MainActivity>()
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }

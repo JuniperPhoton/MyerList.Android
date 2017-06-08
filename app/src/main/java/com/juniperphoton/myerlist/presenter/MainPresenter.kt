@@ -9,11 +9,15 @@ import com.juniperphoton.myerlist.api.CloudService
 import com.juniperphoton.myerlist.api.response.AddToDoResponse
 import com.juniperphoton.myerlist.api.response.CommonResponse
 import com.juniperphoton.myerlist.api.response.GetOrderResponse
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.model.CategoryRespInformation
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
-import com.juniperphoton.myerlist.util.*
+import com.juniperphoton.myerlist.util.AppConfig
+import com.juniperphoton.myerlist.util.LocalSettingUtil
+import com.juniperphoton.myerlist.util.Params
+import com.juniperphoton.myerlist.util.ToastService
 import io.realm.Sort
 import rx.Observable
 import rx.Subscriber
@@ -174,7 +178,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                     override fun onNext(commonResponse: CommonResponse) {
                         view.toggleRefreshing(false)
                         if (commonResponse.ok) {
-                            ToastService.sendShortToast(R.string.modified_hint.getResString()!!)
+                            ToastService.sendShortToast(R.string.modified_hint.getResString())
                         } else {
                             ToastService.sendShortToast(commonResponse.friendErrorMessage)
                             Log.e(TAG, "Modify failed:" + commonResponse.friendErrorMessage)

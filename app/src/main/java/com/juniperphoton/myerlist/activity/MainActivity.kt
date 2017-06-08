@@ -2,7 +2,6 @@ package com.juniperphoton.myerlist.activity
 
 import android.animation.Animator
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -20,6 +19,9 @@ import com.juniperphoton.myerlist.adapter.CategoryAdapter
 import com.juniperphoton.myerlist.adapter.ToDoAdapter
 import com.juniperphoton.myerlist.event.ReCreateEvent
 import com.juniperphoton.myerlist.event.RefreshToDoEvent
+import com.juniperphoton.myerlist.extension.registerEventBus
+import com.juniperphoton.myerlist.extension.startActivity
+import com.juniperphoton.myerlist.extension.unregisterEventBus
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
@@ -65,11 +67,11 @@ class MainActivity : BaseActivity(), MainContract.View {
         setSupportActionBar(toolbar)
         presenter = MainPresenter(this)
 
-        if (drawerLayout != null) {
+        drawerLayout?.let {
             val toggle = ActionBarDrawerToggle(
                     this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-            drawerLayout.addDrawerListener(toggle)
-            drawerLayout.post { toggle.syncState() }
+            it.addDrawerListener(toggle)
+            it.post { toggle.syncState() }
         }
 
         initViews()
@@ -82,21 +84,21 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     override fun onResume() {
         super.onResume()
-        presenter!!.start()
+
+        presenter?.start()
         if (cateAdapter != null) {
             refreshCategoryList()
         }
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this)
-        }
+
+        registerEventBus()
     }
 
     override fun onPause() {
         super.onPause()
-        presenter!!.stop()
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this)
-        }
+
+        presenter?.stop()
+
+        unregisterEventBus()
     }
 
     private fun updateNoItemUi(show: Boolean) {
@@ -129,8 +131,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
             if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
                 drawerLayout?.closeDrawer(Gravity.START)
-                val intent = Intent(this@MainActivity, CategoryManagementActivity::class.java)
-                startActivity(intent)
+                startActivity<CategoryManagementActivity>()
                 return@handler
             }
 
@@ -187,15 +188,15 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
             onClickRecover = { position ->
                 val toDo = getData(position)
-                presenter!!.recoverToDo(toDo)
+                presenter?.recoverToDo(toDo)
             }
             onUpdateDone = { position ->
                 val toDo = getData(position)
-                presenter!!.updateIsDone(toDo.id!!, toDo.isdone!!)
+                presenter?.updateIsDone(toDo.id!!, toDo.isdone!!)
             }
             onDelete = { position ->
                 val toDo = getData(position)
-                presenter!!.deleteToDo(toDo)
+                presenter?.deleteToDo(toDo)
             }
         }
 
@@ -253,21 +254,19 @@ class MainActivity : BaseActivity(), MainContract.View {
     @OnClick(R.id.drawer_settings)
     internal fun onClickSettings() {
         drawerLayout?.closeDrawer(Gravity.START)
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+        startActivity<SettingsActivity>()
     }
 
     @OnClick(R.id.drawer_about)
     internal fun onClickAbout() {
         drawerLayout?.closeDrawer(Gravity.START)
-        val intent = Intent(this, AboutActivity::class.java)
-        startActivity(intent)
+        startActivity<AboutActivity>()
     }
 
     @OnClick(R.id.addFAB)
     internal fun onClickFAB() {
         if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
-            if (toDoAdapter!!.data!!.size == 0) {
+            if (toDoAdapter?.data?.size == 0) {
                 return
             }
             AlertDialog.Builder(this)
@@ -298,8 +297,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private fun hideAddingView() {
         hideRevealAnimation(object : StartEndAnimator() {
-            override fun onAnimationStart(animation: Animator) {
-
+            override fun onAnimationStart(animation: Animator?) {
             }
 
             override fun onAnimationEnd(animation: Animator) {
@@ -318,10 +316,12 @@ class MainActivity : BaseActivity(), MainContract.View {
                 .findAllSorted(ToDoCategory.KEY_POSITION, Sort.ASCENDING)
 
         val list = RealmList<ToDoCategory>()
-        list += categories
-        list.add(0, ToDoCategory.allCategory)
-        list.add(ToDoCategory.deletedCategory)
-        list.add(ToDoCategory.personalizationCategory)
+        list.apply {
+            this += categories
+            add(0, ToDoCategory.allCategory)
+            add(ToDoCategory.deletedCategory)
+            add(ToDoCategory.personalizationCategory)
+        }
 
         cateAdapter?.refreshData(list)
         cateAdapter?.selectItem(0)

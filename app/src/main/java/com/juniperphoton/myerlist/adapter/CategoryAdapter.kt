@@ -9,8 +9,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.toColor
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.util.toColor
 import com.juniperphoton.myerlist.widget.CircleView
 
 class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHolder>() {

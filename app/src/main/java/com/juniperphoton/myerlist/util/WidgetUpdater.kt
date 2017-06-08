@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.receiver.ListViewUpdateService

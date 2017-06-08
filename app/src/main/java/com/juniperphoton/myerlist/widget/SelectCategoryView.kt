@@ -4,12 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.LinearLayout
-
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.dpToPixel
+import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
-import com.juniperphoton.myerlist.util.dpToPixel
-import com.juniperphoton.myerlist.util.toResColor
 
 class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     companion object {

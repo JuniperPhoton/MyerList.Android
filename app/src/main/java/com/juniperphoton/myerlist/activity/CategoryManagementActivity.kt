@@ -14,13 +14,14 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CustomCategoryAdapter
+import com.juniperphoton.myerlist.extension.getResDimen
+import com.juniperphoton.myerlist.extension.getResString
+import com.juniperphoton.myerlist.extension.startActivityForResult
+import com.juniperphoton.myerlist.extension.toColorString
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.CustomCategoryContract
 import com.juniperphoton.myerlist.presenter.CustomCategoryPresenter
 import com.juniperphoton.myerlist.util.KeyboardUtil
-import com.juniperphoton.myerlist.util.dpToPixel
-import com.juniperphoton.myerlist.util.getResString
-import com.juniperphoton.myerlist.util.toColorString
 import kotlinx.android.synthetic.main.activity_manage_category.*
 
 @Suppress("unused", "unused_parameter")
@@ -58,7 +59,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     override fun onStart() {
         super.onStart()
-        presenter!!.start()
+        presenter?.start()
     }
 
     override fun onPause() {
@@ -71,34 +72,34 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
         createHeader()
 
         adapter = CustomCategoryAdapter(this)
-        adapter!!.onClickSelectCategory = {
-            toDoCategory = it
-            val intent = Intent(this, PickColorActivity::class.java)
-            startActivityForResult(intent, 0)
-        }
-        adapter!!.headerView = headerView
-        categoryManageList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        categoryManageList.adapter = adapter
+        adapter?.let {
+            it.onClickSelectCategory = {
+                toDoCategory = it
+                startActivityForResult<PickColorActivity>(0)
+            }
+            it.headerView = headerView
+            categoryManageList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            categoryManageList.adapter = adapter
 
-        categoryManageCancelView.requestFocus()
+            categoryManageCancelView.requestFocus()
+        }
     }
 
     private fun createHeader() {
         headerView = LayoutInflater.from(this).inflate(R.layout.add_cate_header, null, false)
-        headerView!!.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                this.dpToPixel(52))
-        headerView!!.setOnClickListener {
-            val category = ToDoCategory()
-            category.name = R.string.default_category_name.getResString()
-            category.color = R.color.MyerListBlue.toColorString()
-            var maxId = adapter?.data?.maxBy {
-                it.id
-            }?.id
-            if (maxId == null) {
-                maxId = 0
+        headerView?.apply {
+            layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    R.dimen.manage_category_header_height.getResDimen())
+            setOnClickListener {
+                val category = ToDoCategory()
+                category.name = R.string.default_category_name.getResString()
+                category.color = R.color.MyerListBlue.toColorString()
+
+                val maxId = adapter?.data?.maxBy { it.id }?.id ?: 0
+
+                category.id = maxId + 1
+                adapter?.addData(category)
             }
-            category.id = maxId + 1
-            adapter!!.addData(category)
         }
     }
 
@@ -106,19 +107,21 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
         if (adapter == null) {
             return
         }
-        adapter!!.refreshData(data)
+        adapter?.refreshData(data)
     }
 
     override fun showDialog() {
         progressDialog = ProgressDialog(this, ProgressDialog.STYLE_SPINNER)
-        progressDialog!!.setTitle(R.string.loading_hint.getResString()!!)
-        progressDialog!!.setMessage(R.string.waiting.getResString()!!)
-        progressDialog!!.show()
+        progressDialog?.apply {
+            setTitle(R.string.loading_hint.getResString())
+            setMessage(R.string.waiting.getResString())
+            show()
+        }
     }
 
     override fun hideDialog(delayMillis: Long) {
-        if (progressDialog != null) {
-            categoryManageCancelView.postDelayed({ progressDialog!!.hide() }, delayMillis)
+        progressDialog?.let {
+            categoryManageCancelView.postDelayed({ it.hide() }, delayMillis)
         }
     }
 
@@ -146,8 +149,8 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             return
         }
         val color = data.getIntExtra(PickColorActivity.RESULT_KEY, Color.BLACK)
-        if (toDoCategory != null) {
-            toDoCategory!!.color = color.toColorString()
+        toDoCategory?.let {
+            it.color = color.toColorString()
             adapter!!.notifyDataSetChanged()
         }
     }

@@ -9,7 +9,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myerlist.R
-import com.juniperphoton.myerlist.util.getActivity
+import com.juniperphoton.myerlist.extension.getActivity
 
 class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @JvmField
