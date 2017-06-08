@@ -404,8 +404,11 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     override fun uploadOrders() {
         val orderStr = StringBuilder()
-        for (toDo in toDoAdapter!!.data!!) {
-            orderStr.append(toDo.id)
+        val todoList = RealmUtils.mainInstance.where(ToDo::class.java)
+                .notEqualTo(ToDo.KEY_DELETED, true)
+                .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
+        todoList.forEach {
+            orderStr.append(it.id)
             orderStr.append(",")
         }
         orderStr.deleteCharAt(orderStr.length - 1)

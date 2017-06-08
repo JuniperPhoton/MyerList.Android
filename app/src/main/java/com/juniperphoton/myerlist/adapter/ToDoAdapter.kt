@@ -17,7 +17,6 @@ import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.CustomItemTouchHelper
 import com.juniperphoton.myerlist.widget.CircleView
-import java.util.*
 
 class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     companion object {
@@ -54,18 +53,30 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             return CustomItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
         }
 
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-            RealmUtils.mainInstance.executeTransaction {
-                Collections.swap(data!!, viewHolder.adapterPosition, target.adapterPosition)
-                notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
-            }
+        override fun onMoved(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, fromPos: Int, target: RecyclerView.ViewHolder?, toPos: Int, x: Int, y: Int) {
+            super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
 
-            if (isItemValid(viewHolder.adapterPosition)) {
-                return false
+            RealmUtils.mainInstance.executeTransaction { realm ->
+                val from = viewHolder!!.adapterPosition
+                val to = target!!.adapterPosition
+
+                val fromItem = realm.where(ToDo::class.java).equalTo(ToDo.KEY_POSITION, from)
+                        .findFirst()
+                val toItem = realm.where(ToDo::class.java).equalTo(ToDo.KEY_POSITION, to)
+                        .findFirst()
+
+                val fromPosition = fromItem.position
+                val toPosition = toItem.position
+                fromItem.position = toPosition
+                toItem.position = fromPosition
+                notifyItemMoved(from, to)
             }
 
             onArrangeCompleted?.invoke()
-            return false
+        }
+
+        override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+            return true
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -197,7 +208,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
                             return@OnTouchListener true
                         }
                     }
-                    true
+                    return@OnTouchListener false
                 })
             } else {
                 thumb!!.visibility = View.GONE
