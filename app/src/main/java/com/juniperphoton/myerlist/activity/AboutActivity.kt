@@ -1,6 +1,5 @@
 package com.juniperphoton.myerlist.activity
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,8 +7,9 @@ import android.view.View
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
-import com.juniperphoton.myerlist.util.getResString
-import com.juniperphoton.myerlist.util.getVersionName
+import com.juniperphoton.myerlist.extension.getResString
+import com.juniperphoton.myerlist.extension.getVersionName
+import com.juniperphoton.myerlist.extension.startActivitySafely
 import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
@@ -57,18 +57,6 @@ class AboutActivity : BaseActivity() {
     internal fun onClickGithub() {
         val uri = Uri.parse(R.string.github_url.getResString())
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
-    }
-
-    fun startActivitySafely(intent: Intent) {
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
+        startActivitySafely(intent)
     }
 }

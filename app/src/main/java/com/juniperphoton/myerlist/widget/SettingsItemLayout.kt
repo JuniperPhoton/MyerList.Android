@@ -7,33 +7,26 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.FrameLayout
 import android.widget.TextView
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.util.LocalSettingUtil
 
-import butterknife.BindView
-import butterknife.ButterKnife
-
 class SettingsItemLayout(private val ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
-    @JvmField
     @BindView(R.id.settings_item_title)
-    var titleTextView: TextView? = null
+    lateinit var titleTextView: TextView
 
-    @JvmField
     @BindView(R.id.settings_item_content)
-    var contentTextView: TextView? = null
+    lateinit var contentTextView: TextView
 
-    @JvmField
     @BindView(R.id.settings_item_switch)
-    var compoundButton: CompoundButton? = null
+    lateinit var compoundButton: CompoundButton
 
-    @JvmField
     @BindView(R.id.divider_view)
-    var dividerView: View? = null
+    lateinit var dividerView: View
 
-    @JvmField
     @BindView(R.id.settings_item_root)
-    var root: View? = null
+    lateinit var root: View
 
     var onClick: (() -> Unit)? = null
 
@@ -41,21 +34,21 @@ class SettingsItemLayout(private val ctx: Context, attrs: AttributeSet) : FrameL
     private var key: String? = null
 
     var checked: Boolean
-        get() = compoundButton!!.isChecked
+        get() = compoundButton.isChecked
         set(checked) {
-            compoundButton!!.isChecked = checked
+            compoundButton.isChecked = checked
         }
 
     var title: String
-        get() = titleTextView!!.text.toString()
+        get() = titleTextView.text.toString()
         set(value) {
-            titleTextView!!.text = value
+            titleTextView.text = value
         }
 
     var content: String
-        get() = contentTextView!!.text.toString()
+        get() = contentTextView.text.toString()
         set(value) {
-            contentTextView!!.text = value
+            contentTextView.text = value
         }
 
     init {
@@ -73,23 +66,23 @@ class SettingsItemLayout(private val ctx: Context, attrs: AttributeSet) : FrameL
         array.recycle()
 
         if (title != null) {
-            titleTextView!!.text = title
+            titleTextView.text = title
         }
 
         if (content != null) {
-            contentTextView!!.text = content
+            contentTextView.text = content
         }
 
         if (!hasCheckbox) {
-            compoundButton!!.visibility = View.GONE
+            compoundButton.visibility = View.GONE
         }
 
         if (!showDivider) {
-            dividerView!!.visibility = View.GONE
+            dividerView.visibility = View.GONE
         }
 
-        root!!.setOnClickListener {
-            compoundButton!!.isChecked = !compoundButton!!.isChecked
+        root.setOnClickListener {
+            compoundButton.isChecked = !compoundButton.isChecked
             onClick?.invoke()
         }
 
@@ -101,10 +94,10 @@ class SettingsItemLayout(private val ctx: Context, attrs: AttributeSet) : FrameL
     private fun initViews() {
         if (LocalSettingUtil.checkKey(ctx, key!!)) {
             val addToBottom = LocalSettingUtil.getBoolean(ctx, key!!, defaultValue)
-            compoundButton!!.isChecked = addToBottom
+            compoundButton.isChecked = addToBottom
         } else {
-            compoundButton!!.isChecked = defaultValue
+            compoundButton.isChecked = defaultValue
         }
-        compoundButton!!.setOnCheckedChangeListener { _, isChecked -> LocalSettingUtil.putBoolean(ctx, key!!, isChecked) }
+        compoundButton.setOnCheckedChangeListener { _, isChecked -> LocalSettingUtil.putBoolean(ctx, key!!, isChecked) }
     }
 }

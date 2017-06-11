@@ -1,4 +1,4 @@
-package com.juniperphoton.myerlist.util
+package com.juniperphoton.myerlist.extension
 
 import android.graphics.Color
 import android.support.v4.content.ContextCompat

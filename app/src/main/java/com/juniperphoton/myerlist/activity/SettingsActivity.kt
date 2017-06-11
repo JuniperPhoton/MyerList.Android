@@ -3,15 +3,14 @@ package com.juniperphoton.myerlist.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.event.ReCreateEvent
-import com.juniperphoton.myerlist.realm.RealmUtils
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.util.LocalSettingUtil
-import com.juniperphoton.myerlist.util.getResString
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
@@ -22,10 +21,11 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
-        changeLangView!!.onClick = {
-            onClickChangeLanguage()
-        }
         updateLocal()
+
+        changeLangView.onClick = {
+            toggleChangeLanguage()
+        }
     }
 
     private fun updateLocal() {
@@ -33,13 +33,13 @@ class SettingsActivity : BaseActivity() {
         val config = resources.configuration
         val locale = config.locale
         if (locale == Locale.SIMPLIFIED_CHINESE) {
-            changeLangView.content = R.string.change_lang_hint_chinese.getResString()!!
+            changeLangView.content = R.string.change_lang_hint_chinese.getResString()
         } else {
-            changeLangView.content = R.string.change_lang_hint_english.getResString()!!
+            changeLangView.content = R.string.change_lang_hint_english.getResString()
         }
     }
 
-    internal fun onClickChangeLanguage() {
+    private fun toggleChangeLanguage() {
         val resources = resources
         val dm = resources.displayMetrics
         val config = resources.configuration
@@ -49,13 +49,11 @@ class SettingsActivity : BaseActivity() {
         if (locale == Locale.SIMPLIFIED_CHINESE) {
             defaultIndex = 1
         }
-        Log.d("settings", locale.toString())
-        val builder = AlertDialog.Builder(this)
-        val finalDefaultIndex = defaultIndex
-        builder.setTitle(R.string.change_lang)
+        AlertDialog.Builder(this)
+                .setTitle(R.string.change_lang)
                 .setSingleChoiceItems(opts, defaultIndex) { dialog, which ->
                     dialog.dismiss()
-                    if (finalDefaultIndex != which) {
+                    if (defaultIndex != which) {
                         config.setLocale(if (which == 0) Locale.ENGLISH else Locale.SIMPLIFIED_CHINESE)
                         resources.updateConfiguration(config, dm)
                         EventBus.getDefault().postSticky(ReCreateEvent())
@@ -67,18 +65,18 @@ class SettingsActivity : BaseActivity() {
 
     @OnClick(R.id.settings_logout)
     internal fun onClickLogout() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.confirm_to_logout.getResString()!!)
-                .setPositiveButton(R.string.confirm_ok.getResString()!!) { _, _ ->
+        AlertDialog.Builder(this)
+                .setTitle(R.string.confirm_to_logout.getResString())
+                .setPositiveButton(R.string.yes.getResString()) { _, _ ->
                     LocalSettingUtil.clearAll(App.instance!!)
-                    RealmUtils.mainInstance.executeTransaction {
+                    Realm.getDefaultInstance().executeTransaction {
                         it.deleteAll()
                     }
                     val intent = Intent(App.instance!!, StartActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 }
-                .setNegativeButton(R.string.confirm_cancel.getResString()!!) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+                .setNegativeButton(R.string.no.getResString()) { dialog, _ -> dialog.dismiss() }
+                .create().show()
     }
 }

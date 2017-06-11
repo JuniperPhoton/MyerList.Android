@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -21,17 +20,17 @@ import com.juniperphoton.myerlist.adapter.CategoryAdapter
 import com.juniperphoton.myerlist.adapter.ToDoAdapter
 import com.juniperphoton.myerlist.event.ReCreateEvent
 import com.juniperphoton.myerlist.event.RefreshToDoEvent
+import com.juniperphoton.myerlist.extension.registerEventBus
+import com.juniperphoton.myerlist.extension.startActivity
+import com.juniperphoton.myerlist.extension.unregisterEventBus
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
 import com.juniperphoton.myerlist.presenter.MainPresenter
-import com.juniperphoton.myerlist.realm.RealmUtils
-import com.juniperphoton.myerlist.util.LocalSettingUtil
-import com.juniperphoton.myerlist.util.Params
-import com.juniperphoton.myerlist.util.StartEndAnimator
-import com.juniperphoton.myerlist.util.TypefaceUtil
+import com.juniperphoton.myerlist.util.*
 import com.juniperphoton.myerlist.widget.AddingView
-import io.realm.RealmResults
+import io.realm.Realm
+import io.realm.RealmList
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
@@ -39,12 +38,11 @@ import kotlinx.android.synthetic.main.no_item_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 @Suppress("unused", "unused_parameter")
 class MainActivity : BaseActivity(), MainContract.View {
     companion object {
-        private val TAG = "MainActivity"
+        private const val TAG = "MainActivity"
     }
 
     private var cateAdapter: CategoryAdapter? = null
@@ -70,11 +68,11 @@ class MainActivity : BaseActivity(), MainContract.View {
         setSupportActionBar(toolbar)
         presenter = MainPresenter(this)
 
-        if (drawerLayout != null) {
+        drawerLayout?.let {
             val toggle = ActionBarDrawerToggle(
                     this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-            drawerLayout.addDrawerListener(toggle)
-            drawerLayout.post { toggle.syncState() }
+            it.addDrawerListener(toggle)
+            it.post { toggle.syncState() }
         }
 
         initViews()
@@ -83,26 +81,25 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "destroyed")
     }
 
     override fun onResume() {
         super.onResume()
-        presenter!!.start()
+
+        presenter?.start()
         if (cateAdapter != null) {
             refreshCategoryList()
         }
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this)
-        }
+
+        registerEventBus()
     }
 
     override fun onPause() {
         super.onPause()
-        presenter!!.stop()
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this)
-        }
+
+        presenter?.stop()
+
+        unregisterEventBus()
     }
 
     private fun updateNoItemUi(show: Boolean) {
@@ -125,17 +122,17 @@ class MainActivity : BaseActivity(), MainContract.View {
                 presenter!!.getCategories()
             }
         }
+
         drawerEmailView.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
 
         cateAdapter = CategoryAdapter()
-        cateAdapter!!.onSelected = handler@ { category, position ->
+        cateAdapter?.onSelected = handler@ { category, position ->
             if (selectedCategoryId == category.id) {
                 return@handler
             }
-            if (category.id == ToDoCategory.PERSONALIZATION_ID) {
+            if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
                 drawerLayout?.closeDrawer(Gravity.START)
-                val intent = Intent(this@MainActivity, CategoryManagementActivity::class.java)
-                startActivity(intent)
+                startActivity<CategoryManagementActivity>()
                 return@handler
             }
 
@@ -146,7 +143,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
             toolbar.title = category.name
 
-            if (selectedCategoryId == ToDoCategory.DELETED_ID) {
+            if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
                 addFAB.setImageResource(R.drawable.ic_delete)
             } else {
                 addFAB.setImageResource(R.drawable.ic_add)
@@ -161,46 +158,47 @@ class MainActivity : BaseActivity(), MainContract.View {
         categoryRecyclerView.adapter = cateAdapter
 
         toDoAdapter = ToDoAdapter()
-        toDoAdapter!!.onArrangeCompleted = {
-            uploadOrders()
-        }
-        toDoAdapter!!.onClickItem = onClick@ { position, cateView ->
-            val location = IntArray(2)
-            cateView.getLocationOnScreen(location)
-            val x = location[0] + cateView.width / 2
-            val y = location[1] + cateView.height / 2
-
-            val toDo = toDoAdapter!!.getData(position)
-            var index = cateAdapter!!.getItemIndexById(toDo.cate!!)
-            if (index < 0 || index >= cateAdapter!!.data!!.size) {
-                index = 0
+        toDoAdapter?.apply {
+            onArrangeCompleted = {
+                uploadOrders()
             }
-            modifyingToDoId = Integer.parseInt(toDo.id)
-            startRevealAnimation(x, y, object : StartEndAnimator() {
-                override fun onAnimationStart(animation: Animator) {
-                    addingView.visibility = View.VISIBLE
-                    addingView.mode = AddingView.MODIFY_MODE
-                    addingView.content = toDo.content!!
-                    addingView.selectedIndex = index
-                }
+            onClickItem = onClick@ { position, cateView ->
+                val location = IntArray(2)
+                cateView.getLocationOnScreen(location)
+                val x = location[0] + cateView.width / 2
+                val y = location[1] + cateView.height / 2
 
-                override fun onAnimationEnd(animation: Animator) {
-                    addingView.showInputPane()
+                val toDo = getData(position)
+                var index = cateAdapter!!.getItemIndexById(toDo.cate!!)
+                if (index < 0 || index >= cateAdapter!!.data!!.size) {
+                    index = 0
                 }
-            })
-        }
-        toDoAdapter!!.onClickRecover = { position ->
-            val toDo = toDoAdapter!!.getData(position)
-            presenter!!.recoverToDo(toDo)
-        }
-        toDoAdapter!!.onUpdateDone = { position ->
-            val toDo = toDoAdapter!!.getData(position)
-            presenter!!.updateIsDone(toDo)
-            updateCount()
-        }
-        toDoAdapter!!.onDelete = { position ->
-            val toDo = toDoAdapter!!.getData(position)
-            presenter!!.deleteToDo(toDo)
+                modifyingToDoId = Integer.parseInt(toDo.id)
+                startRevealAnimation(x, y, object : StartEndAnimator() {
+                    override fun onAnimationStart(animation: Animator) {
+                        addingView.visibility = View.VISIBLE
+                        addingView.mode = AddingView.MODIFY_MODE
+                        addingView.content = toDo.content!!
+                        addingView.selectedIndex = index
+                    }
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        addingView.showInputPane()
+                    }
+                })
+            }
+            onClickRecover = { position ->
+                val toDo = getData(position)
+                presenter?.recoverToDo(toDo)
+            }
+            onUpdateDone = { position ->
+                val toDo = getData(position)
+                presenter?.updateIsDone(toDo.id!!, toDo.isdone!!)
+            }
+            onDelete = { position ->
+                val toDo = getData(position)
+                presenter?.deleteToDo(toDo)
+            }
         }
 
         toDoRecyclerView.layoutManager = LinearLayoutManager(this,
@@ -219,8 +217,10 @@ class MainActivity : BaseActivity(), MainContract.View {
             when (mode) {
                 AddingView.ADD_MODE -> presenter!!.addToDo(category.id.toString(), content)
                 AddingView.MODIFY_MODE -> if (modifyingToDoId != -1) {
-                    presenter!!.modifyToDo(category.id.toString(), content,
-                            modifyingToDoId.toString())
+                    presenter!!.modifyToDo(
+                            modifyingToDoId.toString(),
+                            category.id.toString(),
+                            content)
                     modifyingToDoId = -1
                 }
             }
@@ -233,12 +233,18 @@ class MainActivity : BaseActivity(), MainContract.View {
         TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
 
         refreshCategoryList()
-        //refreshToDoList()
-        handleShortcutsAction()
+        handleShortcutsAction(intent?.action)
     }
 
-    private fun handleShortcutsAction() {
-        val action = intent.action ?: return
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.action == "action.add") {
+            handledShortCuts = false
+        }
+        handleShortcutsAction(intent?.action)
+    }
+
+    private fun handleShortcutsAction(action: String?) {
         when (action) {
             "action.add" -> {
                 if (!handledShortCuts) {
@@ -256,21 +262,19 @@ class MainActivity : BaseActivity(), MainContract.View {
     @OnClick(R.id.drawer_settings)
     internal fun onClickSettings() {
         drawerLayout?.closeDrawer(Gravity.START)
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+        startActivity<SettingsActivity>()
     }
 
     @OnClick(R.id.drawer_about)
     internal fun onClickAbout() {
         drawerLayout?.closeDrawer(Gravity.START)
-        val intent = Intent(this, AboutActivity::class.java)
-        startActivity(intent)
+        startActivity<AboutActivity>()
     }
 
     @OnClick(R.id.addFAB)
     internal fun onClickFAB() {
-        if (selectedCategoryId == ToDoCategory.DELETED_ID) {
-            if (toDoAdapter!!.data!!.size == 0) {
+        if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
+            if (toDoAdapter?.data?.size == 0) {
                 return
             }
             AlertDialog.Builder(this)
@@ -301,8 +305,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private fun hideAddingView() {
         hideRevealAnimation(object : StartEndAnimator() {
-            override fun onAnimationStart(animation: Animator) {
-
+            override fun onAnimationStart(animation: Animator?) {
             }
 
             override fun onAnimationEnd(animation: Animator) {
@@ -314,59 +317,59 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun refreshCategoryList() {
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
 
         val categories = realm.where(ToDoCategory::class.java)
-                .equalTo(ToDoCategory.SID_KEY, LocalSettingUtil.getString(this, Params.SID_KEY))
-                .findAllSorted(ToDoCategory.POSITION_KEY, Sort.ASCENDING)
-        val list = ArrayList<ToDoCategory>()
-        if (categories != null) {
-            list += categories
-        }
-        list.add(0, ToDoCategory.allCategory)
-        list.add(ToDoCategory.deletedCategory)
-        list.add(ToDoCategory.personalizationCategory)
+                .equalTo(ToDoCategory.KEY_SID, LocalSettingUtil.getString(this, Params.SID_KEY))
+                .findAllSorted(ToDoCategory.KEY_POSITION, Sort.ASCENDING)
 
-        cateAdapter!!.refreshData(list)
-        cateAdapter!!.selectItem(0)
+        val list = RealmList<ToDoCategory>()
+        list.apply {
+            this += categories
+            add(0, ToDoCategory.allCategory)
+            add(ToDoCategory.deletedCategory)
+            add(ToDoCategory.personalizationCategory)
+        }
+
+        cateAdapter?.refreshData(list)
+        cateAdapter?.selectItem(0)
 
         addingView.makeCategoriesSelection()
     }
 
     override fun refreshToDoList() {
-        var results: RealmResults<ToDo>? = null
-
-        val realm = RealmUtils.mainInstance
-
-        when (selectedCategoryId) {
-            ToDoCategory.PERSONALIZATION_ID -> {
-                // empty
-            }
-            ToDoCategory.DELETED_ID -> results = realm.where(ToDo::class.java)
-                    .equalTo(ToDo.DELETED_KEY, java.lang.Boolean.TRUE)
-                    .equalTo(ToDoCategory.SID_KEY, LocalSettingUtil.getString(this, Params.SID_KEY))
-                    .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING)
-            ToDoCategory.ALL_ID -> results = realm.where(ToDo::class.java).notEqualTo(ToDo.DELETED_KEY, java.lang.Boolean.TRUE)
-                    .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING)
-            else -> results = realm.where(ToDo::class.java)
-                    .notEqualTo(ToDo.DELETED_KEY, java.lang.Boolean.TRUE)
-                    .equalTo(ToDo.CATE_KEY, selectedCategoryId.toString())
-                    .findAllSorted(ToDo.POSITION_KEY, Sort.ASCENDING)
+        val realm = Realm.getDefaultInstance()
+        val results = when (selectedCategoryId) {
+            ToDoCategory.VALUE_DELETED_ID -> realm.where(ToDo::class.java)
+                    .equalTo(ToDo.KEY_DELETED, true)
+                    .equalTo(ToDoCategory.KEY_SID, LocalSettingUtil.getString(this, Params.SID_KEY))
+                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
+            ToDoCategory.VALUE_ALL_ID -> realm.where(ToDo::class.java)
+                    .notEqualTo(ToDo.KEY_DELETED, true)
+                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
+            else -> realm.where(ToDo::class.java)
+                    .notEqualTo(ToDo.KEY_DELETED, true)
+                    .equalTo(ToDo.KEY_CATEGORY, selectedCategoryId.toString())
+                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
         }
 
-        updateNoItemUi(results!!.size == 0)
-        toDoAdapter!!.refreshData(results.toMutableList())
-
+        updateNoItemUi(results.size == 0)
+        toDoAdapter!!.refreshData(results)
         updateCount()
+        WidgetUpdater.update(this)
     }
 
     override fun notifyDataSetChanged() {
         toDoAdapter?.notifyDataSetChanged()
+        WidgetUpdater.update(this)
+        updateCount()
     }
 
     private fun updateCount() {
-        val toDos = toDoAdapter!!.data
-        val count = toDos!!.count { it.isdone == ToDo.IS_NOT_DONE }
+        val count = Realm.getDefaultInstance()
+                .where(ToDo::class.java)
+                .equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE)
+                .equalTo(ToDo.KEY_DELETED, false).count()
         undoneText.text = count.toString()
     }
 
@@ -397,7 +400,8 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (addingView.visibility == View.VISIBLE) {
             hideAddingView()
         } else {
-            super.onBackPressed()
+            //super.onBackPressed()
+            moveTaskToBack(true)
         }
     }
 
@@ -409,12 +413,17 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     override fun uploadOrders() {
         val orderStr = StringBuilder()
-        for (toDo in toDoAdapter!!.data!!) {
-            orderStr.append(toDo.id)
+        val todoList = Realm.getDefaultInstance().where(ToDo::class.java)
+                .notEqualTo(ToDo.KEY_DELETED, true)
+                .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
+        todoList.forEach {
+            orderStr.append(it.id)
             orderStr.append(",")
         }
         orderStr.deleteCharAt(orderStr.length - 1)
         presenter!!.updateOrders(orderStr.toString())
+
+        WidgetUpdater.update(this)
     }
 
     override fun notifyToDoDeleted(pos: Int) {

@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <include layout="@layout/status_bar_layout"/>
 
@@ -54,8 +53,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:src="@drawable/ic_add"
-                app:backgroundTint="@color/MyerListBlue"
-                />
+                app:backgroundTint="@color/MyerListBlue"/>
 
         </android.support.design.widget.CoordinatorLayout>
 

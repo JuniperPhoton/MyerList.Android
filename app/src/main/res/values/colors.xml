@@ -8,6 +8,8 @@
     <color name="DeleteColor">#a9a9a9</color>
     <color name="ThumbGray">#cccccc</color>
 
+    <color name="PlaceholderGray">#f5f5f5</color>
+
     <color name="DoneGreenColor">#FF4AD4CB</color>
     <color name="DeleteRedColor">#FFDC7373</color>
 

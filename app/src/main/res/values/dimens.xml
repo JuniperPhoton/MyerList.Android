@@ -8,4 +8,5 @@
     <dimen name="fab_center_margin">28dp</dimen>
     <dimen name="todo_item_margin">12dp</dimen>
     <dimen name="todo_item_thumb_size">52dp</dimen>
+    <dimen name="manage_category_header_height">52dp</dimen>
 </resources>

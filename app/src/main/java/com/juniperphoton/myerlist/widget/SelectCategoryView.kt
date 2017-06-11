@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.LinearLayout
-
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.dpToPixel
+import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
-import com.juniperphoton.myerlist.util.dpToPixel
-import com.juniperphoton.myerlist.util.toResColor
+import io.realm.Realm
 
 class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     companion object {
@@ -38,7 +38,7 @@ class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     fun makeViews() {
         removeAllViews()
-        val categories = RealmUtils.mainInstance.where(ToDoCategory::class.java).findAll()
+        val categories = Realm.getDefaultInstance().where(ToDoCategory::class.java).findAll()
         categories.filterIndexed handle@ { index, _ ->
             return@handle index >= 0
         }.forEach {

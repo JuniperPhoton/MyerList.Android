@@ -24,13 +24,13 @@ class MainContract {
 
         fun updateOrders(order: String)
 
-        fun updateIsDone(toDo: ToDo)
+        fun updateIsDone(id: String, oldValue: String)
 
-        fun modifyToDo(cate: String, content: String, id: String)
+        fun modifyToDo(id: String, cate: String, content: String)
 
         fun addToDo(cate: String, content: String)
 
-        fun deleteToDo(toDo: ToDo)
+        fun deleteToDo(item: ToDo)
 
         fun clearDeletedList()
 

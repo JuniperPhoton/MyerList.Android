@@ -2,13 +2,15 @@ package com.juniperphoton.myerlist.presenter
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.api.CloudService
 import com.juniperphoton.myerlist.api.response.CommonResponse
 import com.juniperphoton.myerlist.event.RefreshToDoEvent
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.AppConfig
 import com.juniperphoton.myerlist.util.ToastService
+import io.realm.Realm
 import io.realm.Sort
 import org.greenrobot.eventbus.EventBus
 import rx.Subscriber
@@ -27,7 +29,7 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
         view.hideKeyboard()
         view.showDialog()
 
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         realm.delete(ToDoCategory::class.java)
         for ((i, category) in list!!.withIndex()) {
@@ -68,13 +70,13 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
                     override fun onNext(commonResponse: CommonResponse) {
                         view.hideDialog(DELAY_MILLIS)
                         if (commonResponse.ok) {
-                            ToastService.sendShortToast("Updated")
+                            ToastService.sendShortToast(R.string.category_updated.getResString())
                             view.postDelay(Runnable {
                                 view.finish()
                             }, DELAY_MILLIS)
                             EventBus.getDefault().postSticky(RefreshToDoEvent())
                         } else {
-                            ToastService.sendShortToast("Failed to update category")
+                            ToastService.sendShortToast(R.string.category_update_failed.getResString())
                         }
                     }
                 })
@@ -89,10 +91,10 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
     }
 
     override fun refreshData() {
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         val realmResults = realm.where(ToDoCategory::class.java)
-                .findAllSorted(ToDoCategory.POSITION_KEY, Sort.ASCENDING)
+                .findAllSorted(ToDoCategory.KEY_POSITION, Sort.ASCENDING)
         realm.commitTransaction()
         list = ArrayList<ToDoCategory>()
 

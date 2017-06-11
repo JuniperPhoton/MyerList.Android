@@ -3,10 +3,9 @@ package com.juniperphoton.myerlist.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.juniperphoton.myerlist.realm.RealmUtils
 import java.util.*
 
-abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseViewHolder>() {
+abstract class BaseAdapter<T, U : RecyclerView.ViewHolder> : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private val HEADER = 1
         private val ITEM = 1 shl 1
@@ -25,7 +24,7 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
     val hasFooter: Boolean
         get() = footerView != null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         parent.clipChildren = false
         return when (viewType) {
             HEADER -> BaseViewHolder(headerView)
@@ -34,7 +33,7 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
         }
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == ITEM) {
             val index: Int
             if (headerView != null) {
@@ -81,18 +80,14 @@ abstract class BaseAdapter<T, U : BaseViewHolder> : RecyclerView.Adapter<BaseVie
     }
 
     fun addData(item: T) {
-        RealmUtils.mainInstance.executeTransaction {
-            data!!.add(item)
-            notifyItemInserted(data!!.indexOf(item) + if (headerView != null) 1 else 0)
-        }
+        data!!.add(item)
+        notifyItemInserted(data!!.indexOf(item) + if (headerView != null) 1 else 0)
     }
 
     fun removeData(index: Int) {
-        RealmUtils.mainInstance.executeTransaction {
-            data!!.removeAt(index)
-            notifyItemRemoved(if (headerView != null) index + 1 else index)
-        }
+        data!!.removeAt(index)
+        notifyItemRemoved(if (headerView != null) index + 1 else index)
     }
 }
 
-open class BaseViewHolder(var rootView: View?) : RecyclerView.ViewHolder(rootView)
+open class BaseViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView)

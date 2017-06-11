@@ -65,7 +65,7 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
         helper.attachToRecyclerView(recyclerView)
     }
 
-    inner class CustomCategoryViewHolder(itemView: View) : BaseViewHolder(itemView) {
+    inner class CustomCategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @JvmField
         @BindView(R.id.row_category_color_view_root)
         var colorRoot: View? = null
@@ -91,7 +91,9 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
         init {
             ButterKnife.bind(this, itemView)
 
-            deleteView!!.setOnClickListener { removeData(adapterPosition - 1) }
+            deleteView!!.setOnClickListener {
+                removeData(adapterPosition - 1)
+            }
 
             colorRoot!!.setOnClickListener {
                 onClickSelectCategory?.invoke(category)

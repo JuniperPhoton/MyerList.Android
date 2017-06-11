@@ -1,6 +1,7 @@
 package com.juniperphoton.myerlist.adapter
 
 import android.content.Context
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,7 @@ class PickColorAdapter(private val context: Context) : BaseAdapter<Int, PickColo
 
     override fun onBindItemViewHolder(holder: PickColorHolder, dataPosition: Int) {
         holder.bind(getData(dataPosition))
-        animateContainer(holder.rootView!!, dataPosition)
+        animateContainer(holder.itemView!!, dataPosition)
     }
 
     private fun animateContainer(container: View, position: Int) {
@@ -39,7 +40,7 @@ class PickColorAdapter(private val context: Context) : BaseAdapter<Int, PickColo
                 .start()
     }
 
-    inner class PickColorHolder internal constructor(itemView: View) : BaseViewHolder(itemView) {
+    inner class PickColorHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @JvmField
         @BindView(R.id.color_view)
         internal var tintView: View? = null

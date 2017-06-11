@@ -6,14 +6,14 @@ import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.PickColorAdapter
-import com.juniperphoton.myerlist.util.toColor
+import com.juniperphoton.myerlist.extension.toColor
 import kotlinx.android.synthetic.main.activity_color_picker.*
 
 @Suppress("unused","unused_parameter")
 class PickColorActivity : BaseActivity() {
     companion object {
-        private val SPAN_COUNT = 6
-        val RESULT_KEY = "picked_color"
+        private const val SPAN_COUNT = 6
+        const val RESULT_KEY = "picked_color"
     }
 
     private var colors: MutableList<Int>? = null
@@ -30,15 +30,17 @@ class PickColorActivity : BaseActivity() {
         colors = generateColors()
 
         adapter = PickColorAdapter(this)
-        adapter!!.onSelectColor = { color ->
-            val intent = Intent()
-            intent.putExtra(RESULT_KEY, color)
-            setResult(Activity.RESULT_OK, intent)
-            finish()
+        adapter?.let {
+            it.onSelectColor = { color ->
+                val intent = Intent()
+                intent.putExtra(RESULT_KEY, color)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+            colorPickList.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+            colorPickList.adapter = adapter
+            it.refreshData(colors!!)
         }
-        colorPickList.layoutManager = GridLayoutManager(this, SPAN_COUNT)
-        colorPickList.adapter = adapter
-        adapter!!.refreshData(colors!!)
     }
 
     fun generateColors(): MutableList<Int> {

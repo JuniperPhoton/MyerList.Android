@@ -1,5 +1,6 @@
 package com.juniperphoton.myerlist.adapter
 
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
+import com.juniperphoton.myerlist.extension.toColor
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.util.toColor
 import com.juniperphoton.myerlist.widget.CircleView
 
 class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHolder>() {
@@ -24,7 +25,7 @@ class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHo
 
     override fun onBindItemViewHolder(holder: CategoryViewHolder, dataPosition: Int) {
         holder.bind(getData(dataPosition))
-        holder.rootView?.setOnClickListener(View.OnClickListener {
+        holder.itemView?.setOnClickListener(View.OnClickListener {
             if (dataPosition == selectedIndex) return@OnClickListener
             selectItem(dataPosition)
         })
@@ -32,7 +33,7 @@ class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHo
 
     fun selectItem(position: Int) {
         val category = getData(position)
-        if (category.id != ToDoCategory.PERSONALIZATION_ID) {
+        if (category.id != ToDoCategory.VALUE_PERSONALIZATION_ID) {
             val lastIndex = selectedIndex
             selectedIndex = position
             notifyItemChanged(lastIndex)
@@ -55,7 +56,7 @@ class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHo
         return -1
     }
 
-    inner class CategoryViewHolder(itemView: View) : BaseViewHolder(itemView) {
+    inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @JvmField
         @BindView(R.id.row_cate_color_view)
         var circleView: CircleView? = null

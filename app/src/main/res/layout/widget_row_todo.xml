@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/widget_row_root"
+             android:layout_width="match_parent"
+             android:layout_height="50dp"
+             android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/widget_cate_view"
+        android:layout_width="8dp"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/widget_row_to_do_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        tools:Text="ToDo"/>
+
+    <TextView
+        android:id="@+id/widget_done_line"
+        android:layout_width="match_parent"
+        android:clickable="false"
+        android:layout_height="1dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/todo_item_margin"
+        android:layout_marginRight="@dimen/todo_item_margin"
+        android:alpha="0.3"
+        android:background="@android:color/black"/>
+</FrameLayout>
