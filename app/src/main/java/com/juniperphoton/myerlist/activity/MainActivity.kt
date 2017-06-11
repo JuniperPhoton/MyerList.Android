@@ -26,9 +26,9 @@ import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
 import com.juniperphoton.myerlist.presenter.MainPresenter
-import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.*
 import com.juniperphoton.myerlist.widget.AddingView
+import io.realm.Realm
 import io.realm.RealmList
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
@@ -309,7 +309,7 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun refreshCategoryList() {
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
 
         val categories = realm.where(ToDoCategory::class.java)
                 .equalTo(ToDoCategory.KEY_SID, LocalSettingUtil.getString(this, Params.SID_KEY))
@@ -330,7 +330,7 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun refreshToDoList() {
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
         val results = when (selectedCategoryId) {
             ToDoCategory.VALUE_DELETED_ID -> realm.where(ToDo::class.java)
                     .equalTo(ToDo.KEY_DELETED, true)
@@ -358,7 +358,7 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     private fun updateCount() {
-        val count = RealmUtils.mainInstance
+        val count = Realm.getDefaultInstance()
                 .where(ToDo::class.java)
                 .equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE)
                 .equalTo(ToDo.KEY_DELETED, false).count()
@@ -404,7 +404,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     override fun uploadOrders() {
         val orderStr = StringBuilder()
-        val todoList = RealmUtils.mainInstance.where(ToDo::class.java)
+        val todoList = Realm.getDefaultInstance().where(ToDo::class.java)
                 .notEqualTo(ToDo.KEY_DELETED, true)
                 .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
         todoList.forEach {

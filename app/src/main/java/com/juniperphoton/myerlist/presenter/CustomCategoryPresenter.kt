@@ -6,9 +6,9 @@ import com.juniperphoton.myerlist.api.CloudService
 import com.juniperphoton.myerlist.api.response.CommonResponse
 import com.juniperphoton.myerlist.event.RefreshToDoEvent
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.AppConfig
 import com.juniperphoton.myerlist.util.ToastService
+import io.realm.Realm
 import io.realm.Sort
 import org.greenrobot.eventbus.EventBus
 import rx.Subscriber
@@ -27,7 +27,7 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
         view.hideKeyboard()
         view.showDialog()
 
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         realm.delete(ToDoCategory::class.java)
         for ((i, category) in list!!.withIndex()) {
@@ -89,7 +89,7 @@ class CustomCategoryPresenter(private val view: CustomCategoryContract.View) : C
     }
 
     override fun refreshData() {
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         val realmResults = realm.where(ToDoCategory::class.java)
                 .findAllSorted(ToDoCategory.KEY_POSITION, Sort.ASCENDING)

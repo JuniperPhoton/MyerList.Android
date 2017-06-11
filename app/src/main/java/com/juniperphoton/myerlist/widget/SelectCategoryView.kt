@@ -9,6 +9,7 @@ import com.juniperphoton.myerlist.extension.dpToPixel
 import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.realm.RealmUtils
+import io.realm.Realm
 
 class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     companion object {
@@ -37,7 +38,7 @@ class SelectCategoryView(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     fun makeViews() {
         removeAllViews()
-        val categories = RealmUtils.mainInstance.where(ToDoCategory::class.java).findAll()
+        val categories = Realm.getDefaultInstance().where(ToDoCategory::class.java).findAll()
         categories.filterIndexed handle@ { index, _ ->
             return@handle index >= 0
         }.forEach {

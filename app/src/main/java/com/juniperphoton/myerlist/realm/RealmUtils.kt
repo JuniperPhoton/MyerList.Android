@@ -8,23 +8,14 @@ import io.realm.RealmConfiguration
 object RealmUtils {
     private val FILE_NAME = "MyerList.realm"
     private val SCHEMA_VERSION = 1
-    private var sConfiguration: RealmConfiguration? = null
-
-    private var sMainInstance: Realm? = null
 
     fun init(context: Context) {
         Realm.init(context)
-        sConfiguration = RealmConfiguration.Builder()
+        var config = RealmConfiguration.Builder()
                 .name(FILE_NAME)
                 .schemaVersion(SCHEMA_VERSION.toLong())
                 .migration(CacheMigration())
                 .build()
-        sMainInstance = Realm.getInstance(sConfiguration!!)
+        Realm.setDefaultConfiguration(config)
     }
-
-    val mainInstance: Realm
-        get() = sMainInstance!!
-
-    val newInstance: Realm
-        get() = Realm.getInstance(sConfiguration!!)
 }

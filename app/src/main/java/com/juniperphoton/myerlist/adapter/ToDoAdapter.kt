@@ -14,9 +14,9 @@ import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.CustomItemTouchHelper
 import com.juniperphoton.myerlist.widget.CircleView
+import io.realm.Realm
 
 class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
     companion object {
@@ -56,7 +56,7 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
         override fun onMoved(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, fromPos: Int, target: RecyclerView.ViewHolder?, toPos: Int, x: Int, y: Int) {
             super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
 
-            RealmUtils.mainInstance.executeTransaction { realm ->
+            Realm.getDefaultInstance().executeTransaction { realm ->
                 val from = viewHolder!!.adapterPosition
                 val to = target!!.adapterPosition
 
@@ -181,16 +181,17 @@ class ToDoAdapter : BaseAdapter<ToDo, ToDoAdapter.ToDoViewHolder>() {
             toDo = todo
 
             var color: Int = R.color.MyerListBlue.toResColor()
-            RealmUtils.mainInstance.executeTransaction {
-                val cate = Integer.valueOf(todo.cate)!!
-                if (cate > 0) {
-                    val category = it.where(ToDoCategory::class.java).equalTo(ToDoCategory.KEY_ID,
-                            cate).findFirst()
-                    if (category != null) {
-                        color = category.intColor
-                    }
+
+            var realm = Realm.getDefaultInstance()
+            val cate = Integer.valueOf(todo.cate)!!
+            if (cate > 0) {
+                val category = realm.where(ToDoCategory::class.java).equalTo(ToDoCategory.KEY_ID,
+                        cate).findFirst()
+                if (category != null) {
+                    color = category.intColor
                 }
             }
+
             circleView?.color = color
 
             if (todo.isdone == ToDo.VALUE_DONE) {

@@ -3,6 +3,7 @@ package com.juniperphoton.myerlist.receiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
@@ -11,7 +12,7 @@ import com.juniperphoton.myerlist.extension.toColor
 import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.realm.RealmUtils
+import io.realm.Realm
 import io.realm.Sort
 
 class ListViewUpdateService : RemoteViewsService() {
@@ -32,7 +33,7 @@ class ListViewUpdateFactory(private var context: Context) : RemoteViewsService.R
     }
 
     private fun updateDataSet() {
-        val realm = RealmUtils.newInstance
+        val realm = Realm.getDefaultInstance()
         val cateList = realm.where(ToDoCategory::class.java)
                 .greaterThanOrEqualTo(ToDoCategory.KEY_ID, 0)
                 .findAll()
@@ -64,6 +65,7 @@ class ListViewUpdateFactory(private var context: Context) : RemoteViewsService.R
     }
 
     override fun onDataSetChanged() {
+        Log.d(TAG, "onDataSetChanged")
         updateDataSet()
     }
 

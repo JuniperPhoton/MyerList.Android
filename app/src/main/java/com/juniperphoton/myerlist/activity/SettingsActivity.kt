@@ -9,8 +9,8 @@ import com.juniperphoton.myerlist.App
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.event.ReCreateEvent
 import com.juniperphoton.myerlist.extension.getResString
-import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.LocalSettingUtil
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
@@ -66,7 +66,7 @@ class SettingsActivity : BaseActivity() {
                 .setTitle(R.string.confirm_to_logout.getResString())
                 .setPositiveButton(R.string.confirm_ok.getResString()) { _, _ ->
                     LocalSettingUtil.clearAll(App.instance!!)
-                    RealmUtils.mainInstance.executeTransaction {
+                    Realm.getDefaultInstance().executeTransaction {
                         it.deleteAll()
                     }
                     val intent = Intent(App.instance!!, StartActivity::class.java)

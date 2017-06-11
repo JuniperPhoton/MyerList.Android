@@ -13,12 +13,11 @@ import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.model.CategoryRespInformation
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
-import com.juniperphoton.myerlist.realm.RealmUtils
 import com.juniperphoton.myerlist.util.AppConfig
 import com.juniperphoton.myerlist.util.LocalSettingUtil
 import com.juniperphoton.myerlist.util.Params
 import com.juniperphoton.myerlist.util.ToastService
-import io.realm.Sort
+import io.realm.Realm
 import rx.Observable
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
@@ -85,7 +84,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
     }
 
     private fun mergeToDos(toDos: List<ToDo>) {
-        RealmUtils.mainInstance.executeTransaction { realm ->
+        Realm.getDefaultInstance().executeTransaction { realm ->
             val localWithoutDeleteFlag = realm.where(ToDo::class.java)
                     .notEqualTo(ToDo.KEY_DELETED, java.lang.Boolean.TRUE).findAll()
             localWithoutDeleteFlag.forEach {
@@ -118,19 +117,11 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
     override fun updateIsDone(id: String, oldValue: String) {
         val newValue = if (oldValue == ToDo.VALUE_DONE) ToDo.VALUE_UNDONE else ToDo.VALUE_DONE
 
-        val realm = RealmUtils.mainInstance
+        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         val managedToDo = realm.where(ToDo::class.java).equalTo(ToDo.KEY_ID, id).findFirst()
         managedToDo!!.isdone = newValue
         realm.commitTransaction()
-
-        val todoList = RealmUtils.mainInstance.where(ToDo::class.java)
-                .equalTo(ToDo.KEY_DELETED, false)
-                .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
-        Log.d("ListViewUpdateFactory", "-----------updateIsDone--------------------")
-        todoList.forEach {
-            Log.d("ListViewUpdateFactory", "todo:${it.content},done:${it.isdone}")
-        }
 
         view.notifyDataSetChanged()
 
@@ -151,7 +142,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
 
     override fun modifyToDo(id: String, cate: String, content: String) {
         val dateStr = dateStr
-        RealmUtils.mainInstance.executeTransaction {
+        Realm.getDefaultInstance().executeTransaction {
             val toDo = it.where(ToDo::class.java).equalTo(ToDo.KEY_ID, id).findFirst()
             toDo?.let {
                 it.content = content
@@ -215,7 +206,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                         view.toggleRefreshing(false)
                         val toDo = addToDoResponse.toDo
                         if (toDo != null) {
-                            RealmUtils.mainInstance.executeTransaction {
+                            Realm.getDefaultInstance().executeTransaction {
                                 val managedToDo = it.copyToRealm(toDo)
                                 if (AppConfig.addToBottom()) {
                                     var pos = it.where(ToDo::class.java).findAll().max(ToDo.KEY_POSITION).toInt()
@@ -236,7 +227,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
         val id = item.id
         val alreadyDeleted = item.deleted
 
-        RealmUtils.mainInstance.executeTransaction { realm ->
+        Realm.getDefaultInstance().executeTransaction { realm ->
             val todo = realm.where(ToDo::class.java).equalTo(ToDo.KEY_ID, id).findFirst()
             todo?.let {
                 if (!alreadyDeleted) {
@@ -268,7 +259,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
     }
 
     override fun clearDeletedList() {
-        RealmUtils.mainInstance.executeTransaction {
+        Realm.getDefaultInstance().executeTransaction {
             val deletedList = it.where(ToDo::class.java).equalTo(ToDo.KEY_DELETED, true)
                     .findAll()
             for (todo in deletedList) {
@@ -281,7 +272,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
 
     override fun recoverToDo(toDo: ToDo) {
         addToDo(toDo.cate!!, toDo.content!!)
-        RealmUtils.mainInstance.executeTransaction {
+        Realm.getDefaultInstance().executeTransaction {
             toDo.deleteFromRealm()
         }
         view.refreshToDoList()
@@ -294,7 +285,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
 
             val orders = order.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-            RealmUtils.mainInstance.executeTransaction {
+            Realm.getDefaultInstance().executeTransaction {
                 val localToDos = it.where(ToDo::class.java).findAll()
                 orders.indices.forEach {
                     val toDo = localToDos.where().equalTo(ToDo.KEY_ID, orders[it]).findFirst()
@@ -323,7 +314,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
     }
 
     private fun saveCategoriesToRealm(list: List<ToDoCategory>) {
-        RealmUtils.mainInstance.executeTransaction { realm ->
+        Realm.getDefaultInstance().executeTransaction { realm->
             for ((i, cate) in list.withIndex()) {
                 cate.position = i
                 cate.setSid(LocalSettingUtil.getString(App.instance!!, Params.SID_KEY)!!)
