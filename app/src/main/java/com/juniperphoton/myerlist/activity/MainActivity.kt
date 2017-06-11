@@ -2,6 +2,7 @@ package com.juniperphoton.myerlist.activity
 
 import android.animation.Animator
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -232,11 +233,18 @@ class MainActivity : BaseActivity(), MainContract.View {
         TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
 
         refreshCategoryList()
-        handleShortcutsAction()
+        handleShortcutsAction(intent?.action)
     }
 
-    private fun handleShortcutsAction() {
-        val action = intent.action ?: return
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.action == "action.add") {
+            handledShortCuts = false
+        }
+        handleShortcutsAction(intent?.action)
+    }
+
+    private fun handleShortcutsAction(action: String?) {
         when (action) {
             "action.add" -> {
                 if (!handledShortCuts) {
@@ -392,7 +400,8 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (addingView.visibility == View.VISIBLE) {
             hideAddingView()
         } else {
-            super.onBackPressed()
+            //super.onBackPressed()
+            moveTaskToBack(true)
         }
     }
 
