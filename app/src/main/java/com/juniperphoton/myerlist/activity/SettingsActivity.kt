@@ -22,6 +22,10 @@ class SettingsActivity : BaseActivity() {
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
         updateLocal()
+
+        changeLangView.onClick = {
+            toggleChangeLanguage()
+        }
     }
 
     private fun updateLocal() {
@@ -35,8 +39,7 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
-    @OnClick(R.id.changeLangView)
-    internal fun onClickChangeLanguage() {
+    private fun toggleChangeLanguage() {
         val resources = resources
         val dm = resources.displayMetrics
         val config = resources.configuration
@@ -64,7 +67,7 @@ class SettingsActivity : BaseActivity() {
     internal fun onClickLogout() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.confirm_to_logout.getResString())
-                .setPositiveButton(R.string.confirm_ok.getResString()) { _, _ ->
+                .setPositiveButton(R.string.yes.getResString()) { _, _ ->
                     LocalSettingUtil.clearAll(App.instance!!)
                     Realm.getDefaultInstance().executeTransaction {
                         it.deleteAll()
@@ -73,7 +76,7 @@ class SettingsActivity : BaseActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 }
-                .setNegativeButton(R.string.confirm_cancel.getResString()) { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton(R.string.no.getResString()) { dialog, _ -> dialog.dismiss() }
                 .create().show()
     }
 }

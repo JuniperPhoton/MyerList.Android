@@ -41,20 +41,8 @@
             app:show_divider="true" />
 
         <com.juniperphoton.myerlist.widget.SettingsItemLayout
-            android:id="@+id/setting_item_dark_mode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:default_checkbox_value="false"
-            app:has_checkbox="true"
-            app:key="@string/use_dark_theme_key"
-            app:setting_content="@string/dark_mode_hint"
-            app:setting_title="@string/dark_mode"
-            app:show_divider="true" />
-
-        <com.juniperphoton.myerlist.widget.SettingsItemLayout
-            android:layout_width="match_parent"
             android:id="@+id/changeLangView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:has_checkbox="false"
             app:setting_content="@string/change_lang_hint_english"

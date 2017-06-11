@@ -14,10 +14,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CustomCategoryAdapter
-import com.juniperphoton.myerlist.extension.getResDimen
-import com.juniperphoton.myerlist.extension.getResString
-import com.juniperphoton.myerlist.extension.startActivityForResult
-import com.juniperphoton.myerlist.extension.toColorString
+import com.juniperphoton.myerlist.extension.*
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.CustomCategoryContract
 import com.juniperphoton.myerlist.presenter.CustomCategoryPresenter
@@ -93,7 +90,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
             setOnClickListener {
                 val category = ToDoCategory()
                 category.name = R.string.default_category_name.getResString()
-                category.color = R.color.MyerListBlue.toColorString()
+                category.color = R.color.MyerListBlue.getResColor().toColorString()
 
                 val maxId = adapter?.data?.maxBy { it.id }?.id ?: 0
 

@@ -422,6 +422,8 @@ class MainActivity : BaseActivity(), MainContract.View {
         }
         orderStr.deleteCharAt(orderStr.length - 1)
         presenter!!.updateOrders(orderStr.toString())
+
+        WidgetUpdater.update(this)
     }
 
     override fun notifyToDoDeleted(pos: Int) {

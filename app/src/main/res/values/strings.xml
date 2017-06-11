@@ -94,4 +94,7 @@
     <string name="empty_input_hint">Please input something</string>
     <string name="email_dev" translatable="false">dengweichao@hotmail.com</string>
     <string name="undone_title">Undone</string>
+
+    <string name="category_updated">Updated</string>
+    <string name="category_update_failed">Failed to update category</string>
 </resources>
