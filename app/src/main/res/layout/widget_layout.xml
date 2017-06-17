@@ -18,8 +18,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
+            android:textColor="@color/LightBlack"
             android:textSize="18sp"
-            tools:text="Undone" />
+            tools:text="@string/undone_title" />
 
         <TextView
             android:id="@+id/widget_undone_count"
@@ -28,6 +29,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="4dp"
             android:layout_weight="1"
+            android:textColor="@color/LightBlack"
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="0" />

@@ -22,7 +22,7 @@ class SettingsActivity : BaseActivity() {
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
         updateLocal()
-
+        
         changeLangView.onClick = {
             toggleChangeLanguage()
         }
