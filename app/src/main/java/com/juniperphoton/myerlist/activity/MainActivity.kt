@@ -11,8 +11,10 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.widget.TextView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
@@ -41,6 +43,10 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private var cateAdapter: CategoryAdapter? = null
     private var toDoAdapter: ToDoAdapter? = null
+
+    private var drawerHeaderView: View? = null
+    private var drawerEmailView: TextView? = null
+    private var undoneText: TextView? = null
 
     private var presenter: MainContract.Presenter? = null
 
@@ -138,35 +144,43 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
         }
 
-        drawerEmailView.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
+        drawerHeaderView = LayoutInflater.from(this).inflate(R.layout.drawer_header, drawerLayout, false)
+        drawerHeaderView?.let {
+            drawerEmailView = it.findViewById(R.id.drawerEmailView) as TextView
+            undoneText = it.findViewById(R.id.undoneText) as TextView
+        }
+        drawerEmailView?.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
 
         cateAdapter = CategoryAdapter()
-        cateAdapter?.onSelected = handler@ { category, position ->
-            if (selectedCategoryId == category.id) {
-                return@handler
+        cateAdapter!!.apply {
+            headerView = drawerHeaderView
+            onSelected = handler@ { category, position ->
+                if (selectedCategoryId == category.id) {
+                    return@handler
+                }
+                if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
+                    drawerLayout?.closeDrawer(Gravity.START)
+                    startActivity<CategoryManagementActivity>()
+                    return@handler
+                }
+
+                selectedCategoryPosition = position
+                selectedCategoryId = category.id
+                toDoAdapter!!.canDrag = selectedCategoryId == 0
+                drawerRoot.background = ColorDrawable(category.intColor)
+                addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
+                toolbar.title = category.name
+
+                if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
+                    addFAB.setImageResource(R.drawable.ic_delete)
+                } else {
+                    addFAB.setImageResource(R.drawable.ic_add)
+                }
+
+                drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
+
+                presenter?.onCategorySelected(selectedCategoryPosition)
             }
-            if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
-                drawerLayout?.closeDrawer(Gravity.START)
-                startActivity<CategoryManagementActivity>()
-                return@handler
-            }
-
-            selectedCategoryPosition = position
-            selectedCategoryId = category.id
-            toDoAdapter!!.canDrag = selectedCategoryId == 0
-            drawerRoot.background = ColorDrawable(category.intColor)
-            addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
-            toolbar.title = category.name
-
-            if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
-                addFAB.setImageResource(R.drawable.ic_delete)
-            } else {
-                addFAB.setImageResource(R.drawable.ic_add)
-            }
-
-            drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
-
-            presenter?.onCategorySelected(selectedCategoryPosition)
         }
 
         categoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -245,7 +259,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             hideAddingView()
         }
 
-        TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
+        TypefaceUtil.setTypeFace(undoneText!!, "fonts/AGENCYB.TTF", this)
 
         refreshCategoryList()
         handleShortcutsAction(intent?.action)
@@ -401,7 +415,7 @@ class MainActivity : BaseActivity(), MainContract.View {
                 .where(ToDo::class.java)
                 .equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE)
                 .equalTo(ToDo.KEY_DELETED, false).count()
-        undoneText.text = count.toString()
+        undoneText?.text = count.toString()
     }
 
     private fun startRevealAnimation(x: Int, y: Int, animator: StartEndAnimator) {

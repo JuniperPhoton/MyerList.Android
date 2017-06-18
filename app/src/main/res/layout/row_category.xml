@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/ripple_clip"
-                android:clickable="true"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="@drawable/ripple_clip"
+    android:clickable="true">
 
     <View
         android:id="@+id/row_cate_back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#70000000"/>
+        android:background="#70000000" />
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -23,8 +21,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            />
+            android:layout_marginLeft="20dp" />
 
         <TextView
             android:id="@+id/row_cate_name"
@@ -35,7 +32,6 @@
             android:drawablePadding="16dp"
             android:gravity="center_vertical"
             android:textColor="@android:color/white"
-            android:textSize="15sp"
-            />
+            android:textSize="15sp" />
     </LinearLayout>
 </RelativeLayout>
