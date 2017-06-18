@@ -18,11 +18,8 @@ import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CategoryAdapter
 import com.juniperphoton.myerlist.adapter.ToDoAdapter
-import com.juniperphoton.myerlist.event.ReCreateEvent
-import com.juniperphoton.myerlist.event.RefreshToDoEvent
-import com.juniperphoton.myerlist.extension.registerEventBus
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.extension.startActivity
-import com.juniperphoton.myerlist.extension.unregisterEventBus
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
@@ -35,9 +32,6 @@ import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.android.synthetic.main.no_item_layout.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 @Suppress("unused", "unused_parameter")
 class MainActivity : BaseActivity(), MainContract.View {
@@ -66,6 +60,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         ButterKnife.bind(this)
 
         setSupportActionBar(toolbar)
+
         presenter = MainPresenter(this)
 
         drawerLayout?.let {
@@ -90,16 +85,36 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (cateAdapter != null) {
             refreshCategoryList()
         }
-
-        registerEventBus()
     }
 
     override fun onPause() {
         super.onPause()
 
         presenter?.stop()
+    }
 
-        unregisterEventBus()
+    override fun updateFilterIcon(filterOption: Int) {
+        when (filterOption) {
+            MainPresenter.FILTER_ALL -> filerButton.setImageResource(R.drawable.ic_filter_all)
+            MainPresenter.FILTER_DONE -> filerButton.setImageResource(R.drawable.ic_filter_done)
+            MainPresenter.FILTER_UNDONE -> filerButton.setImageResource(R.drawable.ic_filter_undone)
+        }
+    }
+
+    private fun showFilterMenu() {
+        val options = arrayOf(R.string.filter_all.getResString(),
+                R.string.filter_undone.getResString(),
+                R.string.filter_done.getResString())
+        val builder = AlertDialog.Builder(this)
+        builder.setSingleChoiceItems(options, presenter!!.filterOption) { dialog, which ->
+            dialog.dismiss()
+            presenter?.filterOption = which
+        }
+        builder.setTitle(R.string.filter_title)
+        builder.setPositiveButton(R.string.confirm_ok) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 
     private fun updateNoItemUi(show: Boolean) {
@@ -151,7 +166,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
             drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
 
-            refreshToDoList()
+            presenter?.onCategorySelected(selectedCategoryPosition)
         }
 
         categoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -259,6 +274,11 @@ class MainActivity : BaseActivity(), MainContract.View {
         presenter!!.getCategories()
     }
 
+    @OnClick(R.id.filerButton)
+    fun onClickFilter() {
+        showFilterMenu()
+    }
+
     @OnClick(R.id.drawer_settings)
     internal fun onClickSettings() {
         drawerLayout?.closeDrawer(Gravity.START)
@@ -337,21 +357,32 @@ class MainActivity : BaseActivity(), MainContract.View {
         addingView.makeCategoriesSelection()
     }
 
-    override fun refreshToDoList() {
+    override fun refreshToDoList(filter: Int) {
         val realm = Realm.getDefaultInstance()
-        val results = when (selectedCategoryId) {
+        var query = when (selectedCategoryId) {
             ToDoCategory.VALUE_DELETED_ID -> realm.where(ToDo::class.java)
                     .equalTo(ToDo.KEY_DELETED, true)
                     .equalTo(ToDoCategory.KEY_SID, LocalSettingUtil.getString(this, Params.SID_KEY))
-                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
             ToDoCategory.VALUE_ALL_ID -> realm.where(ToDo::class.java)
                     .notEqualTo(ToDo.KEY_DELETED, true)
-                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
             else -> realm.where(ToDo::class.java)
                     .notEqualTo(ToDo.KEY_DELETED, true)
                     .equalTo(ToDo.KEY_CATEGORY, selectedCategoryId.toString())
-                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
         }
+
+        query = when (filter) {
+            MainPresenter.FILTER_UNDONE -> {
+                query.equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE)
+            }
+            MainPresenter.FILTER_DONE -> {
+                query.equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_DONE)
+            }
+            else -> {
+                query
+            }
+        }
+
+        val results = query.findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
 
         updateNoItemUi(results.size == 0)
         toDoAdapter!!.refreshData(results)
@@ -400,7 +431,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (addingView.visibility == View.VISIBLE) {
             hideAddingView()
         } else {
-            //super.onBackPressed()
             moveTaskToBack(true)
         }
     }
@@ -409,6 +439,10 @@ class MainActivity : BaseActivity(), MainContract.View {
         mainRefreshLayout?.post {
             mainRefreshLayout?.isRefreshing = show
         }
+    }
+
+    override fun reCreateView() {
+        recreate()
     }
 
     override fun uploadOrders() {
@@ -424,21 +458,5 @@ class MainActivity : BaseActivity(), MainContract.View {
         presenter!!.updateOrders(orderStr.toString())
 
         WidgetUpdater.update(this)
-    }
-
-    override fun notifyToDoDeleted(pos: Int) {
-        refreshToDoList()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun receiveEvent(event: ReCreateEvent) {
-        recreate()
-        EventBus.getDefault().removeAllStickyEvents()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun receiveRefreshToDoEvent(event: RefreshToDoEvent) {
-        refreshToDoList()
-        EventBus.getDefault().removeAllStickyEvents()
     }
 }

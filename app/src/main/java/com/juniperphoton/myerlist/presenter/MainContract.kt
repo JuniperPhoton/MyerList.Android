@@ -6,7 +6,7 @@ class MainContract {
     interface View {
         fun refreshCategoryList()
 
-        fun refreshToDoList()
+        fun refreshToDoList(filter: Int)
 
         fun notifyDataSetChanged()
 
@@ -14,10 +14,14 @@ class MainContract {
 
         fun toggleRefreshing(show: Boolean)
 
-        fun notifyToDoDeleted(pos: Int)
+        fun reCreateView()
+
+        fun updateFilterIcon(filterOption: Int)
     }
 
     interface Presenter : com.juniperphoton.myerlist.presenter.Presenter {
+        var filterOption: Int
+
         fun getCategories()
 
         fun getToDos()
@@ -35,5 +39,7 @@ class MainContract {
         fun clearDeletedList()
 
         fun recoverToDo(toDo: ToDo)
+
+        fun onCategorySelected(item: Int)
     }
 }

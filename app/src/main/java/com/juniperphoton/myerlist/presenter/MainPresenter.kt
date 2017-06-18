@@ -9,6 +9,8 @@ import com.juniperphoton.myerlist.api.CloudService
 import com.juniperphoton.myerlist.api.response.AddToDoResponse
 import com.juniperphoton.myerlist.api.response.CommonResponse
 import com.juniperphoton.myerlist.api.response.GetOrderResponse
+import com.juniperphoton.myerlist.event.ReCreateEvent
+import com.juniperphoton.myerlist.event.RefreshToDoEvent
 import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.model.CategoryRespInformation
 import com.juniperphoton.myerlist.model.ToDo
@@ -18,6 +20,9 @@ import com.juniperphoton.myerlist.util.LocalSettingUtil
 import com.juniperphoton.myerlist.util.Params
 import com.juniperphoton.myerlist.util.ToastService
 import io.realm.Realm
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import rx.Observable
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
@@ -26,6 +31,31 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainPresenter(private val view: MainContract.View) : MainContract.Presenter {
+    companion object {
+        private val TAG = "MainPresenter"
+
+        private val DEFAULT = "{ \\\"modified\\\":true, \\\"cates\\\":[{\\\"name\\\":\\\"Work\\\",\\\"color\\\":\\\"#FF436998\\\",\\\"id\\\":1},{\\\"name\\\":\\\"Life\\\",\\\"color\\\":\\\"#FFFFB542\\\",\\\"id\\\":2},{\\\"name\\\":\\\"Family\\\",\\\"color\\\":\\\"#FFFF395F\\\",\\\"id\\\":3},{\\\"name\\\":\\\"Entertainment\\\",\\\"color\\\":\\\"#FF55C1C1\\\",\\\"id\\\":4}]}"
+
+        const val FILTER_ALL = 0
+        const val FILTER_UNDONE = 1
+        const val FILTER_DONE = 2
+    }
+
+    override var filterOption: Int = LocalSettingUtil.getInt(App.instance!!, Params.KEY_FILTER_OPTION, FILTER_ALL)
+        set(value) {
+            if (field != value) {
+                field = value
+                view.refreshToDoList(value)
+                view.updateFilterIcon(value)
+
+                LocalSettingUtil.putInt(App.instance!!, Params.KEY_FILTER_OPTION, value)
+            }
+        }
+
+    override fun onCategorySelected(item: Int) {
+        view.refreshToDoList(filterOption)
+    }
+
     override fun getCategories() {
         view.toggleRefreshing(true)
         CloudService.getCategories()
@@ -41,7 +71,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                     override fun onError(e: Throwable) {
                         e.printStackTrace()
                         view.toggleRefreshing(false)
-                        view.refreshToDoList()
+                        view.refreshToDoList(filterOption)
                     }
 
                     override fun onNext(cateResponse: Unit) {
@@ -68,12 +98,12 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                 .subscribe(object : Subscriber<GetOrderResponse>() {
                     override fun onCompleted() {
                         view.toggleRefreshing(false)
-                        view.refreshToDoList()
+                        view.refreshToDoList(filterOption)
                     }
 
                     override fun onError(e: Throwable) {
                         view.toggleRefreshing(false)
-                        view.refreshToDoList()
+                        view.refreshToDoList(filterOption)
                     }
 
                     override fun onNext(getOrderResponse: GetOrderResponse) {
@@ -216,7 +246,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
                                     managedToDo.position = --pos
                                 }
                             }
-                            view.refreshToDoList()
+                            view.refreshToDoList(filterOption)
                             view.uploadOrders()
                         }
                     }
@@ -267,7 +297,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
             }
         }
 
-        view.refreshToDoList()
+        view.refreshToDoList(filterOption)
     }
 
     override fun recoverToDo(toDo: ToDo) {
@@ -275,7 +305,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
         Realm.getDefaultInstance().executeTransaction {
             toDo.deleteFromRealm()
         }
-        view.refreshToDoList()
+        view.refreshToDoList(filterOption)
     }
 
     private fun orderToDos(getOrderResponse: GetOrderResponse) {
@@ -314,7 +344,7 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
     }
 
     private fun saveCategoriesToRealm(list: List<ToDoCategory>) {
-        Realm.getDefaultInstance().executeTransaction { realm->
+        Realm.getDefaultInstance().executeTransaction { realm ->
             for ((i, cate) in list.withIndex()) {
                 cate.position = i
                 cate.setSid(LocalSettingUtil.getString(App.instance!!, Params.SID_KEY)!!)
@@ -323,15 +353,26 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
         }
     }
 
+    @Suppress("unused_parameter", "unused")
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun receiveEvent(event: ReCreateEvent) {
+        view.reCreateView()
+        EventBus.getDefault().removeAllStickyEvents()
+    }
+
+    @Suppress("unused_parameter", "unused")
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun receiveRefreshToDoEvent(event: RefreshToDoEvent) {
+        view.refreshToDoList(filterOption)
+        EventBus.getDefault().removeAllStickyEvents()
+    }
+
     override fun start() {
+        EventBus.getDefault().register(this)
+        view.updateFilterIcon(filterOption)
     }
 
     override fun stop() {
-    }
-
-    companion object {
-        private val TAG = "MainPresenter"
-
-        private val DEFAULT = "{ \\\"modified\\\":true, \\\"cates\\\":[{\\\"name\\\":\\\"Work\\\",\\\"color\\\":\\\"#FF436998\\\",\\\"id\\\":1},{\\\"name\\\":\\\"Life\\\",\\\"color\\\":\\\"#FFFFB542\\\",\\\"id\\\":2},{\\\"name\\\":\\\"Family\\\",\\\"color\\\":\\\"#FFFF395F\\\",\\\"id\\\":3},{\\\"name\\\":\\\"Entertainment\\\",\\\"color\\\":\\\"#FF55C1C1\\\",\\\"id\\\":4}]}"
+        EventBus.getDefault().unregister(this)
     }
 }

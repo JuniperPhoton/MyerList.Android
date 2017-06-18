@@ -21,6 +21,10 @@ object LocalSettingUtil {
         return sharedPreferences.getBoolean(key, defaultVal)
     }
 
+    fun getInt(context: Context, key: String, defaultVal: Int): Int {
+        return getSharedPreference(context).getInt(key, defaultVal)
+    }
+
     fun checkKey(context: Context, key: String): Boolean {
         val sharedPreferences = getSharedPreference(context)
         return sharedPreferences.contains(key)

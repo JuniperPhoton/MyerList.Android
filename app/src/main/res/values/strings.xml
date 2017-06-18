@@ -97,4 +97,9 @@
 
     <string name="category_updated">Updated</string>
     <string name="category_update_failed">Failed to update category</string>
+
+    <string name="filter_title">Filter to-do list</string>
+    <string name="filter_all">All</string>
+    <string name="filter_undone">Undone</string>
+    <string name="filter_done">Done</string>
 </resources>
