@@ -22,6 +22,8 @@ import java.util.*
 class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCategory, CustomCategoryAdapter.CustomCategoryViewHolder>() {
     var onClickSelectCategory: ((ToDoCategory?) -> Unit)? = null
 
+    var isDirty: Boolean = false
+
     private val helper = CustomItemTouchHelper(object : CustomItemTouchHelper.Callback() {
         override fun isLongPressDragEnabled(): Boolean {
             return false
@@ -43,6 +45,9 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
             }
             Collections.swap(data!!, pos, targetPos)
             notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
+
+            isDirty = true
+
             return false
         }
 
@@ -93,6 +98,7 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
 
             deleteView!!.setOnClickListener {
                 removeData(adapterPosition - 1)
+                isDirty = true
             }
 
             colorRoot!!.setOnClickListener {
@@ -126,6 +132,8 @@ class CustomCategoryAdapter(private val context: Context) : BaseAdapter<ToDoCate
                             if (category != null && nameTextView != null) {
                                 category!!.name = editText.text.toString()
                                 nameTextView!!.text = editText.text.toString()
+
+                                isDirty = true
                             }
                         }
                         .setNegativeButton(context.getString(R.string.cancel_adding)) { dialog, _ -> dialog.dismiss() }.create().show()

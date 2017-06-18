@@ -40,7 +40,11 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     }
 
     override fun onBackPressed() {
-        prepareToExit()
+        if (adapter?.isDirty ?: true) {
+            prepareToExit()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun prepareToExit() {
@@ -96,6 +100,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
                 category.id = maxId + 1
                 adapter?.addData(category)
+                adapter?.isDirty = true
             }
         }
     }
@@ -128,7 +133,7 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     @OnClick(R.id.categoryManageCancelView)
     fun onClickCancel() {
-        prepareToExit()
+        onBackPressed()
     }
 
     @OnClick(R.id.activity_cate_per_commit_view)
