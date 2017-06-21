@@ -7,9 +7,9 @@ import java.util.*
 
 abstract class BaseAdapter<T, U : RecyclerView.ViewHolder> : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        private val HEADER = 1
-        private val ITEM = 1 shl 1
-        private val FOOTER = 1 shl 2
+        val HEADER = 0
+        val ITEM = 1
+        val FOOTER = 2
     }
 
     var data: MutableList<T>? = ArrayList()
@@ -48,6 +48,14 @@ abstract class BaseAdapter<T, U : RecyclerView.ViewHolder> : RecyclerView.Adapte
     protected abstract fun onCreateItemViewHolder(parent: ViewGroup): U
 
     protected abstract fun onBindItemViewHolder(holder: U, dataPosition: Int)
+
+    protected fun getAdapterPosition(dataPosition: Int): Int {
+        return dataPosition + if (hasHeader) 1 else 0
+    }
+
+    protected fun getDataPosition(adapterPosition: Int): Int {
+        return adapterPosition + if (hasHeader) -1 else 0
+    }
 
     override fun getItemCount(): Int {
         var count = 0

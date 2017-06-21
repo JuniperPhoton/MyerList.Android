@@ -31,15 +31,15 @@ class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHo
         })
     }
 
-    fun selectItem(position: Int) {
-        val category = getData(position)
+    fun selectItem(dataPosition: Int) {
+        val category = getData(dataPosition)
         if (category.id != ToDoCategory.VALUE_PERSONALIZATION_ID) {
             val lastIndex = selectedIndex
-            selectedIndex = position
-            notifyItemChanged(lastIndex)
-            notifyItemChanged(position)
+            selectedIndex = dataPosition
+            notifyItemChanged(getAdapterPosition(lastIndex))
+            notifyItemChanged(getAdapterPosition(dataPosition))
         }
-        onSelected?.invoke(category, position)
+        onSelected?.invoke(category, dataPosition)
     }
 
     private fun getItemById(cateId: String): ToDoCategory? {
@@ -76,7 +76,7 @@ class CategoryAdapter : BaseAdapter<ToDoCategory, CategoryAdapter.CategoryViewHo
         fun bind(category: ToDoCategory) {
             circleView!!.color = category.color!!.toColor()
             nameView!!.text = category.name
-            if (adapterPosition == selectedIndex) {
+            if (getDataPosition(adapterPosition) == selectedIndex) {
                 setSelected()
             } else {
                 setUnselected()

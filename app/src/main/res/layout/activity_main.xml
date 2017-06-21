@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/status_bar_layout"/>
+    <include layout="@layout/status_bar_layout" />
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawerLayout"
@@ -23,13 +22,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/status_bar_height"
-                    android:background="@android:color/white"
-                    android:title="@string/all"/>
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/status_bar_height"
+                        android:background="@android:color/white"
+                        android:title="@string/all" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent">
+
+                        <ImageView
+                            android:id="@+id/filerButton"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="end|bottom"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_filter_all" />
+                    </FrameLayout>
+
+                </FrameLayout>
+
             </android.support.design.widget.AppBarLayout>
 
             <android.support.v4.widget.SwipeRefreshLayout
@@ -41,10 +62,10 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/toDoRecyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
             </android.support.v4.widget.SwipeRefreshLayout>
 
-            <include layout="@layout/no_item_layout"/>
+            <include layout="@layout/no_item_layout" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/addFAB"
@@ -53,7 +74,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:src="@drawable/ic_add"
-                app:backgroundTint="@color/MyerListBlue"/>
+                app:backgroundTint="@color/MyerListBlue" />
 
         </android.support.design.widget.CoordinatorLayout>
 
@@ -62,7 +83,7 @@
             android:layout_width="290dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:fitsSystemWindows="true"/>
+            android:fitsSystemWindows="true" />
 
     </android.support.v4.widget.DrawerLayout>
 
@@ -70,6 +91,6 @@
         android:id="@+id/addingView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -17,9 +17,9 @@ object AppConfig {
         get() = LocalSettingUtil.checkKey(App.instance!!, Params.OFFLINE_MODE)
 
     fun addToBottom(): Boolean {
-        if (!LocalSettingUtil.checkKey(App.instance!!, Params.SETTING_ADD_TO_BOTTOM_KEY)) {
+        if (!LocalSettingUtil.checkKey(App.instance!!, Params.KEY_ADD_TO_BOTTOM)) {
             return true
         }
-        return LocalSettingUtil.getBoolean(App.instance!!, Params.SETTING_ADD_TO_BOTTOM_KEY, true)
+        return LocalSettingUtil.getBoolean(App.instance!!, Params.KEY_ADD_TO_BOTTOM, true)
     }
 }

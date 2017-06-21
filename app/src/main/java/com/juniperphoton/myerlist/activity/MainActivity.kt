@@ -11,18 +11,17 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.widget.TextView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.CategoryAdapter
 import com.juniperphoton.myerlist.adapter.ToDoAdapter
-import com.juniperphoton.myerlist.event.ReCreateEvent
-import com.juniperphoton.myerlist.event.RefreshToDoEvent
-import com.juniperphoton.myerlist.extension.registerEventBus
+import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.extension.startActivity
-import com.juniperphoton.myerlist.extension.unregisterEventBus
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
 import com.juniperphoton.myerlist.presenter.MainContract
@@ -35,9 +34,6 @@ import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.android.synthetic.main.no_item_layout.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 @Suppress("unused", "unused_parameter")
 class MainActivity : BaseActivity(), MainContract.View {
@@ -47,6 +43,10 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private var cateAdapter: CategoryAdapter? = null
     private var toDoAdapter: ToDoAdapter? = null
+
+    private var drawerHeaderView: View? = null
+    private var drawerEmailView: TextView? = null
+    private var undoneText: TextView? = null
 
     private var presenter: MainContract.Presenter? = null
 
@@ -66,6 +66,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         ButterKnife.bind(this)
 
         setSupportActionBar(toolbar)
+
         presenter = MainPresenter(this)
 
         drawerLayout?.let {
@@ -90,16 +91,36 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (cateAdapter != null) {
             refreshCategoryList()
         }
-
-        registerEventBus()
     }
 
     override fun onPause() {
         super.onPause()
 
         presenter?.stop()
+    }
 
-        unregisterEventBus()
+    override fun updateFilterIcon(filterOption: Int) {
+        when (filterOption) {
+            MainPresenter.FILTER_ALL -> filerButton.setImageResource(R.drawable.ic_filter_all)
+            MainPresenter.FILTER_DONE -> filerButton.setImageResource(R.drawable.ic_filter_done)
+            MainPresenter.FILTER_UNDONE -> filerButton.setImageResource(R.drawable.ic_filter_undone)
+        }
+    }
+
+    private fun showFilterMenu() {
+        val options = arrayOf(R.string.filter_all.getResString(),
+                R.string.filter_undone.getResString(),
+                R.string.filter_done.getResString())
+        val builder = AlertDialog.Builder(this)
+        builder.setSingleChoiceItems(options, presenter!!.filterOption) { dialog, which ->
+            dialog.dismiss()
+            presenter?.filterOption = which
+        }
+        builder.setTitle(R.string.filter_title)
+        builder.setPositiveButton(R.string.confirm_ok) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 
     private fun updateNoItemUi(show: Boolean) {
@@ -123,35 +144,43 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
         }
 
-        drawerEmailView.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
+        drawerHeaderView = LayoutInflater.from(this).inflate(R.layout.drawer_header, drawerLayout, false)
+        drawerHeaderView?.let {
+            drawerEmailView = it.findViewById(R.id.drawerEmailView) as TextView
+            undoneText = it.findViewById(R.id.undoneText) as TextView
+        }
+        drawerEmailView?.text = LocalSettingUtil.getString(this, Params.EMAIL_KEY, "")
 
         cateAdapter = CategoryAdapter()
-        cateAdapter?.onSelected = handler@ { category, position ->
-            if (selectedCategoryId == category.id) {
-                return@handler
+        cateAdapter!!.apply {
+            headerView = drawerHeaderView
+            onSelected = handler@ { category, position ->
+                if (selectedCategoryId == category.id) {
+                    return@handler
+                }
+                if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
+                    drawerLayout?.closeDrawer(Gravity.START)
+                    startActivity<CategoryManagementActivity>()
+                    return@handler
+                }
+
+                selectedCategoryPosition = position
+                selectedCategoryId = category.id
+                toDoAdapter!!.canDrag = selectedCategoryId == 0
+                drawerRoot.background = ColorDrawable(category.intColor)
+                addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
+                toolbar.title = category.name
+
+                if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
+                    addFAB.setImageResource(R.drawable.ic_delete)
+                } else {
+                    addFAB.setImageResource(R.drawable.ic_add)
+                }
+
+                drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
+
+                presenter?.onCategorySelected(selectedCategoryPosition)
             }
-            if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
-                drawerLayout?.closeDrawer(Gravity.START)
-                startActivity<CategoryManagementActivity>()
-                return@handler
-            }
-
-            selectedCategoryPosition = position
-            selectedCategoryId = category.id
-            toDoAdapter!!.canDrag = selectedCategoryId == 0
-            drawerRoot.background = ColorDrawable(category.intColor)
-            addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
-            toolbar.title = category.name
-
-            if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
-                addFAB.setImageResource(R.drawable.ic_delete)
-            } else {
-                addFAB.setImageResource(R.drawable.ic_add)
-            }
-
-            drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
-
-            refreshToDoList()
         }
 
         categoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -230,7 +259,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             hideAddingView()
         }
 
-        TypefaceUtil.setTypeFace(undoneText, "fonts/AGENCYB.TTF", this)
+        TypefaceUtil.setTypeFace(undoneText!!, "fonts/AGENCYB.TTF", this)
 
         refreshCategoryList()
         handleShortcutsAction(intent?.action)
@@ -257,6 +286,11 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private fun initData() {
         presenter!!.getCategories()
+    }
+
+    @OnClick(R.id.filerButton)
+    fun onClickFilter() {
+        showFilterMenu()
     }
 
     @OnClick(R.id.drawer_settings)
@@ -337,21 +371,32 @@ class MainActivity : BaseActivity(), MainContract.View {
         addingView.makeCategoriesSelection()
     }
 
-    override fun refreshToDoList() {
+    override fun refreshToDoList(filter: Int) {
         val realm = Realm.getDefaultInstance()
-        val results = when (selectedCategoryId) {
+        var query = when (selectedCategoryId) {
             ToDoCategory.VALUE_DELETED_ID -> realm.where(ToDo::class.java)
                     .equalTo(ToDo.KEY_DELETED, true)
                     .equalTo(ToDoCategory.KEY_SID, LocalSettingUtil.getString(this, Params.SID_KEY))
-                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
             ToDoCategory.VALUE_ALL_ID -> realm.where(ToDo::class.java)
                     .notEqualTo(ToDo.KEY_DELETED, true)
-                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
             else -> realm.where(ToDo::class.java)
                     .notEqualTo(ToDo.KEY_DELETED, true)
                     .equalTo(ToDo.KEY_CATEGORY, selectedCategoryId.toString())
-                    .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
         }
+
+        query = when (filter) {
+            MainPresenter.FILTER_UNDONE -> {
+                query.equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE)
+            }
+            MainPresenter.FILTER_DONE -> {
+                query.equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_DONE)
+            }
+            else -> {
+                query
+            }
+        }
+
+        val results = query.findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
 
         updateNoItemUi(results.size == 0)
         toDoAdapter!!.refreshData(results)
@@ -370,7 +415,7 @@ class MainActivity : BaseActivity(), MainContract.View {
                 .where(ToDo::class.java)
                 .equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE)
                 .equalTo(ToDo.KEY_DELETED, false).count()
-        undoneText.text = count.toString()
+        undoneText?.text = count.toString()
     }
 
     private fun startRevealAnimation(x: Int, y: Int, animator: StartEndAnimator) {
@@ -400,7 +445,6 @@ class MainActivity : BaseActivity(), MainContract.View {
         if (addingView.visibility == View.VISIBLE) {
             hideAddingView()
         } else {
-            //super.onBackPressed()
             moveTaskToBack(true)
         }
     }
@@ -409,6 +453,10 @@ class MainActivity : BaseActivity(), MainContract.View {
         mainRefreshLayout?.post {
             mainRefreshLayout?.isRefreshing = show
         }
+    }
+
+    override fun reCreateView() {
+        recreate()
     }
 
     override fun uploadOrders() {
@@ -424,21 +472,5 @@ class MainActivity : BaseActivity(), MainContract.View {
         presenter!!.updateOrders(orderStr.toString())
 
         WidgetUpdater.update(this)
-    }
-
-    override fun notifyToDoDeleted(pos: Int) {
-        refreshToDoList()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun receiveEvent(event: ReCreateEvent) {
-        recreate()
-        EventBus.getDefault().removeAllStickyEvents()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun receiveRefreshToDoEvent(event: RefreshToDoEvent) {
-        refreshToDoList()
-        EventBus.getDefault().removeAllStickyEvents()
     }
 }

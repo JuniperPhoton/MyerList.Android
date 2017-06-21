@@ -92,4 +92,9 @@
 
     <string name="category_updated">已更新</string>
     <string name="category_update_failed">更新类别列表失败 :(</string>
+
+    <string name="filter_title">要显示列表里的</string>
+    <string name="filter_all">全部</string>
+    <string name="filter_undone">未完成的</string>
+    <string name="filter_done">完成了的</string>
 </resources>
