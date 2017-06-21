@@ -4,16 +4,21 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.adapter.PickColorAdapter
 import com.juniperphoton.myerlist.extension.toColor
 import kotlinx.android.synthetic.main.activity_color_picker.*
 
-@Suppress("unused","unused_parameter")
+@Suppress("unused", "unused_parameter")
 class PickColorActivity : BaseActivity() {
     companion object {
         private const val SPAN_COUNT = 6
         const val RESULT_KEY = "picked_color"
+    }
+
+    val colorList: RecyclerView by lazy {
+        color_pick_list
     }
 
     private var colors: MutableList<Int>? = null
@@ -37,8 +42,8 @@ class PickColorActivity : BaseActivity() {
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }
-            colorPickList.layoutManager = GridLayoutManager(this, SPAN_COUNT)
-            colorPickList.adapter = adapter
+            colorList.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+            colorList.adapter = adapter
             it.refreshData(colors!!)
         }
     }

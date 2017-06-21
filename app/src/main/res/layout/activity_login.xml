@@ -35,7 +35,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/loginTitleView"
+                android:id="@+id/login_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/emailView"
+                    android:id="@+id/email_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/passwordView"
+                    android:id="@+id/password_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
@@ -79,12 +79,12 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/passwordSecViewRoot"
+                android:id="@+id/password_sec_view_root"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/passwordSecView"
+                    android:id="@+id/password_sec_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/input_password_again"
@@ -92,7 +92,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/loginButton"
+                android:id="@+id/login_button"
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

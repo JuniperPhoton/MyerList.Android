@@ -29,6 +29,14 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
     private var toDoCategory: ToDoCategory? = null
     private var headerView: View? = null
 
+    val categoryList: RecyclerView by lazy {
+        category_manage_list
+    }
+
+    val cancelView: View by lazy {
+        cancel_view
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_category)
@@ -79,10 +87,10 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
                 startActivityForResult<PickColorActivity>(0)
             }
             it.headerView = headerView
-            categoryManageList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-            categoryManageList.adapter = adapter
+            categoryList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            categoryList.adapter = adapter
 
-            categoryManageCancelView.requestFocus()
+            cancel_view.requestFocus()
         }
     }
 
@@ -123,26 +131,26 @@ class CategoryManagementActivity : BaseActivity(), CustomCategoryContract.View {
 
     override fun hideDialog(delayMillis: Long) {
         progressDialog?.let {
-            categoryManageCancelView.postDelayed({ it.hide() }, delayMillis)
+            cancelView.postDelayed({ it.hide() }, delayMillis)
         }
     }
 
     override fun hideKeyboard() {
-        KeyboardUtil.hide(this, categoryManageCancelView.windowToken)
+        KeyboardUtil.hide(this, cancelView.windowToken)
     }
 
-    @OnClick(R.id.categoryManageCancelView)
+    @OnClick(R.id.cancel_view)
     fun onClickCancel() {
         onBackPressed()
     }
 
-    @OnClick(R.id.activity_cate_per_commit_view)
+    @OnClick(R.id.commit_view)
     fun onClickOk() {
         presenter!!.commit()
     }
 
     override fun postDelay(runnable: Runnable, delayMillis: Long) {
-        categoryManageCancelView.postDelayed(runnable, delayMillis)
+        cancelView.postDelayed(runnable, delayMillis)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -22,7 +22,6 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/activity_start_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -38,7 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/myer"
@@ -76,7 +75,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/versionTextView"
+                android:id="@+id/version_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -107,11 +106,9 @@
                 android:text="@string/feedback" />
 
             <TextView
-                android:id="@+id/emailView"
+                android:id="@+id/email_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_gravity="center_horizontal"
                 android:autoLink="web"
                 android:background="@drawable/ripple_clip"
@@ -122,11 +119,9 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/githubView"
+                android:id="@+id/github_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_gravity="center_horizontal"
                 android:autoLink="web"
                 android:background="@drawable/ripple_clip"
@@ -141,7 +136,7 @@
                 android:text="@string/like_this_app" />
 
             <TextView
-                android:id="@+id/donateView"
+                android:id="@+id/donate_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -154,7 +149,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/rateView"
+                android:id="@+id/rate_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

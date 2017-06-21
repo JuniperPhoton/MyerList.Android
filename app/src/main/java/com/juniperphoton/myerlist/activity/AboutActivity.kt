@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myerlist.R
@@ -15,6 +16,10 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
 @Suppress("unused", "unused_parameter")
 class AboutActivity : BaseActivity() {
+    val versionTextView: TextView by lazy {
+        version_text_view
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
@@ -27,7 +32,7 @@ class AboutActivity : BaseActivity() {
         versionTextView.text = "${this.getVersionName()}"
     }
 
-    @OnClick(R.id.emailView)
+    @OnClick(R.id.email_view)
     internal fun onClickEmail(view: View) {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "message/rfc822"
@@ -39,21 +44,21 @@ class AboutActivity : BaseActivity() {
         startActivitySafely(emailIntent)
     }
 
-    @OnClick(R.id.rateView)
+    @OnClick(R.id.rate_view)
     internal fun onClickRate() {
         val uri = Uri.parse("market://details?id=$packageName")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }
 
-    @OnClick(R.id.donateView)
+    @OnClick(R.id.donate_view)
     internal fun onClickDonate() {
         if (AlipayZeroSdk.hasInstalledAlipayClient(this)) {
             AlipayZeroSdk.startAlipayClient(this, "aex09127b4dbo4o7fbvcyb0")
         }
     }
 
-    @OnClick(R.id.githubView)
+    @OnClick(R.id.github_view)
     internal fun onClickGithub() {
         val uri = Uri.parse(R.string.github_url.getResString())
         val intent = Intent(Intent.ACTION_VIEW, uri)

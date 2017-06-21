@@ -15,7 +15,7 @@ class StartActivity : BaseActivity() {
         ButterKnife.bind(this)
     }
 
-    @OnClick(R.id.loginButton)
+    @OnClick(R.id.login_button)
     fun onClickLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.putExtra(Params.LOGIN_MODE, Params.LoginMode.LOGIN)
