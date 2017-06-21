@@ -12,8 +12,9 @@ import com.juniperphoton.myerlist.extension.toColor
 import com.juniperphoton.myerlist.extension.toResColor
 import com.juniperphoton.myerlist.model.ToDo
 import com.juniperphoton.myerlist.model.ToDoCategory
+import com.juniperphoton.myerlist.util.LocalSettingUtil
+import com.juniperphoton.myerlist.util.Params
 import io.realm.Realm
-import io.realm.Sort
 
 class ListViewUpdateService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
@@ -37,9 +38,15 @@ class ListViewUpdateFactory(private var context: Context) : RemoteViewsService.R
         val cateList = realm.where(ToDoCategory::class.java)
                 .greaterThanOrEqualTo(ToDoCategory.KEY_ID, 0)
                 .findAll()
-        val todoList = realm.where(ToDo::class.java)
-                .notEqualTo(ToDo.KEY_DELETED, true)
-                .findAllSorted(ToDo.KEY_POSITION, Sort.ASCENDING)
+        var query = realm.where(ToDo::class.java).notEqualTo(ToDo.KEY_DELETED, true)
+
+        val filter = LocalSettingUtil.getInt(context, Params.KEY_FILTER_OPTION, 0)
+        val todoList = when (filter) {
+            1 -> query.equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_UNDONE).findAllSorted(ToDo.KEY_POSITION)
+            2 -> query.equalTo(ToDo.KEY_IS_DONE, ToDo.VALUE_DONE).findAllSorted(ToDo.KEY_POSITION)
+            else -> query.findAllSorted(ToDo.KEY_POSITION)
+        }
+
         val unmanagedList = ArrayList<ToDo>()
         todoList.forEach {
             unmanagedList.add(realm.copyFromRealm(it))
@@ -61,7 +68,7 @@ class ListViewUpdateFactory(private var context: Context) : RemoteViewsService.R
     }
 
     override fun getItemId(position: Int): Long {
-        return 0
+        return if (list?.size ?: 0 <= 0) 0 else list!![position].hashCode().toLong()
     }
 
     override fun onDataSetChanged() {
@@ -70,7 +77,7 @@ class ListViewUpdateFactory(private var context: Context) : RemoteViewsService.R
     }
 
     override fun hasStableIds(): Boolean {
-        return false
+        return true
     }
 
     override fun getViewAt(position: Int): RemoteViews {
