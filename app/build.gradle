@@ -10,8 +10,8 @@ android {
         applicationId "com.juniperphoton.myerlist"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 516
-        versionName "5.1.1"
+        versionCode 518
+        versionName "5.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
