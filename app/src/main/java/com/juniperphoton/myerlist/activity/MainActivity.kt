@@ -6,14 +6,19 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.widget.ImageView
 import android.widget.TextView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -60,6 +65,30 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private var modifyingToDoId = -1
 
+    val drawerLayout: DrawerLayout by lazy {
+        drawer_layout
+    }
+
+    val filterButton: ImageView by lazy {
+        filter_button
+    }
+
+    val refreshLayout: SwipeRefreshLayout by lazy {
+        main_refresh_layout
+    }
+
+    val toDoList: RecyclerView by lazy {
+        to_do_list
+    }
+
+    val addFab: FloatingActionButton by lazy {
+        add_fab
+    }
+
+    val addingView: AddingView by lazy {
+        adding_view
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -69,7 +98,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         presenter = MainPresenter(this)
 
-        drawerLayout?.let {
+        drawerLayout.let {
             val toggle = ActionBarDrawerToggle(
                     this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
             it.addDrawerListener(toggle)
@@ -101,9 +130,9 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     override fun updateFilterIcon(filterOption: Int) {
         when (filterOption) {
-            MainPresenter.FILTER_ALL -> filerButton.setImageResource(R.drawable.ic_filter_all)
-            MainPresenter.FILTER_DONE -> filerButton.setImageResource(R.drawable.ic_filter_done)
-            MainPresenter.FILTER_UNDONE -> filerButton.setImageResource(R.drawable.ic_filter_undone)
+            MainPresenter.FILTER_ALL -> filterButton.setImageResource(R.drawable.ic_filter_all)
+            MainPresenter.FILTER_DONE -> filterButton.setImageResource(R.drawable.ic_filter_done)
+            MainPresenter.FILTER_UNDONE -> filterButton.setImageResource(R.drawable.ic_filter_undone)
         }
     }
 
@@ -136,7 +165,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
         toolbar.post { toolbar.title = getString(R.string.all) }
 
-        mainRefreshLayout.setOnRefreshListener {
+        refreshLayout.setOnRefreshListener {
             if (cateAdapter != null && cateAdapter!!.data!!.size > 0) {
                 presenter!!.getToDos()
             } else {
@@ -159,7 +188,7 @@ class MainActivity : BaseActivity(), MainContract.View {
                     return@handler
                 }
                 if (category.id == ToDoCategory.VALUE_PERSONALIZATION_ID) {
-                    drawerLayout?.closeDrawer(Gravity.START)
+                    drawerLayout.closeDrawer(Gravity.START)
                     startActivity<CategoryManagementActivity>()
                     return@handler
                 }
@@ -168,13 +197,13 @@ class MainActivity : BaseActivity(), MainContract.View {
                 selectedCategoryId = category.id
                 toDoAdapter!!.canDrag = selectedCategoryId == 0
                 drawerRoot.background = ColorDrawable(category.intColor)
-                addFAB.backgroundTintList = ColorStateList.valueOf(category.intColor)
+                addFab.backgroundTintList = ColorStateList.valueOf(category.intColor)
                 toolbar.title = category.name
 
                 if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
-                    addFAB.setImageResource(R.drawable.ic_delete)
+                    addFab.setImageResource(R.drawable.ic_delete)
                 } else {
-                    addFAB.setImageResource(R.drawable.ic_add)
+                    addFab.setImageResource(R.drawable.ic_add)
                 }
 
                 drawerLayout.postDelayed({ drawerLayout.closeDrawer(GravityCompat.START) }, 300)
@@ -230,10 +259,10 @@ class MainActivity : BaseActivity(), MainContract.View {
             }
         }
 
-        toDoRecyclerView.layoutManager = LinearLayoutManager(this,
+        toDoList.layoutManager = LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false)
-        (toDoRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        toDoRecyclerView.adapter = toDoAdapter
+        (toDoList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        toDoList.adapter = toDoAdapter
 
         addingView.setOnSelectionChangedCallback { position ->
             val toDoCategory = cateAdapter!!.getData(position)
@@ -288,24 +317,24 @@ class MainActivity : BaseActivity(), MainContract.View {
         presenter!!.getCategories()
     }
 
-    @OnClick(R.id.filerButton)
+    @OnClick(R.id.filter_button)
     fun onClickFilter() {
         showFilterMenu()
     }
 
     @OnClick(R.id.drawer_settings)
     internal fun onClickSettings() {
-        drawerLayout?.closeDrawer(Gravity.START)
+        drawerLayout.closeDrawer(Gravity.START)
         startActivity<SettingsActivity>()
     }
 
     @OnClick(R.id.drawer_about)
     internal fun onClickAbout() {
-        drawerLayout?.closeDrawer(Gravity.START)
+        drawerLayout.closeDrawer(Gravity.START)
         startActivity<AboutActivity>()
     }
 
-    @OnClick(R.id.addFAB)
+    @OnClick(R.id.add_fab)
     internal fun onClickFAB() {
         if (selectedCategoryId == ToDoCategory.VALUE_DELETED_ID) {
             if (toDoAdapter?.data?.size == 0) {
@@ -319,7 +348,7 @@ class MainActivity : BaseActivity(), MainContract.View {
             return
         }
         val location = IntArray(2)
-        addFAB.getLocationOnScreen(location)
+        addFab.getLocationOnScreen(location)
 
         val x = location[0] + resources.getDimensionPixelSize(R.dimen.fab_center_margin)
         val y = location[1] + resources.getDimensionPixelSize(R.dimen.fab_center_margin)
@@ -450,8 +479,8 @@ class MainActivity : BaseActivity(), MainContract.View {
     }
 
     override fun toggleRefreshing(show: Boolean) {
-        mainRefreshLayout?.post {
-            mainRefreshLayout?.isRefreshing = show
+        refreshLayout.post {
+            refreshLayout.isRefreshing = show
         }
     }
 

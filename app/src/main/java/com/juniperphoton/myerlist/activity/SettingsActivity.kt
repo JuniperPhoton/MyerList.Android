@@ -10,6 +10,7 @@ import com.juniperphoton.myerlist.R
 import com.juniperphoton.myerlist.event.ReCreateEvent
 import com.juniperphoton.myerlist.extension.getResString
 import com.juniperphoton.myerlist.util.LocalSettingUtil
+import com.juniperphoton.myerlist.widget.SettingsItemLayout
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
@@ -17,13 +18,17 @@ import java.util.*
 
 @Suppress("unused", "unused_parameter")
 class SettingsActivity : BaseActivity() {
+    val changeLanguageView: SettingsItemLayout by lazy {
+        change_language_view
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
         updateLocal()
-        
-        changeLangView.onClick = {
+
+        changeLanguageView.onClick = {
             toggleChangeLanguage()
         }
     }
@@ -33,9 +38,9 @@ class SettingsActivity : BaseActivity() {
         val config = resources.configuration
         val locale = config.locale
         if (locale == Locale.SIMPLIFIED_CHINESE) {
-            changeLangView.content = R.string.change_lang_hint_chinese.getResString()
+            change_language_view.content = R.string.change_lang_hint_chinese.getResString()
         } else {
-            changeLangView.content = R.string.change_lang_hint_english.getResString()
+            change_language_view.content = R.string.change_lang_hint_english.getResString()
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.TextView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -26,8 +27,32 @@ class LoginActivity : BaseActivity(), LoginView {
 
     private var dialog: ProgressDialog? = null
 
+    val loginTitle: TextView by lazy {
+        login_title
+    }
+
+    val emailView: EditText by lazy {
+        email_view
+    }
+
+    val passwordView: EditText by lazy {
+        password_view
+    }
+
+    val passwordSecView: EditText by lazy {
+        password_sec_view
+    }
+
+    val passwordSecViewRoot: View by lazy {
+        password_sec_view_root
+    }
+
+    val loginButton: TextView by lazy {
+        login_button
+    }
+
     override val email: String
-        get() = emailView.text.toString()
+        get() = email_view.text.toString()
 
     override val password: String
         get() = passwordView.text.toString()
@@ -47,12 +72,12 @@ class LoginActivity : BaseActivity(), LoginView {
         loginMode = intent.getIntExtra(Params.LOGIN_MODE, -1)
         when (loginMode) {
             Params.LoginMode.LOGIN -> {
-                loginTitleView.text = R.string.login_title.getResString()
+                loginTitle.text = R.string.login_title.getResString()
                 passwordSecViewRoot.visibility = View.GONE
                 loginButton.text = R.string.login.getResString()
             }
             Params.LoginMode.REGISTER -> {
-                loginTitleView.text = R.string.register_title.getResString()
+                loginTitle.text = R.string.register_title.getResString()
                 passwordSecViewRoot.visibility = View.VISIBLE
                 loginButton.text = R.string.register.getResString()
             }
@@ -82,7 +107,7 @@ class LoginActivity : BaseActivity(), LoginView {
         dialog?.dismiss()
     }
 
-    @OnClick(R.id.loginButton)
+    @OnClick(R.id.login_button)
     fun onClickButton() {
         dialog = ProgressDialog(this, ProgressDialog.STYLE_SPINNER)
         dialog?.apply {

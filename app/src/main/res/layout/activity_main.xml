@@ -8,14 +8,13 @@
     <include layout="@layout/status_bar_layout" />
 
     <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawerLayout"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="0dp"
             android:fitsSystemWindows="false">
 
             <android.support.design.widget.AppBarLayout
@@ -40,7 +39,7 @@
                         android:background="@android:color/transparent">
 
                         <ImageView
-                            android:id="@+id/filerButton"
+                            android:id="@+id/filter_button"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_gravity="end|bottom"
@@ -54,13 +53,13 @@
             </android.support.design.widget.AppBarLayout>
 
             <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/mainRefreshLayout"
+                android:id="@+id/main_refresh_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/toDoRecyclerView"
+                    android:id="@+id/to_do_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </android.support.v4.widget.SwipeRefreshLayout>
@@ -68,7 +67,7 @@
             <include layout="@layout/no_item_layout" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/addFAB"
+                android:id="@+id/add_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
@@ -88,7 +87,7 @@
     </android.support.v4.widget.DrawerLayout>
 
     <com.juniperphoton.myerlist.widget.AddingView
-        android:id="@+id/addingView"
+        android:id="@+id/adding_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

@@ -1,9 +1,24 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
 android {
+    signingConfigs {
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            def key = properties.getProperty('key')
+            def password = properties.getProperty('password')
+
+            keyAlias key
+            keyPassword password
+            storeFile file('keystore/ml.jks')
+            storePassword password
+        }
+    }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -14,12 +29,23 @@ android {
         versionName "5.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = file("$project.buildDir/outputs/apk/myerlist_${variant.baseName}." +
+                            "${defaultConfig.versionName}.${defaultConfig.versionCode}.apk")
+                }
+            }
         }
     }
+
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -63,6 +89,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    testCompile 'junit:junit:4.12'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
@@ -79,13 +110,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'moe.feng:AlipayZeroSdk:1.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-    testCompile 'junit:junit:4.12'
     kapt 'com.jakewharton:butterknife-compiler:8.5.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    kapt "io.realm:realm-annotations:3.0.0"
-    kapt "io.realm:realm-annotations-processor:3.0.0"
-}
-repositories {
-    mavenCentral()
+    kapt "io.realm:realm-annotations:3.3.2"
+    kapt "io.realm:realm-annotations-processor:3.3.2"
 }
