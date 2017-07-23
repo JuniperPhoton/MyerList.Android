@@ -5,6 +5,20 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
 android {
+    signingConfigs {
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            def key = properties.getProperty('key')
+            def password = properties.getProperty('password')
+
+            keyAlias key
+            keyPassword password
+            storeFile file('keystore/ml.jks')
+            storePassword password
+        }
+    }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -15,12 +29,23 @@ android {
         versionName "5.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = file("$project.buildDir/outputs/apk/myerlist_${variant.baseName}." +
+                            "${defaultConfig.versionName}.${defaultConfig.versionCode}.apk")
+                }
+            }
         }
     }
+
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -88,8 +113,4 @@ dependencies {
     kapt 'com.jakewharton:butterknife-compiler:8.5.1'
     kapt "io.realm:realm-annotations:3.3.2"
     kapt "io.realm:realm-annotations-processor:3.3.2"
-}
-
-repositories {
-    mavenCentral()
 }
