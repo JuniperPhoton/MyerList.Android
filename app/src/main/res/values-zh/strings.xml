@@ -68,9 +68,6 @@
     <string name="two_pwd_not_match_hint">两个密码不一致</string>
     <string name="confirm_delete_title">清除已经删除的项目?</string>
 
-    <string name="add_to_bottom_key">add_to_bottom_key</string>
-    <string name="use_dark_theme_key">use_dark_theme_key</string>
-    <string name="language_key">language_key</string>
     <string name="add">添加</string>
     <string name="add_header">添加</string>
     <string name="pick_a_color">选取一个颜色</string>
@@ -97,4 +94,9 @@
     <string name="filter_all">全部</string>
     <string name="filter_undone">未完成的</string>
     <string name="filter_done">完成了的</string>
+
+    <string name="image_desc">Desc</string>
+    <string name="weibo_url">
+        https://m.weibo.cn/p/1005051624312593?from=qrcode&amp;frwbqr=53&amp;jumpfrom=weibocom
+    </string>
 </resources>
