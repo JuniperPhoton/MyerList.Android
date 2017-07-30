@@ -5,6 +5,6 @@
     android:layout_height="@dimen/status_bar_height"
     android:layout_alignParentTop="true"
     android:alpha="0.3"
-    android:background="@drawable/statusbar"
+    android:background="#c5000000"
     android:elevation="4dp"
     android:scaleType="fitXY"/>

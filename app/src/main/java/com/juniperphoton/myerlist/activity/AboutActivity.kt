@@ -64,4 +64,18 @@ class AboutActivity : BaseActivity() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }
+
+    @OnClick(R.id.twitter_item)
+    internal fun onClickTwitter() {
+        val uri = Uri.parse(getString(R.string.twitter_url))
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivitySafely(intent)
+    }
+
+    @OnClick(R.id.weibo_item)
+    internal fun onClickWeibo() {
+        val uri = Uri.parse(getString(R.string.weibo_url))
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivitySafely(intent)
+    }
 }

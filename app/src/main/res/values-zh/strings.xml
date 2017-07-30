@@ -94,4 +94,9 @@
     <string name="filter_all">全部</string>
     <string name="filter_undone">未完成的</string>
     <string name="filter_done">完成了的</string>
+
+    <string name="image_desc">Desc</string>
+    <string name="weibo_url">
+        https://m.weibo.cn/p/1005051624312593?from=qrcode&amp;frwbqr=53&amp;jumpfrom=weibocom
+    </string>
 </resources>
