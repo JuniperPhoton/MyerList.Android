@@ -2,6 +2,8 @@ package com.juniperphoton.myerlist.activity
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -33,6 +35,7 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
+    @Suppress("deprecation")
     private fun updateLocal() {
         val resources = resources
         val config = resources.configuration
@@ -44,23 +47,30 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
+    @Suppress("deprecation")
+    private fun getCurrentLocale(config: Configuration): Locale {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return config.locales[0]
+        } else {
+            return config.locale
+        }
+    }
+
+    @Suppress("deprecation")
     private fun toggleChangeLanguage() {
-        val resources = resources
-        val dm = resources.displayMetrics
-        val config = resources.configuration
-        val locale = config.locale
+        val locale = getCurrentLocale(resources.configuration)
         val opts = resources.getStringArray(R.array.language)
-        var defaultIndex = 0
-        if (locale == Locale.SIMPLIFIED_CHINESE) {
-            defaultIndex = 1
+        val defaultIndex = when (locale) {
+            Locale.SIMPLIFIED_CHINESE -> 1
+            else -> 0
         }
         AlertDialog.Builder(this)
                 .setTitle(R.string.change_lang)
                 .setSingleChoiceItems(opts, defaultIndex) { dialog, which ->
                     dialog.dismiss()
                     if (defaultIndex != which) {
-                        config.setLocale(if (which == 0) Locale.ENGLISH else Locale.SIMPLIFIED_CHINESE)
-                        resources.updateConfiguration(config, dm)
+                        val languageKey = resources.getString(R.string.language_key)
+                        LocalSettingUtil.putInt(this, languageKey, which)
                         EventBus.getDefault().postSticky(ReCreateEvent())
                         finish()
                     }
