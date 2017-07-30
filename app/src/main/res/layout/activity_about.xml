@@ -1,18 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/MyerListGray"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    tools:context="activity.AboutActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/MyerListGray"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                tools:context="activity.AboutActivity">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/texture_background" />
-
-    <include layout="@layout/status_bar_layout" />
+    <include layout="@layout/status_bar_layout"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +26,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:src="@drawable/launcher_icon" />
+                android:src="@drawable/launcher_icon"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -42,7 +36,7 @@
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@android:color/black"
-                android:textSize="40sp" />
+                android:textSize="40sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -52,7 +46,7 @@
                 android:text="@string/list"
                 android:textColor="@android:color/black"
                 android:textSize="40sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <TextView
@@ -65,7 +59,7 @@
             android:text="@string/for_windows_10_and_android"
             android:textColor="@android:color/black"
             android:textSize="15sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,11 +79,11 @@
                 android:textColor="@android:color/white"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                tools:text="1.0.0" />
+                tools:text="1.0.0"/>
 
             <TextView
                 style="@style/AboutTitle"
-                android:text="@string/credit" />
+                android:text="@string/credit"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -99,41 +93,49 @@
                 android:text="@string/juniperphoton"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 style="@style/AboutTitle"
-                android:text="@string/feedback" />
+                android:text="@string/feedback"/>
 
-            <TextView
-                android:id="@+id/email_view"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:autoLink="web"
-                android:background="@drawable/ripple_clip"
-                android:padding="10sp"
-                android:text="@string/i_have_an_idea"
-                android:textColor="@android:color/black"
-                android:textColorLink="@android:color/black"
-                android:textSize="14sp" />
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/github_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:autoLink="web"
-                android:background="@drawable/ripple_clip"
-                android:padding="10sp"
-                android:text="@string/donate_your_code"
-                android:textColor="@android:color/black"
-                android:textColorLink="@android:color/black"
-                android:textSize="14sp" />
+                <ImageView
+                    android:id="@+id/email_view"
+                    style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
+                    android:src="@drawable/ic_email"/>
+
+                <ImageView
+                    android:id="@+id/github_view"
+                    style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
+                    android:src="@drawable/ic_github_icon"/>
+
+                <ImageView
+                    android:id="@+id/twitter_item"
+                    style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_twitter"/>
+
+                <ImageView
+                    android:id="@+id/weibo_item"
+                    style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
+                    android:src="@drawable/ic_weibo_social_logo"/>
+            </LinearLayout>
 
             <TextView
                 style="@style/AboutTitle"
-                android:text="@string/like_this_app" />
+                android:text="@string/like_this_app"/>
 
             <TextView
                 android:id="@+id/donate_view"
@@ -146,7 +148,7 @@
                 android:text="@string/treat_me_a_drink"
                 android:textColor="@android:color/black"
                 android:textColorLink="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/rate_view"
@@ -158,7 +160,7 @@
                 android:text="@string/give_me_a_rate"
                 android:textColor="@android:color/black"
                 android:textColorLink="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
